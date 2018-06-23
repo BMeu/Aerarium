@@ -1,0 +1,26 @@
+sudo: false
+
+language: python
+
+python:
+  - "3.6"
+  - "3.6-dev"
+  - "3.7-dev"
+  - "nightly"
+
+before_install:
+  - cp instance/example.env instance/.env
+
+install:
+  - pip install -r requirements.txt
+  - pip install -r requirements-dev.txt
+  - pip install codecov
+
+script:
+  - flake8
+  - coverage run --source app --omit app/cli.py -m unittest discover -v -s tests -p "*_test.py" -t .
+  - sphinx-apidoc -o docs/source/api app app/configuration
+  - sphinx-build -b html docs/source docs/build
+
+after_success:
+- codecov

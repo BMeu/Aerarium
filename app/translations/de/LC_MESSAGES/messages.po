@@ -1,0 +1,34 @@
+# German translations for Aerarium.
+# Copyright (C) 2018 Bastian Meyer
+# This file is distributed under the same license as the  project.
+# Bastian Meyer <bastian@bastianmeyer.eu>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Aerarium\n"
+"Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
+"POT-Creation-Date: 2018-03-02 15:22+0100\n"
+"PO-Revision-Date: 2018-03-02 15:22+0100\n"
+"Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
+"Language: de\n"
+"Language-Team: de <aerarium@bastianmeyer.eu>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.5.3\n"
+"X-Generator: Poedit 1.8.7.1\n"
+
+#: app/__init__.py:34
+msgid "Please log in to access this page."
+msgstr "Bitte melde Dich an, um diese Seite öffnen zu können."
+
+#: app/main/routes.py:28
+#, python-format
+msgid "Welcome, %(name)s!"
+msgstr "Willkommen, %(name)s!"
+
+#: app/main/routes.py:30
+#, python-format
+msgid "Welcome to %(title)s!"
+msgstr "Willkommen bei %(title)s!"
