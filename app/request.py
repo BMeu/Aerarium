@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask
+from flask import g
 from flask import Response
+from flask_babel import get_locale
 
 """
     Functions modifying the request on application level.
@@ -16,6 +18,24 @@ def register_after_request_handlers(application: Flask) -> None:
         :param application: The application instance for which the handlers will be registered.
     """
     application.after_request(_header_x_clacks_overhead)
+
+
+def register_before_request_handlers(application: Flask) -> None:
+    """
+        Register handlers that will be executed before each request.
+
+        :param application: The application instance for which the handlers will be registered.
+    """
+    application.before_request(_extend_global_variable)
+
+
+def _extend_global_variable() -> None:
+    """
+        Extend the global variable ``g`` with further information:
+
+         * ``locale``: The current locale (e.g. ``en-US`` or ``de``).
+    """
+    g.locale = get_locale()
 
 
 def _header_x_clacks_overhead(response: Response) -> Response:

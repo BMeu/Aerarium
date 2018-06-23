@@ -22,6 +22,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 from app import register_after_request_handlers
+from app import register_before_request_handlers
 from app.configuration import BaseConfiguration
 from app.localization import get_locale
 from app.logging import create_file_handler
@@ -50,6 +51,7 @@ def create_app(configuration_class: Type[BaseConfiguration] = BaseConfiguration)
     _initialize_extensions(application)
     _initialize_blueprints(application)
 
+    register_before_request_handlers(application)
     register_after_request_handlers(application)
 
     # If the application is running in production mode, enable logging and ensure some configuration variables.
