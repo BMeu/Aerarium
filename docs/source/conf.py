@@ -27,6 +27,7 @@ VERSION = '0.1.0'
 
 project = PROJECTNAME
 author = 'Bastian Meyer'
+# noinspection PyShadowingBuiltins
 copyright = f'Developed by {author}. {project} is licensed under the MIT license.'
 
 # The short X.Y version
