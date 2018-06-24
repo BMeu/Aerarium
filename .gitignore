@@ -103,6 +103,7 @@ ENV/
 
 # IDE
 .idea
+.pre-commit-hook.sh
 
 # Keep folders with a .gitkeep file.
 !.gitkeep
