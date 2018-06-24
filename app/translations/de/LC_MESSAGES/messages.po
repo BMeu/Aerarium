@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-03-02 15:22+0100\n"
-"PO-Revision-Date: 2018-03-02 15:22+0100\n"
+"POT-Creation-Date: 2018-06-24 12:16+0200\n"
+"PO-Revision-Date: 2018-06-24 12:17+0200\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -16,19 +16,31 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.5.3\n"
+"Generated-By: Babel 2.6.0\n"
 "X-Generator: Poedit 1.8.7.1\n"
 
-#: app/__init__.py:34
+#: app/application.py:102
 msgid "Please log in to access this page."
 msgstr "Bitte melde Dich an, um diese Seite öffnen zu können."
 
-#: app/main/routes.py:28
+#: app/main/routes.py:29
 #, python-format
 msgid "Welcome, %(name)s!"
 msgstr "Willkommen, %(name)s!"
 
-#: app/main/routes.py:30
+#: app/main/routes.py:31 app/templates/_header.html:13
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: app/templates/_footer.html:4
 #, python-format
-msgid "Welcome to %(title)s!"
-msgstr "Willkommen bei %(title)s!"
+msgid "%(title)s. Written by %(author)s. Visit the project page on %(github)s."
+msgstr "%(title)s. Entwickelt von %(author)s. Besuche die Projektseite auf %(github)s."
+
+#: app/templates/_header.html:5 app/templates/_header.html:6
+msgid "Toggle Navigation"
+msgstr "Navigation umschalten"
+
+#: app/templates/_messages.html:14 app/templates/_messages.html:15
+msgid "Close"
+msgstr "Schließen"

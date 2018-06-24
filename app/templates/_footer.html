@@ -1,0 +1,8 @@
+<div class="container">
+    <span class="text-muted">
+        {% set mail = 'bastian@bastianmeyer.eu' %}
+        {{ _('%(title)s. Written by %(author)s. Visit the project page on %(github)s.', title=g.title,
+             author=('<a href="mailto:' + mail + '" title="mailto:' + mail + '">Bastian Meyer</a>')|safe,
+             github='<a href="https://github.com/BMeu/Aerarium" target="_blank" title="GitHub">GitHub</a>'|safe) }}
+    </span>
+</div>

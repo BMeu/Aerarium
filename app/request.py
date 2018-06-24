@@ -6,6 +6,8 @@ from flask import g
 from flask import Response
 from flask_babel import get_locale
 
+from app.configuration import BaseConfiguration
+
 """
     Functions modifying the request on application level.
 """
@@ -33,9 +35,11 @@ def _extend_global_variable() -> None:
     """
         Extend the global variable ``g`` with further information:
 
-         * ``locale``: The current locale (e.g. ``en-US`` or ``de``).
+         * ``g.locale``: The current locale (e.g. ``en-US`` or ``de``).
+         * ``g.title``: The app title.
     """
     g.locale = get_locale()
+    g.title = BaseConfiguration.TITLE_SHORT
 
 
 def _header_x_clacks_overhead(response: Response) -> Response:

@@ -89,3 +89,4 @@ class RequestTest(TestCase):
         _extend_global_variable()
 
         self.assertEqual(g.locale, 'en-DE')
+        self.assertEqual(g.title, TestConfiguration.TITLE_SHORT)

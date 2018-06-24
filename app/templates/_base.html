@@ -6,11 +6,33 @@
 
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-reboot-4.1.1.min.css') }}" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-4.1.1.min.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 
-        <title>{{ title }}</title>
+        {% if title %}
+        <title>{{ title }} &laquo; {{ g.title }}</title>
+        {% else %}
+        <title>{{ g.title }}</title>
+        {% endif %}
     </head>
     <body>
-        <h1>{{ title }}</h1>
+        <header>
+            {% include '_header.html' %}
+        </header>
+
+        <main role="main" class="container">
+            {% include '_messages.html' %}
+
+            <h1>{{ title }}</h1>
+            {% if subtitle %}
+            <h2>{{ subtitle }}</h2>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="footer bg-light">
+            {% include '_footer.html' %}
+        </footer>
 
         <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/popper-1.14.3.min.js') }}"></script>
