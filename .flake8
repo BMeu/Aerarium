@@ -3,5 +3,6 @@ max-line-length = 120
 count = True
 exclude =
     instance,
+    migrations,
     resources,
     venv,
