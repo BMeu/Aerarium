@@ -8,6 +8,16 @@ python:
   - "3.7-dev"
   - "nightly"
 
+env:
+  global:
+    - FLASK_APP=aerarium
+    - SECRET_KEY="Gallia est omnis divisa in partes tres"
+
+  matrix:
+    - FLASK_DEBUG=1
+    - FLASK_DEBUG=0
+
+
 before_install:
   - cp instance/example.env instance/.env
 
@@ -18,6 +28,7 @@ install:
 
 script:
   - flake8
+  - flask translate compile
   - coverage run --source app --omit app/cli.py -m unittest discover -v -s tests -p "*_test.py" -t .
   - sphinx-apidoc -o docs/source/api app app/configuration
   - sphinx-build -b html docs/source docs/build
