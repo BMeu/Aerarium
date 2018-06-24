@@ -1,0 +1,4 @@
+[run]
+branch = True
+source = app
+omit = app/cli.py
