@@ -12,6 +12,7 @@ env:
   global:
     - FLASK_APP=aerarium
     - SECRET_KEY="Gallia est omnis divisa in partes tres"
+    - SYS_ADMINS=aerarium@bastianmeyer.eu
 
   matrix:
     - FLASK_DEBUG=1
