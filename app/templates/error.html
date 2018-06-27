@@ -1,0 +1,13 @@
+{% extends '_base.html' %}
+{% block content %}
+<p>
+    {{ message }}
+</p>
+<p>
+    {{ _('Go back to the %(homepage)s.',
+         homepage='<a href="%(url)s" title="%(title)s">%(text)s</a>'
+            |format(url=url_for('main.index'), title=_('Home page'), text=_('home page'))
+            |safe
+    ) }}
+</p>
+{% endblock %}

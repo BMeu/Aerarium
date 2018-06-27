@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-06-24 12:16+0200\n"
-"PO-Revision-Date: 2018-06-24 12:17+0200\n"
+"POT-Creation-Date: 2018-06-25 22:07+0200\n"
+"PO-Revision-Date: 2018-06-25 22:12+0200\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -23,6 +23,82 @@ msgstr ""
 msgid "Please log in to access this page."
 msgstr "Bitte melde Dich an, um diese Seite öffnen zu können."
 
+#: app/main/errors.py:20
+msgid "Bad Request"
+msgstr "Fehlerhafte Anfrage"
+
+#: app/main/errors.py:21
+msgid ""
+"Your request was malformed and could therefore not be handled by the server."
+msgstr ""
+"Deine Anfrage war fehlerhaft aufgebaut und konnte deswegen nicht vom Server "
+"bearbeitet werden."
+
+#: app/main/errors.py:28
+msgid "Unauthorized Access"
+msgstr "Unauthorisierter Zugriff"
+
+#: app/main/errors.py:30
+msgid "The page you want to access requires you to login."
+msgstr "Du musst Dich anmelden, um diese Seite öffnen zu können."
+
+#: app/main/errors.py:37
+msgid "Permission Denied"
+msgstr "Zugriff verweigert"
+
+#: app/main/errors.py:39
+msgid ""
+"You do not have sufficient permissions to access this page. You can try "
+"logging in. If you are logged\n"
+"                in and you still get this message, ask your administrator to "
+"raise your permissions."
+msgstr ""
+"Du hast unzulängliche Berechtigungen, um auf diese Seite zugreifen zu "
+"dürfen. Du kannst versuchen, Dich anzumelden. Wenn du bereits angemeldet "
+"bist und weiterhin diese Meldung erhältst, bitte Deinen Administrator um die "
+"entsprechenden Berechtigungen."
+
+#: app/main/errors.py:47
+msgid "Page Not Found"
+msgstr "Seite nicht gefunden"
+
+#: app/main/errors.py:48
+msgid ""
+"The page you requested was not found on the server. If you are positive the "
+"link you clicked is\n"
+"                correct contact your administrator."
+msgstr ""
+"Die von Dir angeforderte Seite wurde auf dem Server nicht gefunden. Wenn Du "
+"Dir sicher bist, dass der Link korrekt ist, kontaktiere bitte Deinen "
+"Administrator. \t"
+
+#: app/main/errors.py:50 app/templates/error.html:8
+msgid "Home page"
+msgstr "Startseite"
+
+#: app/main/errors.py:57
+msgid "Method Not Allowed"
+msgstr "Methode nicht erlaubt"
+
+#: app/main/errors.py:58
+msgid "The HTTP method you used is not allowed to access this page."
+msgstr ""
+"Die von Dir genutzte HTTP-Methode ist für diese Seite nicht zugelassen."
+
+#: app/main/errors.py:65
+msgid "Internal Error"
+msgstr "Interner Fehler"
+
+#: app/main/errors.py:66
+msgid ""
+"The server encountered an internal error while processing your request. "
+"Please try again later.\n"
+"                The administrator has been notified."
+msgstr ""
+"Beim Bearbeiten Deiner Anfrage kam es auf dem Server zu einem internen "
+"Fehler. Bitte versuche es später erneut. Der Administrator wurde hierüber "
+"benachrichtigt."
+
 #: app/main/routes.py:29
 #, python-format
 msgid "Welcome, %(name)s!"
@@ -35,7 +111,9 @@ msgstr "Dashboard"
 #: app/templates/_footer.html:4
 #, python-format
 msgid "%(title)s. Written by %(author)s. Visit the project page on %(github)s."
-msgstr "%(title)s. Entwickelt von %(author)s. Besuche die Projektseite auf %(github)s."
+msgstr ""
+"%(title)s. Entwickelt von %(author)s. Besuche die Projektseite auf "
+"%(github)s."
 
 #: app/templates/_header.html:5 app/templates/_header.html:6
 msgid "Toggle Navigation"
@@ -44,3 +122,12 @@ msgstr "Navigation umschalten"
 #: app/templates/_messages.html:14 app/templates/_messages.html:15
 msgid "Close"
 msgstr "Schließen"
+
+#: app/templates/error.html:9
+msgid "home page"
+msgstr "Startseite"
+
+#: app/templates/error.html:10
+#, python-format
+msgid "Go back to the %(homepage)s."
+msgstr "Zurück zur %(homepage)s."
