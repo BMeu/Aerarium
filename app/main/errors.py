@@ -84,7 +84,7 @@ def method_not_allowed_error(error: HTTPException):
         :return: The rendered error page.
     """
     title = _('Method Not Allowed')
-    message = _('''The HTTP method you used is not allowed to access this page.''')
+    message = _('The HTTP method you used is not allowed to access this page.')
     return render_template('error.html', title=title, message=message), 405
 
 
