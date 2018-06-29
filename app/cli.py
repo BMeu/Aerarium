@@ -6,6 +6,7 @@
 """
 
 import os
+import sys
 
 import click
 from flask import Flask
@@ -44,7 +45,8 @@ def register(application: Flask) -> None:
         """
 
         if os.system(f'{babel_cmd} compile -d {babel_translation_dir}'):
-            raise RuntimeError('PyBabel: Compilation failed.')
+            click.echo('PyBabel: Compilation failed.')
+            sys.exit(1)
 
     @translate.command(name='init', help='Initialize a new language with the given LANGUAGE code.')
     @click.argument('language')
@@ -59,7 +61,8 @@ def register(application: Flask) -> None:
         _translate_extract()
 
         if os.system(f'{babel_cmd} init -i {babel_pot_file} -d {babel_translation_dir} -l {language}'):
-            raise RuntimeError('PyBabel: Language initialization failed.')
+            click.echo('PyBabel: Language initialization failed.')
+            sys.exit(1)
 
         os.remove(babel_pot_file)
 
@@ -74,7 +77,8 @@ def register(application: Flask) -> None:
         _translate_extract()
 
         if os.system(f'{babel_cmd} update -i {babel_pot_file} -d {babel_translation_dir}'):
-            raise RuntimeError('PyBabel: Update failed.')
+            click.echo('PyBabel: Update failed.')
+            sys.exit(1)
 
         os.remove(babel_pot_file)
 
@@ -87,4 +91,5 @@ def register(application: Flask) -> None:
 
         keywords = ' '.join(babel_keywords)
         if os.system(f'{babel_cmd} extract -F {babel_config} -k {keywords} -o {babel_pot_file} .'):
-            raise RuntimeError('PyBabel: Extraction failed.')
+            click.echo('PyBabel: Extraction failed.')
+            sys.exit(1)
