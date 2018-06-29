@@ -67,7 +67,7 @@ html_theme_options = {
     'logo': 'logo.png',
     'github_banner': True,
     'github_user': 'BMeu',
-    'github_repo': 'Aearium',
+    'github_repo': 'Aerarium',
     'travis_button': True,
     'codecov_button': True,
     'page_width': '1200px',
