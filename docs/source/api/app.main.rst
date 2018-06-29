@@ -4,6 +4,14 @@ app.main package
 Submodules
 ----------
 
+app.main.errors module
+----------------------
+
+.. automodule:: app.main.errors
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 app.main.routes module
 ----------------------
 

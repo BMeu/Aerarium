@@ -1,4 +1,4 @@
-|projectname|
+|project|
 =============
 
 .. toctree::
@@ -9,5 +9,5 @@
    changelog
    license
 
-Developed by `Bastian Meyer <https://www.bastianmeyer.eu>`_. |projectname| is licensed under the
+Developed by `Bastian Meyer <https://www.bastianmeyer.eu>`_. |project| is licensed under the
 `MIT License <http://www.opensource.org/licenses/MIT>`_.
