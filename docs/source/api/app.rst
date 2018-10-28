@@ -46,6 +46,14 @@ app.request module
     :undoc-members:
     :show-inheritance:
 
+app.token module
+----------------
+
+.. automodule:: app.token
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

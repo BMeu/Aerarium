@@ -49,6 +49,7 @@ class BaseConfiguration:
     SESSION_COOKIE_HTTPONLY: bool = True
     SESSION_COOKIE_SECURE: bool = True if environ.get('USE_HTTP', '0') != '1' else False
     PREFERRED_URL_SCHEME: str = 'https' if environ.get('USE_HTTP', '0') != '1' else 'http'
+    TOKEN_VALIDITY: int = int(environ.get('TOKEN_VALIDITY', 900))
 
     # Database settings.
     SQLALCHEMY_DATABASE_URI: str = environ.get('DATABASE_URI', 'sqlite:///' + path.join(_instance_dir, 'app.db'))
