@@ -5,6 +5,8 @@
     Application initialization.
 """
 
+from typing import Optional
+
 from logging import ERROR
 from logging import Formatter as LoggingFormatter
 from logging import INFO
@@ -12,6 +14,7 @@ import os
 import sys
 from typing import Type
 
+from flask import current_app
 from flask import Flask
 from flask.logging import default_handler
 from flask_babel import Babel
@@ -76,6 +79,21 @@ def create_app(configuration_class: Type[BaseConfiguration] = BaseConfiguration)
             print(message)
             application.logger.error(message)
             sys.exit(1)
+
+    return application
+
+
+def get_app() -> Optional[Flask]:
+    """
+        Get the application instance object.
+
+        :return: The application object. ``None`` if it does not exist (e.g. when working outside the app context).
+    """
+    try:
+        # noinspection PyProtectedMember
+        application = current_app._get_current_object()
+    except (AttributeError, RuntimeError):
+        application = None
 
     return application
 

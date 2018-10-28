@@ -30,6 +30,14 @@ app.cli module
     :undoc-members:
     :show-inheritance:
 
+app.email module
+----------------
+
+.. automodule:: app.email
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 app.request module
 ------------------
 
