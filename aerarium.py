@@ -10,6 +10,7 @@ from typing import Dict
 from app import create_app
 from app import db
 from app import cli
+from app.authorization import User
 
 app = create_app()
 cli.register(app)
@@ -24,6 +25,7 @@ def make_shell_context() -> Dict[str, object]:
     """
     context = {
         'db': db,
+        'User': User,
     }
 
     return context

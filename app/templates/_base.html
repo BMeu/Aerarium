@@ -22,12 +22,7 @@
         <main role="main" class="container">
             {% include '_messages.html' %}
 
-            <h1>{{ title }}</h1>
-            {% if subtitle %}
-            <h2>{{ subtitle }}</h2>
-            {% endif %}
-
-            {% block content %}{% endblock %}
+            {% block content_base %}{% endblock %}
         </main>
 
         <footer class="footer bg-light">

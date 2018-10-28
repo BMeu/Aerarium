@@ -1,22 +1,26 @@
-html {
-    min-height: 100%;
-    position: relative;
-}
-
 body {
-    margin-bottom: 60px;  /* Height of the fixed footer. */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 body > .container {
-    padding-bottom: 5px;
-    padding-top: 70px;  /* Move the content down a bit from the navbar. */
+    flex: 1;
+    padding-top: 70px;
 }
 
-/* Fix the footer at the bottom. */
 .footer {
-    bottom: 0;
-    height: 60px;
-    line-height: 60px;  /* Vertically center the text in the footer. */
-    position: absolute;
-    width: 100%;
+    padding: 1em 0;
+}
+
+@media (min-width:576px) {
+    /* Extend basic bootstrap classes to the view model. */
+
+    .border-sm {
+        border: 1px solid #dee2e6;
+    }
+
+    .rounded-sm {
+        border-radius:.25rem !important;
+    }
 }

@@ -5,6 +5,7 @@ from flask import Flask
 from flask import g
 from flask import Response
 from flask_babel import get_locale
+from flask_login import current_user
 
 from app.configuration import BaseConfiguration
 
@@ -37,9 +38,11 @@ def _extend_global_variable() -> None:
 
          * ``g.locale``: The current locale (e.g. ``en-US`` or ``de``).
          * ``g.title``: The app title.
+         * ``g.user``: The user object.
     """
     g.locale = get_locale()
     g.title = BaseConfiguration.TITLE_SHORT
+    g.user = current_user
 
 
 def _header_x_clacks_overhead(response: Response) -> Response:

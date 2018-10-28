@@ -36,10 +36,9 @@ def unauthorized_access_error(error: HTTPException):
         :param error: The exception causing this error.
         :return: The rendered error page.
     """
-    # TODO: Add login link.
     title = _('Unauthorized Access')
     message = _('The page you want to access requires you to login.')
-    return render_template('error.html', title=title, message=message), 401
+    return render_template('error.html', title=title, message=message, show_login_link=True), 401
 
 
 # noinspection PyUnusedLocal
@@ -51,11 +50,10 @@ def permission_denied_error(error: HTTPException):
         :param error: The exception causing this error.
         :return: The rendered error page.
     """
-    # TODO: Add login link.
     title = _('Permission Denied')
     message = _('''You do not have sufficient permissions to access this page. You can try logging in. If you are logged
                 in and you still get this message, ask your administrator to raise your permissions.''')
-    return render_template('error.html', title=title, message=message), 403
+    return render_template('error.html', title=title, message=message, show_login_link=True), 403
 
 
 # noinspection PyUnusedLocal
@@ -70,8 +68,7 @@ def page_not_found_error(error: HTTPException):
     title = _('Page Not Found')
     message = _('''The page you requested was not found on the server. If you are positive the link you clicked is
                 correct contact your administrator.''')
-    link_title = _('Home page')
-    return render_template('error.html', title=title, message=message, link_title=link_title), 404
+    return render_template('error.html', title=title, message=message), 404
 
 
 # noinspection PyUnusedLocal

@@ -1,0 +1,150 @@
+{% set required_flag %}<span class="font-weight-bold text-danger">*</span>{% endset %}
+
+{#
+    Render a simple input field.
+
+    Params:
+        field  - WTForm field.
+        kwargs - Any arguments to put them into the HTML attributes.
+                 Exceptions: for - for_,
+                             class - class_,
+                             class__ - class_
+
+    Example usage:
+        {{ macros.render_field(form.email, placeholder='Input email', type='email') }}
+#}
+{% macro render_field(field, label_visible=true) -%}
+    <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}">
+        {% if (field.type != 'HiddenField' and field.type !='CSRFTokenField') and label_visible %}
+            <label for="{{ field.id }}">
+                {{ field.label }}{% if field.flags.required %} {{ required_flag }}{% endif %}
+            </label>
+        {% endif %}
+        {{ field(class_='form-control', **kwargs) }}
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <p class="form-text text-danger">{{ error }}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+{%- endmacro %}
+
+{#
+    Render a submit button.
+
+    Params:
+        field  - WTForm SubmitField.
+        kwargs - Any arguments to put them into the HTML attributes.
+                 Exceptions: for - for_,
+                             class - class_,
+                             class__ - class_
+
+    Example usage:
+        {{ macros.render_submit_field(form.email, placeholder='Input email', type='email') }}
+#}
+{% macro render_submit_field(field, label_visible=true) -%}
+    <div class="form-group {{ kwargs.pop('class_', '') }}">
+        {{ field(class_='btn btn-dark', **kwargs) }}
+    </div>
+{%- endmacro %}
+
+{#
+    Render a checkbox field.
+
+    Params:
+        field  - WTForm BooleanField.
+        kwargs - Any arguments to put them into the HTML attributes.
+                 Exceptions: for - for_,
+                             class - class_,
+                             class__ - class_
+
+    Example usage:
+        {{ macros.render_checkbox_field(form.remember_me) }}
+#}
+{% macro render_checkbox_field(field) -%}
+    <div class="form-check form-group">
+        {{ field(type='checkbox', class_='form-check-input', **kwargs) }}
+        <label class="form-check-label">
+            {% if field.flags.required %}{{ required_flag }} {% endif %}{{ field.label }}
+        </label>
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <p class="form-text text-danger">{{ error }}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+{%- endmacro %}
+
+{#
+    Render a radio field.
+
+    Params:
+        field  - WTForm RadioField.
+        kwargs - Any arguments to put them into the HTML attributes.
+                 Exceptions: for - for_,
+                             class - class_,
+                             class__ - class_
+
+    Example usage:
+        {{ macros.render_radio_field(form.answers) }}
+#}
+{% macro render_radio_field(field) -%}
+    <div class="form-group">
+    {% for value, label, _ in field.iter_choices() %}
+        <div class="form-check">
+            <input type="radio" name="{{ field.id }}" id="{{ field.id }}" class="form-check-input" value="{{ value }}">
+            <label class="form-check-label">
+                {% if field.flags.required %}{{ required_flag }} {% endif %}{{ label }}
+            </label>
+            {% if field.errors %}
+                {% for error in field.errors %}
+                    <p class="form-text text-danger">{{ error }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% endfor %}
+    </div>
+{%- endmacro %}
+
+{#
+    Render an entire WTForm.
+
+    There are two ways to call function:
+     - As macros: all form fields will be rendered by iterating over them.
+     - As call: all form fields will be inserted as specified:
+
+     Params:
+        form       - WTForm object.
+        action_url - URL to which the form will be submitted.
+        class_     - CSS classes, separated by spaces.
+
+     Example usage:
+        {% call macros.render_form(form, action_url=url_for('login_view'), class_='login-form') %}
+            {{ macros.render_field(form.email, placeholder='Input email', type='email') }}
+            {{ macros.render_field(form.password, placeholder='Input password', type='password') }}
+            {{ macros.render_checkbox_field(form.remember_me, type='checkbox') }}
+        {% endcall %}
+#}
+{% macro render_form(form, action_url='', class_='') -%}
+    <form method="POST" action="{{ action_url }}" role="form" class="{{ class_ }}">
+        {{ form.hidden_tag() }}
+        {% if caller %}
+            {{ caller() }}
+        {% else %}
+            {% for field in form %}
+                {% if field.type == 'BooleanField' %}
+                    {{ render_checkbox_field(field) }}
+                {% elif field.type == 'RadioField' %}
+                    {{ render_radio_field(field) }}
+                {% elif field.type == 'SubmitField' %}
+                    {{ render_submit_field(field) }}
+                {% elif field.type != 'CSRFTokenField' %}
+                    {{ render_field(field) }}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <p class="text-form text-muted mb-0">
+            {{ _('Fields marked with an asterisk (%(asterisk)s) are required.', asterisk=required_flag|safe) }}
+        </p>
+    </form>
+{%- endmacro %}

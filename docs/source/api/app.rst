@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+    app.authorization
     app.localization
     app.logging
     app.main

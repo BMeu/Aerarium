@@ -8,7 +8,9 @@
 from app.request import register_after_request_handlers
 from app.request import register_before_request_handlers
 from app.application import babel
+from app.application import bcrypt
 from app.application import create_app
+from app.application import csrf
 from app.application import db
 from app.application import login
 from app.application import mail
@@ -16,7 +18,9 @@ from app.application import migrate
 
 __all__ = [
             'babel',
+            'bcrypt',
             'create_app',
+            'csrf',
             'db',
             'login',
             'mail',

@@ -16,10 +16,12 @@ from flask import Flask
 from flask.logging import default_handler
 from flask_babel import Babel
 from flask_babel import lazy_gettext as _l
+from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 
 from app import register_after_request_handlers
 from app import register_before_request_handlers
@@ -31,6 +33,8 @@ from app.logging import create_stream_handler
 
 # Create the extension objects.
 babel = Babel()
+bcrypt = Bcrypt()
+csrf = CSRFProtect()
 db = SQLAlchemy()
 login = LoginManager()
 mail = Mail()
@@ -82,8 +86,10 @@ def _initialize_blueprints(application: Flask) -> None:
 
         :param application: The application instance for which the blueprints will be registered.
     """
+    from app.authorization import bp as authorization_bp
     from app.main import bp as main_bp
 
+    application.register_blueprint(authorization_bp)
     application.register_blueprint(main_bp)
 
 
@@ -95,6 +101,10 @@ def _initialize_extensions(application: Flask) -> None:
     """
     babel.init_app(application)
     babel.locale_selector_func = get_locale
+
+    bcrypt.init_app(application)
+
+    csrf.init_app(application)
 
     db.init_app(application)
 

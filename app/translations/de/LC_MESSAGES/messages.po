@@ -5,106 +5,125 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Aerarium\n"
+"Project-Id-Version:  Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-06-25 22:07+0200\n"
-"PO-Revision-Date: 2018-06-25 22:12+0200\n"
+"POT-Creation-Date: 2018-10-28 13:44+0100\n"
+"PO-Revision-Date: 2018-10-28 13:42+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
-"X-Generator: Poedit 1.8.7.1\n"
 
-#: app/application.py:102
+#: app/application.py:112
 msgid "Please log in to access this page."
 msgstr "Bitte melde Dich an, um diese Seite öffnen zu können."
 
-#: app/main/errors.py:20
+#: app/authorization/routes.py:41
+#, python-format
+msgid "Welcome, %(name)s!"
+msgstr "Willkommen, %(name)s!"
+
+#: app/authorization/routes.py:51
+msgid "Invalid email address or password."
+msgstr "Ungültige E-Mail-Adresse oder ungültiges Passwort."
+
+#: app/authorization/routes.py:53 app/authorization/user.py:143
+msgid "Log In"
+msgstr "Anmelden"
+
+#: app/authorization/routes.py:65
+msgid "You were successfully logged out."
+msgstr "Du wurdest erfolgreich abgemeldet."
+
+#: app/authorization/user.py:140
+msgid "Email:"
+msgstr "E-Mail:"
+
+#: app/authorization/user.py:141
+msgid "Password:"
+msgstr "Passwort:"
+
+#: app/authorization/user.py:142
+msgid "Remember Me"
+msgstr "Angemeldet bleiben"
+
+#: app/main/errors.py:25
 msgid "Bad Request"
 msgstr "Fehlerhafte Anfrage"
 
-#: app/main/errors.py:21
+#: app/main/errors.py:26
 msgid ""
-"Your request was malformed and could therefore not be handled by the server."
+"Your request was malformed and could therefore not be handled by the "
+"server."
 msgstr ""
-"Deine Anfrage war fehlerhaft aufgebaut und konnte deswegen nicht vom Server "
-"bearbeitet werden."
+"Deine Anfrage war fehlerhaft aufgebaut und konnte deswegen nicht vom "
+"Server bearbeitet werden."
 
-#: app/main/errors.py:28
+#: app/main/errors.py:39
 msgid "Unauthorized Access"
 msgstr "Unauthorisierter Zugriff"
 
-#: app/main/errors.py:30
+#: app/main/errors.py:40
 msgid "The page you want to access requires you to login."
 msgstr "Du musst Dich anmelden, um diese Seite öffnen zu können."
 
-#: app/main/errors.py:37
+#: app/main/errors.py:53
 msgid "Permission Denied"
 msgstr "Zugriff verweigert"
 
-#: app/main/errors.py:39
+#: app/main/errors.py:54
 msgid ""
 "You do not have sufficient permissions to access this page. You can try "
 "logging in. If you are logged\n"
-"                in and you still get this message, ask your administrator to "
-"raise your permissions."
+"                in and you still get this message, ask your administrator"
+" to raise your permissions."
 msgstr ""
 "Du hast unzulängliche Berechtigungen, um auf diese Seite zugreifen zu "
 "dürfen. Du kannst versuchen, Dich anzumelden. Wenn du bereits angemeldet "
-"bist und weiterhin diese Meldung erhältst, bitte Deinen Administrator um die "
-"entsprechenden Berechtigungen."
+"bist und weiterhin diese Meldung erhältst, bitte Deinen Administrator um "
+"die entsprechenden Berechtigungen."
 
-#: app/main/errors.py:47
+#: app/main/errors.py:68
 msgid "Page Not Found"
 msgstr "Seite nicht gefunden"
 
-#: app/main/errors.py:48
+#: app/main/errors.py:69
 msgid ""
-"The page you requested was not found on the server. If you are positive the "
-"link you clicked is\n"
+"The page you requested was not found on the server. If you are positive "
+"the link you clicked is\n"
 "                correct contact your administrator."
 msgstr ""
-"Die von Dir angeforderte Seite wurde auf dem Server nicht gefunden. Wenn Du "
-"Dir sicher bist, dass der Link korrekt ist, kontaktiere bitte Deinen "
-"Administrator. \t"
+"Die von Dir angeforderte Seite wurde auf dem Server nicht gefunden. Wenn "
+"Du Dir sicher bist, dass der Link korrekt ist, kontaktiere bitte Deinen "
+"Administrator."
 
-#: app/main/errors.py:50 app/templates/error.html:8
-msgid "Home page"
-msgstr "Startseite"
-
-#: app/main/errors.py:57
+#: app/main/errors.py:83
 msgid "Method Not Allowed"
 msgstr "Methode nicht erlaubt"
 
-#: app/main/errors.py:58
+#: app/main/errors.py:84
 msgid "The HTTP method you used is not allowed to access this page."
-msgstr ""
-"Die von Dir genutzte HTTP-Methode ist für diese Seite nicht zugelassen."
+msgstr "Die von Dir genutzte HTTP-Methode ist für diese Seite nicht zugelassen."
 
-#: app/main/errors.py:65
+#: app/main/errors.py:97
 msgid "Internal Error"
 msgstr "Interner Fehler"
 
-#: app/main/errors.py:66
+#: app/main/errors.py:98
 msgid ""
 "The server encountered an internal error while processing your request. "
 "Please try again later.\n"
 "                The administrator has been notified."
 msgstr ""
 "Beim Bearbeiten Deiner Anfrage kam es auf dem Server zu einem internen "
-"Fehler. Bitte versuche es später erneut. Der Administrator wurde hierüber "
-"benachrichtigt."
+"Fehler. Bitte versuche es später erneut. Der Administrator wurde hierüber"
+" benachrichtigt."
 
-#: app/main/routes.py:29
-#, python-format
-msgid "Welcome, %(name)s!"
-msgstr "Willkommen, %(name)s!"
-
-#: app/main/routes.py:31 app/templates/_header.html:13
+#: app/main/routes.py:29 app/templates/_header.html:13
 msgid "Dashboard"
 msgstr "Dashboard"
 
@@ -119,15 +138,41 @@ msgstr ""
 msgid "Toggle Navigation"
 msgstr "Navigation umschalten"
 
+#: app/templates/_header.html:20
+msgid "Logout"
+msgstr "Abmelden"
+
+#: app/templates/_header.html:22
+msgid "Login"
+msgstr "Anmelden"
+
 #: app/templates/_messages.html:14 app/templates/_messages.html:15
 msgid "Close"
 msgstr "Schließen"
 
-#: app/templates/error.html:9
-msgid "home page"
-msgstr "Startseite"
+#: app/templates/error.html:8
+#, python-format
+msgid "%(login)s."
+msgstr "%(login)s."
 
 #: app/templates/error.html:10
+msgid "Log in"
+msgstr "Anmelden"
+
+#: app/templates/error.html:16
 #, python-format
 msgid "Go back to the %(homepage)s."
 msgstr "Zurück zur %(homepage)s."
+
+#: app/templates/error.html:18
+msgid "Home page"
+msgstr "Startseite"
+
+#: app/templates/error.html:18
+msgid "home page"
+msgstr "Startseite"
+
+#: app/templates/macros/form.html:147
+#, python-format
+msgid "Fields marked with an asterisk (%(asterisk)s) are required."
+msgstr "Mit einem Sternchen (%(asterisk)s) markierte Felder sind Pflichtfelder."

@@ -1,0 +1,13 @@
+{% extends '_base.html' %}
+{% block content_base %}
+    <div class="row">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 m-sm-auto bg-light border-sm border-dark p-3 rounded-sm">
+            <h1>{{ title }}</h1>
+            {% if subtitle %}
+            <h2>{{ subtitle }}</h2>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

@@ -43,9 +43,11 @@ class BaseConfiguration:
         if environ.get('SYS_ADMINS') else None
 
     # Security settings.
+    BCRYPT_HANDLE_LONG_PASSWORDS: int = 1
+    BCRYPT_LOG_ROUNDS: int = int(environ.get('BCRYPT_LOG_ROUNDS', 12))
     SECRET_KEY: str = environ.get('SECRET_KEY')
     SESSION_COOKIE_HTTPONLY: bool = True
-    SESSION_COOKIE_SECURE: bool = True
+    SESSION_COOKIE_SECURE: bool = True if environ.get('USE_HTTP', '0') != '1' else False
     PREFERRED_URL_SCHEME: str = 'https' if environ.get('USE_HTTP', '0') != '1' else 'http'
 
     # Database settings.
