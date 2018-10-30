@@ -22,9 +22,11 @@ from app.authorization import EmailForm
 from app.authorization import LoginForm
 from app.authorization import PasswordResetForm
 from app.authorization import User
+from app.authorization import logout_required
 
 
 @bp.route('/login', methods=['GET', 'POST'])
+@logout_required
 def login() -> str:
     """
         Show a login form to the user. If they submitted the login form, try to log them in and redirect them to the
@@ -32,9 +34,6 @@ def login() -> str:
 
         :return: The HTML response.
     """
-
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -73,15 +72,13 @@ def logout() -> str:
 
 
 @bp.route('/reset-password', methods=['GET', 'POST'])
+@logout_required
 def reset_password_request() -> str:
     """
         Show a form to request resetting the password and process it upon submission.
 
         :return: The HTML response.
     """
-
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
 
     # Get the validity of the token and convert it from seconds to minutes for display.
     application = get_app()
@@ -104,6 +101,7 @@ def reset_password_request() -> str:
 
 
 @bp.route('/reset-password/<string:token>', methods=['GET', 'POST'])
+@logout_required
 def reset_password(token: str) -> str:
     """
         Show a form to reset the password.
@@ -111,9 +109,6 @@ def reset_password(token: str) -> str:
         :param token: The token the user has been sent confirming that the password reset is valid.
         :return: The HTML response.
     """
-
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
 
     user = User.verify_password_reset_token(token)
     if user is None:

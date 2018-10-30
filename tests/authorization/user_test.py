@@ -7,10 +7,13 @@ from unittest.mock import patch
 
 from flask import url_for
 from flask_login import current_user
+from flask_login import login_user
+from werkzeug.wrappers import Response
 
 from app import create_app
 from app import db
 from app import mail
+from app.authorization import logout_required
 from app.authorization import User
 from app.configuration import TestConfiguration
 from app.token import get_token
@@ -455,3 +458,51 @@ class UserTest(TestCase):
         """
         loaded_user = User.load_from_id(1)
         self.assertIsNone(loaded_user)
+
+    def test_logout_required_logged_out(self):
+        """
+            Test the ``logout_required`` decorator with an anonymous user.
+
+            Expected result: The decorated view function is returned.
+        """
+
+        def test_view_function() -> str:
+            """
+                A simple test "view" function.
+
+                :return: 'Decorated View'.
+            """
+            return 'Decorated View'
+
+        view_function = logout_required(test_view_function)
+        response = view_function()
+        self.assertEqual('Decorated View', response)
+
+    def test_logout_required_logged_in(self):
+        """
+            Test the ``logout_required`` decorator with a logged-in user.
+
+            Expected result: The redirect response to the home page is returned.
+        """
+
+        def test_view_function() -> str:
+            """
+                A simple test "view" function.
+
+                :return: 'Decorated View'.
+            """
+            return 'Decorated View'
+
+        email = 'test@example.com'
+        name = 'John Doe'
+        user = User(email, name)
+
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+
+        redirect_function = logout_required(test_view_function)
+        response = redirect_function()
+        self.assertIsInstance(response, Response)
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(url_for('main.index'), response.location)

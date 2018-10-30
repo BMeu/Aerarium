@@ -9,6 +9,7 @@ from flask import Blueprint
 
 from app.authorization.user import EmailForm
 from app.authorization.user import LoginForm
+from app.authorization.user import logout_required
 from app.authorization.user import PasswordResetForm
 from app.authorization.user import User
 
@@ -18,6 +19,7 @@ __all__ = [
             'bp',
             'EmailForm',
             'LoginForm',
+            'logout_required',
             'PasswordResetForm',
             'User'
           ]
