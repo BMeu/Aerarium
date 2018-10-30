@@ -1,0 +1,4 @@
+{{ _('Dear %(name)s,', name=name) }}
+{% block content %}{% endblock %}
+{{ _('Sincerely,') }}
+{{ _('Your %(program)s team', program=g.title) }}

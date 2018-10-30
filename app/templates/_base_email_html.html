@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="{{ g.locale }}">
+    <head>
+        <meta charset="UTF-8">
+
+        {% if subject %}
+        <title>{{ g.title }} &raquo; {{ subject }}</title>
+        {% else %}
+        <title>{{ g.title }}</title>
+        {% endif %}
+    </head>
+    <body>
+        <p>
+            {{ _('Dear %(name)s,', name=name) }}
+        </p>
+
+        {% block content %}{% endblock %}
+
+        <p>
+            {{ _('Sincerely,') }}<br />
+            {{ _('Your %(program)s team', program=g.title) }}
+        </p>
+    </body>
+</html>

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-10-28 13:44+0100\n"
-"PO-Revision-Date: 2018-10-28 13:42+0100\n"
+"POT-Creation-Date: 2018-10-30 17:05+0100\n"
+"PO-Revision-Date: 2018-10-29 21:42+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -18,38 +18,78 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
 
-#: app/application.py:112
+#: app/application.py:130
 msgid "Please log in to access this page."
 msgstr "Bitte melde Dich an, um diese Seite öffnen zu können."
 
-#: app/authorization/routes.py:41
+#: app/authorization/routes.py:45
 #, python-format
 msgid "Welcome, %(name)s!"
 msgstr "Willkommen, %(name)s!"
 
-#: app/authorization/routes.py:51
+#: app/authorization/routes.py:55
 msgid "Invalid email address or password."
 msgstr "Ungültige E-Mail-Adresse oder ungültiges Passwort."
 
-#: app/authorization/routes.py:53 app/authorization/user.py:143
+#: app/authorization/routes.py:57 app/authorization/user.py:250
 msgid "Log In"
 msgstr "Anmelden"
 
-#: app/authorization/routes.py:65
+#: app/authorization/routes.py:70
 msgid "You were successfully logged out."
 msgstr "Du wurdest erfolgreich abgemeldet."
 
-#: app/authorization/user.py:140
+#: app/authorization/routes.py:98
+#, python-format
+msgid ""
+"An email has been sent to the specified address. Please be aware that the"
+" included link for resetting                 the password is only valid "
+"for %(validity)d minutes."
+msgstr ""
+"Eine E-Mail wurde an die angegebene Adresse versandt. Bitte beachte, dass"
+" der enthaltene Link zum Zurücksetzen des Passworts nur %(validity)d "
+"Minuten lang gültig ist."
+
+#: app/authorization/routes.py:102 app/templates/authorization/login.html:5
+msgid "Forgot Your Password?"
+msgstr "Passwort vergessen?"
+
+#: app/authorization/routes.py:127
+msgid "Your password has successfully been changed."
+msgstr "Dein Passwort wurde erfolgreich geändert."
+
+#: app/authorization/routes.py:130 app/authorization/user.py:145
+#: app/templates/authorization/emails/reset_password_html.html:7
+msgid "Reset Your Password"
+msgstr "Passwort zurücksetzen"
+
+#: app/authorization/user.py:238 app/authorization/user.py:247
 msgid "Email:"
 msgstr "E-Mail:"
 
-#: app/authorization/user.py:141
+#: app/authorization/user.py:239
+msgid "Submit"
+msgstr "Abschicken"
+
+#: app/authorization/user.py:248
 msgid "Password:"
 msgstr "Passwort:"
 
-#: app/authorization/user.py:142
+#: app/authorization/user.py:249
 msgid "Remember Me"
 msgstr "Angemeldet bleiben"
+
+#: app/authorization/user.py:258
+msgid "New Password:"
+msgstr "Neues Passwort:"
+
+#: app/authorization/user.py:259
+msgid "Confirm Your New Password:"
+msgstr "Bitte bestätige Dein neues Passwort:"
+
+#: app/authorization/user.py:261
+msgid "Change Password"
+msgstr "Passwort ändern"
 
 #: app/main/errors.py:25
 msgid "Bad Request"
@@ -127,6 +167,20 @@ msgstr ""
 msgid "Dashboard"
 msgstr "Dashboard"
 
+#: app/templates/_base_email_html.html:14 app/templates/_base_email_plain.txt:1
+#, python-format
+msgid "Dear %(name)s,"
+msgstr "Hallo %(name)s,"
+
+#: app/templates/_base_email_html.html:20 app/templates/_base_email_plain.txt:3
+msgid "Sincerely,"
+msgstr "Viele Grüße,"
+
+#: app/templates/_base_email_html.html:21 app/templates/_base_email_plain.txt:4
+#, python-format
+msgid "Your %(program)s team"
+msgstr "Dein %(program)s-Team"
+
 #: app/templates/_footer.html:4
 #, python-format
 msgid "%(title)s. Written by %(author)s. Visit the project page on %(github)s."
@@ -172,7 +226,46 @@ msgstr "Startseite"
 msgid "home page"
 msgstr "Startseite"
 
+#: app/templates/authorization/login.html:6
+msgid "Forgot your password?"
+msgstr "Passwort vergessen?"
+
+#: app/templates/authorization/reset_password_request.html:5
+#, python-format
+msgid ""
+"If you forgot your password you can enter the email address of your "
+"account here. We will send a link               allowing you to set a new"
+" password. This link will be valid for %(validity)d minutes."
+msgstr ""
+"Wenn Du Dein Passwort vergessen hast, kannst Du hier die an Deinem "
+"Benutzerkonto hinterlegte E-Mail-Adresse angeben. Wir werden Dir dann "
+"einen Link zuschicken, über den Du ein neues Passwort festlegen kannst. "
+"Dieser Link wird %(validity)d Minuten lang gültig sein."
+
+#: app/templates/authorization/emails/reset_password_html.html:4
+#: app/templates/authorization/emails/reset_password_plain.txt:3
+msgid ""
+"To reset your password, click on the following link or copy and paste it "
+"to your browser:"
+msgstr ""
+"Klicke auf den folgenden Link oder kopiere ihn in Deinen Browser, um Dein"
+" Passwort zurückzusetzen:"
+
+#: app/templates/authorization/emails/reset_password_html.html:10
+#: app/templates/authorization/emails/reset_password_plain.txt:7
+#, python-format
+msgid "This link is only valid for the next %(validity)d minutes."
+msgstr "Dieser Link ist nur für die nächsten %(validity)d Minuten gültig."
+
+#: app/templates/authorization/emails/reset_password_html.html:13
+#: app/templates/authorization/emails/reset_password_plain.txt:9
+msgid "If you have not requested a password reset simply ignore this message."
+msgstr ""
+"Wenn Du das Zurücksetzen Deines Passwortes nicht angefordert hast, kannst"
+" du diese E-Mail ignorieren."
+
 #: app/templates/macros/form.html:147
 #, python-format
 msgid "Fields marked with an asterisk (%(asterisk)s) are required."
 msgstr "Mit einem Sternchen (%(asterisk)s) markierte Felder sind Pflichtfelder."
+

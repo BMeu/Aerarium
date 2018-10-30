@@ -3,6 +3,10 @@
 
 from typing import Optional
 
+from flask import render_template
+from flask import url_for
+# noinspection PyProtectedMember
+from flask_babel import _
 from flask_babel import lazy_gettext as _l
 from flask_login import login_user
 from flask_login import logout_user
@@ -14,10 +18,15 @@ from wtforms import StringField
 from wtforms import SubmitField
 from wtforms.validators import DataRequired
 from wtforms.validators import Email
+from wtforms.validators import EqualTo
 
 from app import bcrypt
 from app import db
+from app import get_app
 from app import login as app_login
+from app import send_email
+from app.token import get_token
+from app.token import verify_token
 
 """
     The application's user model and related classes.
@@ -99,6 +108,42 @@ class User(UserMixin, db.Model):
         """
         return bcrypt.check_password_hash(self.password_hash, password)
 
+    def get_password_reset_token(self) -> Optional[str]:
+        """
+            Get a JWT for resetting the user's password.
+
+            :return: The JWT for this user. ``None`` if outside the application context.
+        """
+        return get_token(reset_password=self.id)
+
+    def send_password_reset_email(self):
+        """
+            Send a mail for resetting the user's password to their email address.
+        """
+
+        if self.email is None:
+            return
+
+        application = get_app()
+        if application is None:
+            return
+
+        token = self.get_password_reset_token()
+        if token is None:
+            return
+
+        # Get the validity of the token and convert it from seconds to minutes for display.
+        validity = application.config['TOKEN_VALIDITY'] / 60
+
+        link = url_for('authorization.reset_password', token=token, _external=True)
+
+        body_plain = render_template('authorization/emails/reset_password_plain.txt',
+                                     name=self.name, link=link, validity=validity)
+        body_html = render_template('authorization/emails/reset_password_html.html',
+                                    name=self.name, link=link, validity=validity)
+
+        send_email(_('Reset Your Password'), [self.email], body_plain, body_html)
+
     def __repr__(self) -> str:
         """
             Get a string representation of the user.
@@ -106,6 +151,25 @@ class User(UserMixin, db.Model):
             :return: A string representation of the user.
         """
         return f'<User [{self.id}] {self.email}>'
+
+    @staticmethod
+    def verify_password_reset_token(token: str) -> Optional['User']:
+        """
+            Verify a given token for resetting a password.
+
+            :param token: The password-reset JWT.
+            :return: The user for whom the token is valid. ``None`` if the token is invalid or if outside the
+                     application context.
+        """
+        payload = verify_token(token)
+        if payload is None:
+            return None
+
+        user_id = payload.pop('reset_password', None)
+        if user_id is None:
+            return None
+
+        return User.load_from_id(user_id)
 
     @staticmethod
     def login(email: str, password: str, remember_me: bool = False) -> Optional['User']:
@@ -118,7 +182,7 @@ class User(UserMixin, db.Model):
             :return: The user if the email/password combination is valid and the user is logged in, ``None`` otherwise.
         """
 
-        user = User.query.filter_by(email=email).first()
+        user = User.load_from_email(email)
         if user is None:
             return None
 
@@ -144,7 +208,7 @@ class User(UserMixin, db.Model):
 
     @staticmethod
     @app_login.user_loader
-    def load_from_db(user_id: int) -> Optional['User']:
+    def load_from_id(user_id: int) -> Optional['User']:
         """
             Load the user with the given ID from the database.
 
@@ -153,6 +217,26 @@ class User(UserMixin, db.Model):
         """
 
         return User.query.get(user_id)
+
+    @staticmethod
+    def load_from_email(email: str) -> Optional['User']:
+        """
+            Load the user with the given email address from the database.
+
+            :param email: The email address of the user to load.
+            :return: The loaded user if it exists, ``None`` otherwise.
+        """
+
+        return User.query.filter_by(email=email).first()
+
+
+class EmailForm(FlaskForm):
+    """
+        A form requesting a user to enter their email address.
+    """
+
+    email = StringField(_l('Email:'), validators=[DataRequired(), Email()])
+    submit = SubmitField(_l('Submit'))
 
 
 class LoginForm(FlaskForm):
@@ -164,3 +248,14 @@ class LoginForm(FlaskForm):
     password = PasswordField(_l('Password:'), validators=[DataRequired()])
     remember_me = BooleanField(_l('Remember Me'))
     submit = SubmitField(_l('Log In'))
+
+
+class PasswordResetForm(FlaskForm):
+    """
+        A form for resetting a user's password.
+    """
+
+    password = PasswordField(_l('New Password:'), validators=[DataRequired()])
+    password_confirmation = PasswordField(_l('Confirm Your New Password:'),
+                                          validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField(_l('Change Password'))

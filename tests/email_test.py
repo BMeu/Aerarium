@@ -32,22 +32,22 @@ class EmailTest(TestCase):
             Expected result: The email would have been sent if it weren't in test mode.
         """
         subject = 'Test Subject'
-        sender = 'no-reply@example.com'
         recipients = ['test@example.com']
         body_plain = 'Plain-text body.'
         body_html = '<html><head><title>Test Email</title></head><body><h1>HTML body.</h1></body></html>'
 
+        subject_prefix = self.app.config['TITLE_SHORT']
         with mail.record_messages() as outgoing:
-            send_email(subject, sender, recipients, body_plain, body_html)
+            send_email(subject, recipients, body_plain, body_html)
 
             self.assertEqual(1, len(outgoing))
-            self.assertEqual(subject, outgoing[0].subject)
-            self.assertEqual(sender, outgoing[0].sender)
+            self.assertEqual(f'{subject_prefix} » {subject}', outgoing[0].subject)
+            self.assertEqual(self.app.config['MAIL_FROM'], outgoing[0].sender)
             self.assertEqual(recipients, outgoing[0].recipients)
             self.assertEqual(body_plain, outgoing[0].body)
             self.assertEqual(body_html, outgoing[0].html)
 
-    def test_send_email_failure(self):
+    def test_send_email_failure_outside_context(self):
         """
             Test sending an email outside the application context.
 
@@ -58,15 +58,33 @@ class EmailTest(TestCase):
         self.app_context.pop()
 
         subject = 'Test Subject'
-        sender = 'no-reply@example.com'
         recipients = ['test@example.com']
         body_plain = 'Plain-text body.'
         body_html = '<html><head><title>Test Email</title></head><body><h1>HTML body.</h1></body></html>'
 
         with mail.record_messages() as outgoing:
-            send_email(subject, sender, recipients, body_plain, body_html)
+            send_email(subject, recipients, body_plain, body_html)
 
             self.assertEqual(0, len(outgoing))
 
         # Re-add the application context so the tear-down method will not pop an empty list.
         self.app_context.push()
+
+    def test_send_email_failure_no_sender(self):
+        """
+            Test sending an email without a configured sender.
+
+            Expected result: No email would have been sent.
+        """
+
+        self.app.config['MAIL_FROM'] = None
+
+        subject = 'Test Subject'
+        recipients = ['test@example.com']
+        body_plain = 'Plain-text body.'
+        body_html = '<html><head><title>Test Email</title></head><body><h1>HTML body.</h1></body></html>'
+
+        with mail.record_messages() as outgoing:
+            send_email(subject, recipients, body_plain, body_html)
+
+            self.assertEqual(0, len(outgoing))

@@ -16,24 +16,29 @@ from app import get_app
 from app import mail
 
 
-def send_email(subject: str, sender: str, recipients: List[str], body_plain: str, body_html: str) -> None:
+def send_email(subject: str, recipients: List[str], body_plain: str, body_html: str) -> None:
     """
         Send an email.
 
         :param subject: The mail's subject.
-        :param sender: The sender address of the mail.
         :param recipients: List of recipient addresses.
         :param body_plain: The actual content in plain text.
         :param body_html: The actual content in HTML.
     """
 
-    message = Message(subject, sender=sender, recipients=recipients)
-    message.body = body_plain
-    message.html = body_html
-
     application = get_app()
     if application is None:
         return
+
+    if application.config['MAIL_FROM'] is None:
+        return
+
+    title = application.config['TITLE_SHORT']
+    subject = f'{title} » {subject}'
+
+    message = Message(subject, sender=application.config['MAIL_FROM'], recipients=recipients)
+    message.body = body_plain
+    message.html = body_html
 
     Thread(target=_send_email_async, args=(application, message)).start()
 
