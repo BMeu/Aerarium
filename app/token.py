@@ -18,6 +18,24 @@ from jwt import PyJWTError
 from app import get_app
 
 
+def get_validity(in_minutes: bool = False) -> Optional[int]:
+    """
+        Get the validity of the tokens as defined in the application configurations.
+
+        :param in_minutes: Return the validity in minutes instead of in seconds when set to ``True``.
+        :return: The validity in seconds. ``None`` if outside the application context.
+    """
+    app = get_app()
+    if app is None:
+        return None
+
+    validity = app.config['TOKEN_VALIDITY']
+    if in_minutes:
+        return validity // 60
+
+    return validity
+
+
 def get_token(**payload: Any) -> Optional[str]:
     """
         Get a JWT with the given payload. Use the token validity from the configuration.
@@ -34,7 +52,7 @@ def get_token(**payload: Any) -> Optional[str]:
     if app is None:
         return None
 
-    validity = app.config['TOKEN_VALIDITY']
+    validity = get_validity()
     expiration_date = time() + validity
     payload['exp'] = expiration_date
 

@@ -16,11 +16,15 @@
 {% macro render_field(field, label_visible=true) -%}
     <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}">
         {% if (field.type != 'HiddenField' and field.type !='CSRFTokenField') and label_visible %}
+            {% set is_visible=True %}
             <label for="{{ field.id }}">
                 {{ field.label.text }}{% if field.flags.required %} {{ required_flag }}{% endif %}
             </label>
         {% endif %}
         {{ field(class_='form-control', **kwargs) }}
+        {% if is_visible and field.description %}
+            <small class="text-form text-muted">{{ field.description }}</small>
+        {% endif %}
         {% if field.errors %}
             {% for error in field.errors %}
                 <p class="form-text text-danger">{{ error }}</p>
@@ -42,9 +46,12 @@
     Example usage:
         {{ macros.render_submit_field(form.email, placeholder='Input email', type='email') }}
 #}
-{% macro render_submit_field(field, label_visible=true) -%}
+{% macro render_submit_field(field, label_visible=True, include_cancel_button=False) -%}
     <div class="form-group {{ kwargs.pop('class_', '') }}">
         {{ field(class_='btn btn-dark', **kwargs) }}
+        {% if include_cancel_button %}
+            <input type="reset" class="btn btn-outline-dark" value="{{ _('Cancel') }}" />
+        {% endif %}
     </div>
 {%- endmacro %}
 
@@ -64,9 +71,12 @@
 {% macro render_checkbox_field(field) -%}
     <div class="form-check form-group">
         {{ field(type='checkbox', class_='form-check-input', **kwargs) }}
-        <label class="form-check-label">
+        <label class="form-check-label" for="{{ field.id }}">
             {% if field.flags.required %}{{ required_flag }} {% endif %}{{ field.label.text }}
         </label>
+        {% if field.description %}
+            <small class="text-form text-muted">{{ field.description }}</small>
+        {% endif %}
         {% if field.errors %}
             {% for error in field.errors %}
                 <p class="form-text text-danger">{{ error }}</p>
@@ -96,6 +106,9 @@
             <label class="form-check-label">
                 {% if field.flags.required %}{{ required_flag }} {% endif %}{{ label.text }}
             </label>
+            {% if field.description %}
+                <small class="text-form text-muted">{{ field.description }}</small>
+            {% endif %}
             {% if field.errors %}
                 {% for error in field.errors %}
                     <p class="form-text text-danger">{{ error }}</p>
@@ -114,9 +127,10 @@
      - As call: all form fields will be inserted as specified:
 
      Params:
-        form       - WTForm object.
-        action_url - URL to which the form will be submitted.
-        class_     - CSS classes, separated by spaces.
+        form            - WTForm object.
+        action_url      - URL to which the form will be submitted.
+        class_          - CSS classes, separated by spaces.
+        cancel_button   - Whether to show a cancel button.
 
      Example usage:
         {% call macros.render_form(form, action_url=url_for('login_view'), class_='login-form') %}
@@ -125,7 +139,7 @@
             {{ macros.render_checkbox_field(form.remember_me, type='checkbox') }}
         {% endcall %}
 #}
-{% macro render_form(form, action_url='', class_='') -%}
+{% macro render_form(form, action_url='', class_='', cancel_button=False) -%}
     <form method="POST" action="{{ action_url }}" role="form" class="{{ class_ }}">
         {{ form.hidden_tag() }}
         {% if caller %}
@@ -137,7 +151,7 @@
                 {% elif field.type == 'RadioField' %}
                     {{ render_radio_field(field) }}
                 {% elif field.type == 'SubmitField' %}
-                    {{ render_submit_field(field) }}
+                    {{ render_submit_field(field, include_cancel_button=cancel_button) }}
                 {% elif field.type != 'CSRFTokenField' %}
                     {{ render_field(field) }}
                 {% endif %}

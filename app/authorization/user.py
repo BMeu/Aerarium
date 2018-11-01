@@ -4,6 +4,7 @@
 from typing import Any
 from typing import Callable
 from typing import Optional
+from typing import Tuple
 
 from functools import wraps
 
@@ -19,19 +20,22 @@ from flask_login import logout_user
 from flask_login import UserMixin
 from flask_wtf import FlaskForm
 from wtforms import BooleanField
+from wtforms import Field
+from wtforms import Form
 from wtforms import PasswordField
 from wtforms import StringField
 from wtforms import SubmitField
+from wtforms import ValidationError
 from wtforms.validators import DataRequired
 from wtforms.validators import Email
 from wtforms.validators import EqualTo
 
 from app import bcrypt
 from app import db
-from app import get_app
 from app import login as app_login
 from app import send_email
 from app.token import get_token
+from app.token import get_validity
 from app.token import verify_token
 
 """
@@ -44,12 +48,14 @@ class User(UserMixin, db.Model):
         The class representing the application's users.
     """
 
+    # region Fields and Properties
+
     id = db.Column(db.Integer, primary_key=True)
     """
         The user's unique ID.
     """
 
-    email = db.Column(db.String(255), index=True, unique=True)
+    _email = db.Column('email', db.String(255), index=True, unique=True)
     """
         The user's email address.
     """
@@ -69,16 +75,6 @@ class User(UserMixin, db.Model):
         Whether the user has activated their account.
     """
 
-    def __init__(self, email: str, name: str) -> None:
-        """
-            Initialize the user.
-
-            :param email: The user's email address.
-            :param name: The user's (full) name.
-        """
-        self.email = email
-        self.name = name
-
     @property
     def is_active(self) -> bool:
         """
@@ -97,12 +93,135 @@ class User(UserMixin, db.Model):
         """
         self._is_activated = value
 
+    # endregion
+
+    # region Initialization
+
+    def __init__(self, email: str, name: str) -> None:
+        """
+            Initialize the user.
+
+            :param email: The user's email address.
+            :param name: The user's (full) name.
+        """
+        self._email = email
+        self.name = name
+
+    @staticmethod
+    @app_login.user_loader
+    def load_from_id(user_id: int) -> Optional['User']:
+        """
+            Load the user with the given ID from the database.
+
+            :param user_id: The ID of the user to load.
+            :return: The loaded user if it exists, ``None`` otherwise.
+        """
+
+        return User.query.get(user_id)
+
+    @staticmethod
+    def load_from_email(email: str) -> Optional['User']:
+        """
+            Load the user with the given email address from the database.
+
+            :param email: The email address of the user to load.
+            :return: The loaded user if it exists, ``None`` otherwise.
+        """
+
+        return User.query.filter_by(_email=email).first()
+
+    # endregion
+
+    # region Email
+
+    def get_email(self) -> str:
+        """
+            Get the user's email address.
+
+            :return: The user's email address.
+        """
+        return self._email
+
+    def set_email(self, email: str) -> bool:
+        """
+            Change the user's email address to the new given one.
+
+            :param email: The user's new email address. Must not be used by a different user.
+            :return: ``False`` if the email address already is in use by another user, ``True`` otherwise.
+        """
+        user = User.load_from_email(email)
+        if user is not None and user != self:
+            return False
+
+        # TODO: Send email to old address notifying the user about the change.
+
+        self._email = email
+        return True
+
+    def _get_change_email_address_token(self, new_email: str) -> Optional[str]:
+        """
+            Get a JWT for changing a user's email address.
+
+            :param new_email: The user's new email address.
+            :return: The JWT for this user. ``None`` if outside the application context.
+        """
+        return get_token(change_email=self.id, new_email=new_email)
+
+    def send_change_email_address_email(self, email: str) -> None:
+        """
+            Send a token to the user to change their email address.
+
+            :param email: The email address to which the token will be sent and to which the user's email will be
+                          changed upon verification.
+        """
+
+        validity = get_validity(in_minutes=True)
+        token = self._get_change_email_address_token(email)
+        if token is None:
+            return
+
+        link = url_for('authorization.change_email', token=token, _external=True)
+
+        email_old = self.get_email()
+        body_plain = render_template('authorization/emails/change_email_address_plain.txt',
+                                     name=self.name, link=link, validity=validity, email_old=email_old, email_new=email)
+        body_html = render_template('authorization/emails/change_email_address_html.html',
+                                    name=self.name, link=link, validity=validity, email_old=email_old, email_new=email)
+
+        send_email(_('Change Your Email Address'), [email], body_plain, body_html)
+
+    @staticmethod
+    def verify_change_email_address_token(token: str) -> Tuple[Optional['User'], Optional[str]]:
+        """
+            Verify the JWT to change a user's email address.
+
+            :param token: The change-email token.
+            :return: The user to which the token belongs and the new email address; both are ``None`` if the token is
+                     invalid.
+        """
+        payload = verify_token(token)
+        if payload is None:
+            return None, None
+
+        user_id = payload.pop('change_email', None)
+        email = payload.pop('new_email', None)
+        if not user_id or not email:
+            return None, None
+
+        user = User.load_from_id(user_id)
+        return user, email
+
+    # endregion
+
+    # region Password
+
     def set_password(self, password: str) -> None:
         """
             Hash and set the given password.
 
             :param password: The plaintext password.
         """
+        # TODO: Send email notifying the user about the change.
         self.password_hash = bcrypt.generate_password_hash(password)
 
     def check_password(self, password: str) -> bool:
@@ -114,7 +233,7 @@ class User(UserMixin, db.Model):
         """
         return bcrypt.check_password_hash(self.password_hash, password)
 
-    def get_password_reset_token(self) -> Optional[str]:
+    def _get_password_reset_token(self) -> Optional[str]:
         """
             Get a JWT for resetting the user's password.
 
@@ -122,24 +241,19 @@ class User(UserMixin, db.Model):
         """
         return get_token(reset_password=self.id)
 
-    def send_password_reset_email(self):
+    def send_password_reset_email(self) -> None:
         """
             Send a mail for resetting the user's password to their email address.
         """
 
-        if self.email is None:
+        if self._email is None:
             return
 
-        application = get_app()
-        if application is None:
-            return
-
-        token = self.get_password_reset_token()
+        token = self._get_password_reset_token()
         if token is None:
             return
 
-        # Get the validity of the token and convert it from seconds to minutes for display.
-        validity = application.config['TOKEN_VALIDITY'] / 60
+        validity = get_validity(in_minutes=True)
 
         link = url_for('authorization.reset_password', token=token, _external=True)
 
@@ -148,15 +262,7 @@ class User(UserMixin, db.Model):
         body_html = render_template('authorization/emails/reset_password_html.html',
                                     name=self.name, link=link, validity=validity)
 
-        send_email(_('Reset Your Password'), [self.email], body_plain, body_html)
-
-    def __repr__(self) -> str:
-        """
-            Get a string representation of the user.
-
-            :return: A string representation of the user.
-        """
-        return f'<User [{self.id}] {self.email}>'
+        send_email(_('Reset Your Password'), [self._email], body_plain, body_html)
 
     @staticmethod
     def verify_password_reset_token(token: str) -> Optional['User']:
@@ -176,6 +282,10 @@ class User(UserMixin, db.Model):
             return None
 
         return User.load_from_id(user_id)
+
+    # endregion
+
+    # region Login/Logout
 
     @staticmethod
     def login(email: str, password: str, remember_me: bool = False) -> Optional['User']:
@@ -212,28 +322,21 @@ class User(UserMixin, db.Model):
         logged_out = logout_user()
         return logged_out
 
-    @staticmethod
-    @app_login.user_loader
-    def load_from_id(user_id: int) -> Optional['User']:
+    # endregion
+
+    # region System
+
+    def __repr__(self) -> str:
         """
-            Load the user with the given ID from the database.
+            Get a string representation of the user.
 
-            :param user_id: The ID of the user to load.
-            :return: The loaded user if it exists, ``None`` otherwise.
+            :return: A string representation of the user.
         """
+        return f'<User [{self.id}] {self.get_email()}>'
 
-        return User.query.get(user_id)
+    # endregion
 
-    @staticmethod
-    def load_from_email(email: str) -> Optional['User']:
-        """
-            Load the user with the given email address from the database.
-
-            :param email: The email address of the user to load.
-            :return: The loaded user if it exists, ``None`` otherwise.
-        """
-
-        return User.query.filter_by(email=email).first()
+# region Decorators
 
 
 def logout_required(view_function: Callable[..., str]) -> Callable[..., str]:
@@ -260,6 +363,60 @@ def logout_required(view_function: Callable[..., str]) -> Callable[..., str]:
         return view_function(*args, **kwargs)
 
     return wrapped_logout_required
+
+# endregion
+
+# region Forms
+
+
+class UniqueEmail(object):
+    """
+        A WTForms validator to verify that an entered email address is not yet in use by a user other than the current
+        one.
+    """
+
+    def __init__(self, message=None) -> None:
+        """
+            Initialize the validator.
+
+            :param message: The error message shown to the user if the validation fails.
+        """
+
+        if not message:
+            message = _l('The email address already is in use.')
+
+        self.message = message
+
+    def __call__(self, form: Form, field: Field) -> None:
+        """
+            Execute the validator.
+
+            :param form: The form to which the field belongs.
+            :param field: The field to which this validator is attached.
+            :raise ValidationError: In case the validation fails.
+        """
+        email = field.data
+        if not email:
+            return
+
+        # If there already is a user with that email address and this user is not the current user, this is an error.
+        user = User.load_from_email(email)
+        if user and user != current_user:
+            raise ValidationError(self.message)
+
+
+class AccountForm(FlaskForm):
+    """
+        A form allowing a user to change their account details.
+    """
+    name = StringField(_l('Name:'), validators=[DataRequired()])
+    email = StringField(_l('Email:'), validators=[DataRequired(), Email(), UniqueEmail()],
+                        description=_l('We will send you an email to your new address with a link to confirm the \
+                                        changes. The email address will not be changed until you confirm this action.'))
+    password = PasswordField(_l('New Password:'),
+                             description=_l('Leave this field empty if you do not want to change your password.'))
+    password_confirmation = PasswordField(_l('Confirm Your New Password:'), validators=[EqualTo('password')])
+    submit = SubmitField(_l('Save'))
 
 
 class EmailForm(FlaskForm):
@@ -291,3 +448,5 @@ class PasswordResetForm(FlaskForm):
     password_confirmation = PasswordField(_l('Confirm Your New Password:'),
                                           validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField(_l('Change Password'))
+
+# endregion

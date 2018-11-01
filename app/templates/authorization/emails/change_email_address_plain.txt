@@ -1,0 +1,11 @@
+{% extends '_base_email_plain.txt' %}
+{% block content %}
+{{ _('To change your email address from %(email_old)s to %(email_new)s, click on the following link or copy and paste it to your browser:',
+     email_old=email_old, email_new=email_new) }}
+
+{{ link }}
+
+{{ _('This link is only valid for the next %(validity)d minutes.', validity=validity) }}
+
+{{ _('If you have not requested to change your email address simply ignore this message.') }}
+{% endblock %}

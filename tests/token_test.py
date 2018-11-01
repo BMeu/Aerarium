@@ -7,6 +7,7 @@ from app import create_app
 from app import db
 from app.configuration import TestConfiguration
 from app.token import get_token
+from app.token import get_validity
 from app.token import verify_token
 
 
@@ -28,6 +29,62 @@ class TokenTest(TestCase):
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
+
+    def test_get_validity_success_seconds(self):
+        """
+            Test getting the validity in seconds.
+
+            Expected result: The validity as defined in the configuration is returned.
+        """
+
+        # Validity: 600 seconds.
+        validity = 600
+        self.app.config['TOKEN_VALIDITY'] = validity
+
+        self.assertEqual(validity, get_validity())
+
+    def test_get_validity_success_minutes(self):
+        """
+            Test getting the validity in minutes.
+
+            Expected result: The validity as defined in the configuration is returned, but in minutes.
+        """
+
+        # Validity: 10 minutes.
+        validity = 10
+        self.app.config['TOKEN_VALIDITY'] = validity * 60
+
+        self.assertEqual(validity, get_validity(in_minutes=True))
+
+    def test_get_validity_success_minutes_rounded(self):
+        """
+            Test getting the validity in minutes, but with a value that needs to be rounded.
+
+            Expected result: The validity as defined in the configuration is returned, but in minutes and rounded down
+                             to the nearest integer.
+        """
+
+        # Validity: 90 seconds
+        validity = 90
+        self.app.config['TOKEN_VALIDITY'] = validity
+
+        self.assertEqual(1, get_validity(in_minutes=True))
+
+    def test_get_validity_failure(self):
+        """
+            Test getting the validity outside the application context.
+
+            Expected result: No validity is returned.
+        """
+
+        # Remove the application context.
+        self.app_context.pop()
+
+        validity = get_validity()
+        self.assertIsNone(validity)
+
+        # Re-add the application context so the tear-down method will not pop an empty list.
+        self.app_context.push()
 
     def test_get_token_success(self):
         """
