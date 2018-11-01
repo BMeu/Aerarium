@@ -60,6 +60,8 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
+export FLASK_APP=aerarium.py
+flask translate compile
 ```
 
 Remember to [set up your configuration](#configuration) as well!
@@ -69,7 +71,6 @@ Remember to [set up your configuration](#configuration) as well!
 You can run a local test server on your PC to directly test your changes:
 
 ```bash
-export FLASK_APP=aerarium.py
 export DEBUG=1
 flask run
 ```
