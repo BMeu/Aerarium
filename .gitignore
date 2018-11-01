@@ -107,3 +107,4 @@ ENV/
 
 # Keep folders with a .gitkeep file.
 !.gitkeep
+!/**/.gitkeep
