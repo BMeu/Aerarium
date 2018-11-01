@@ -1,15 +1,11 @@
-sudo: required
-
-dist: xenial
+sudo: false
 
 language: python
 
 python:
   - "3.6"
   - "3.6-dev"
-  - "3.7"
   - "3.7-dev"
-  - "3.8-dev"
   - "nightly"
 
 env:
