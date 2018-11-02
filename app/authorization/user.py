@@ -105,8 +105,8 @@ class User(UserMixin, db.Model):
             :param email: The user's email address.
             :param name: The user's (full) name.
         """
-        # TODO: Use set_email().
-        self._email = email
+        # TODO: Abort if the email already is in use.
+        self.set_email(email)
         self.name = name
 
     @staticmethod
@@ -151,12 +151,19 @@ class User(UserMixin, db.Model):
             :param email: The user's new email address. Must not be used by a different user.
             :return: ``False`` if the email address already is in use by another user, ``True`` otherwise.
         """
-        if self.get_email() == email:
+
+        old_email = self.get_email()
+        if old_email == email:
             return True
 
         user = User.load_from_email(email)
         if user is not None and user != self:
             return False
+
+        self._email = email
+        if not old_email:
+            # If there is no old email the user has just been created. Do not send an email in this case.
+            return True
 
         application = get_app()
         support_address = application.config.get('SUPPORT_ADDRESS', None)
@@ -165,9 +172,8 @@ class User(UserMixin, db.Model):
         body_html = render_template('authorization/emails/email_changed_html.html',
                                     name=self.name, new_email=email, support_email=support_address)
 
-        send_email(_('Your Email Address Has Been Changed'), [self.get_email()], body_plain, body_html)
+        send_email(_('Your Email Address Has Been Changed'), [old_email], body_plain, body_html)
 
-        self._email = email
         return True
 
     def _get_change_email_address_token(self, new_email: str) -> Optional[str]:

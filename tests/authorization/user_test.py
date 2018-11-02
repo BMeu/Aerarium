@@ -95,19 +95,23 @@ class UserTest(TestCase):
         """
         email = 'test@example.com'
         name = 'John Doe'
-        user = User(email, name)
 
-        self.assertIsNone(user.id)
-        self.assertIsNone(user.password_hash)
-        self.assertEqual(email, user.get_email())
-        self.assertEqual(name, user.name)
-        self.assertIsNone(user._is_activated)
+        with mail.record_messages() as outgoing:
+            user = User(email, name)
 
-        db.session.add(user)
-        db.session.commit()
+            self.assertEqual(0, len(outgoing))
 
-        self.assertEqual(1, user.id)
-        self.assertTrue(user._is_activated)
+            self.assertIsNone(user.id)
+            self.assertIsNone(user.password_hash)
+            self.assertEqual(email, user.get_email())
+            self.assertEqual(name, user.name)
+            self.assertIsNone(user._is_activated)
+
+            db.session.add(user)
+            db.session.commit()
+
+            self.assertEqual(1, user.id)
+            self.assertTrue(user._is_activated)
 
     def test_load_from_id_success(self):
         """
@@ -229,6 +233,26 @@ class UserTest(TestCase):
             self.assertEqual(0, len(outgoing))
             self.assertTrue(changed_email)
             self.assertEqual(old_email, user.get_email())
+
+    def test_set_email_success_no_old_email(self):
+        """
+            Test setting the user's email address if the user had none before.
+
+            Expected result: The email address is set successfully, but no email is sent.
+        """
+        name = 'John Doe'
+        # noinspection PyTypeChecker
+        user = User(None, name)
+        db.session.add(user)
+        db.session.commit()
+
+        email = 'test@example.com'
+        with mail.record_messages() as outgoing:
+            changed_email = user.set_email(email)
+
+            self.assertEqual(0, len(outgoing))
+            self.assertTrue(changed_email)
+            self.assertEqual(email, user.get_email())
 
     def test_set_email_failure(self):
         """
