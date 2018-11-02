@@ -99,7 +99,7 @@ class UserTest(TestCase):
 
         self.assertIsNone(user.id)
         self.assertIsNone(user.password_hash)
-        self.assertEqual(email, user._email)
+        self.assertEqual(email, user.get_email())
         self.assertEqual(name, user.name)
         self.assertIsNone(user._is_activated)
 
@@ -128,7 +128,7 @@ class UserTest(TestCase):
         loaded_user = User.load_from_id(user_id)
         self.assertIsNotNone(loaded_user)
         self.assertEqual(user_id, loaded_user.id)
-        self.assertEqual(email, loaded_user._email)
+        self.assertEqual(email, loaded_user.get_email())
         self.assertEqual(name, loaded_user.name)
 
     def test_load_from_id_failure(self):
@@ -159,7 +159,7 @@ class UserTest(TestCase):
         loaded_user = User.load_from_email(email)
         self.assertIsNotNone(loaded_user)
         self.assertEqual(user_id, loaded_user.id)
-        self.assertEqual(email, loaded_user._email)
+        self.assertEqual(email, loaded_user.get_email())
         self.assertEqual(name, loaded_user.name)
 
     def test_load_from_email_failure(self):
@@ -584,10 +584,9 @@ class UserTest(TestCase):
 
             Expected result: No email would be sent.
         """
-        email = 'test@example.com'
         name = 'John Doe'
-        user = User(email, name)
-        user._email = None
+        # noinspection PyTypeChecker
+        user = User(None, name)
 
         with mail.record_messages() as outgoing:
             user.send_password_reset_email()

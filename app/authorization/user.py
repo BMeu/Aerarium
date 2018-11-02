@@ -105,6 +105,7 @@ class User(UserMixin, db.Model):
             :param email: The user's email address.
             :param name: The user's (full) name.
         """
+        # TODO: Use set_email().
         self._email = email
         self.name = name
 
@@ -166,7 +167,6 @@ class User(UserMixin, db.Model):
 
         send_email(_('Your Email Address Has Been Changed'), [self.get_email()], body_plain, body_html)
 
-        # TODO: Update all assignments to _email.
         self._email = email
         return True
 
@@ -278,7 +278,7 @@ class User(UserMixin, db.Model):
             Send a mail for resetting the user's password to their email address.
         """
 
-        if self._email is None:
+        if self.get_email() is None:
             return
 
         token = self._get_password_reset_token()
@@ -294,7 +294,7 @@ class User(UserMixin, db.Model):
         body_html = render_template('authorization/emails/reset_password_html.html',
                                     name=self.name, link=link, validity=validity)
 
-        send_email(_('Reset Your Password'), [self._email], body_plain, body_html)
+        send_email(_('Reset Your Password'), [self.get_email()], body_plain, body_html)
 
     @staticmethod
     def verify_password_reset_token(token: str) -> Optional['User']:

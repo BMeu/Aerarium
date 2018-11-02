@@ -54,7 +54,7 @@ def user_profile() -> str:
         db.session.commit()
 
         # If the email address change send a confirmation mail to the new address.
-        if user._email != form.email.data:
+        if user.get_email() != form.email.data:
             user.send_change_email_address_email(form.email.data)
 
             validity = get_validity(in_minutes=True)
