@@ -199,9 +199,17 @@ class UserTest(TestCase):
         db.session.add(user)
         db.session.commit()
 
-        changed_email = user.set_email(new_email)
-        self.assertTrue(changed_email)
-        self.assertEqual(new_email, user.get_email())
+        with mail.record_messages() as outgoing:
+            changed_email = user.set_email(new_email)
+
+            self.assertEqual(1, len(outgoing))
+            self.assertListEqual([old_email], outgoing[0].recipients)
+            self.assertIn('Your Email Address Has Been Changed', outgoing[0].subject)
+            self.assertIn(f'Your email address has been changed to {new_email}', outgoing[0].body)
+            self.assertIn(f'Your email address has been changed to ', outgoing[0].html)
+
+            self.assertTrue(changed_email)
+            self.assertEqual(new_email, user.get_email())
 
     def test_set_email_success_unchanged(self):
         """
@@ -215,9 +223,12 @@ class UserTest(TestCase):
         db.session.add(user)
         db.session.commit()
 
-        changed_email = user.set_email(old_email)
-        self.assertTrue(changed_email)
-        self.assertEqual(old_email, user.get_email())
+        with mail.record_messages() as outgoing:
+            changed_email = user.set_email(old_email)
+
+            self.assertEqual(0, len(outgoing))
+            self.assertTrue(changed_email)
+            self.assertEqual(old_email, user.get_email())
 
     def test_set_email_failure(self):
         """
@@ -237,9 +248,12 @@ class UserTest(TestCase):
         db.session.add(user)
         db.session.commit()
 
-        changed_email = user.set_email(existing_email)
-        self.assertFalse(changed_email)
-        self.assertEqual(old_email, user.get_email())
+        with mail.record_messages() as outgoing:
+            changed_email = user.set_email(existing_email)
+
+            self.assertEqual(0, len(outgoing))
+            self.assertFalse(changed_email)
+            self.assertEqual(old_email, user.get_email())
 
     def test_change_email_address_token_success(self):
         """
@@ -360,20 +374,71 @@ class UserTest(TestCase):
 
     # region Password
 
-    def test_set_password(self):
+    def test_set_password_success(self):
         """
-            Test the password setting.
+            Test setting a new password.
 
             Expected result: The password is set on the user, but not in plaintext.
         """
+        email = 'test@example.com'
+        name = 'John Doe'
         password = 'Aerarium123!'
-        user = User('test@example.com', 'John Doe')
+        user = User(email, name)
 
         self.assertIsNone(user.password_hash)
 
+        with mail.record_messages() as outgoing:
+            user.set_password(password)
+
+            self.assertEqual(1, len(outgoing))
+            self.assertIn('Your Password Has Been Changed', outgoing[0].subject)
+            self.assertListEqual([email], outgoing[0].recipients)
+            self.assertIn('Your password has been updated.', outgoing[0].body)
+            self.assertIn('Your password has been updated.', outgoing[0].html)
+            self.assertIsNotNone(user.password_hash)
+            self.assertNotEqual(password, user.password_hash)
+            self.assertTrue(user.check_password(password))
+
+    def test_set_password_success_unchanged_password(self):
+        """
+            Test setting a new password, but set the same one as before.
+
+            Expected result: The password is set on the user, but not in plaintext.
+        """
+        email = 'test@example.com'
+        name = 'John Doe'
+        password = 'Aerarium123!'
+        user = User(email, name)
+
         user.set_password(password)
-        self.assertIsNotNone(user.password_hash)
-        self.assertNotEqual(password, user.password_hash)
+        self.assertTrue(user.check_password(password))
+
+        with mail.record_messages() as outgoing:
+            user.set_password(password)
+
+            self.assertEqual(0, len(outgoing))
+            self.assertIsNotNone(user.password_hash)
+            self.assertTrue(user.check_password(password))
+
+    def test_set_password_failure_no_password(self):
+        """
+            Test setting a new, empty password.
+
+            Expected result: The password is not set on the user.
+        """
+        email = 'test@example.com'
+        name = 'John Doe'
+        password = None
+        user = User(email, name)
+
+        with mail.record_messages() as outgoing:
+            # noinspection PyTypeChecker
+            user.set_password(password)
+
+            self.assertEqual(0, len(outgoing))
+            self.assertIsNone(user.password_hash)
+            # noinspection PyTypeChecker
+            self.assertFalse(user.check_password(password))
 
     def test_check_password_success(self):
         """
@@ -388,7 +453,7 @@ class UserTest(TestCase):
         is_correct = user.check_password(password)
         self.assertTrue(is_correct)
 
-    def test_check_password_failure(self):
+    def test_check_password_failure_incorrect_password(self):
         """
             Test the password checking with an incorrect password.
 
@@ -398,6 +463,27 @@ class UserTest(TestCase):
         user.set_password('Aerarium123!')
 
         is_correct = user.check_password('Aerarium456?')
+        self.assertFalse(is_correct)
+
+    def test_check_password_failure_no_set_password(self):
+        """
+            Test checking the password if the user has no password so far.
+
+            Expected result: The result is False.
+        """
+        user = User('test@example.com', 'John Doe')
+        is_correct = user.check_password('123456')
+        self.assertFalse(is_correct)
+
+    def test_check_password_failure_no_password(self):
+        """
+            Test checking the password if the user has no password so far.
+
+            Expected result: The result is False.
+        """
+        user = User('test@example.com', 'John Doe')
+        # noinspection PyTypeChecker
+        is_correct = user.check_password(None)
         self.assertFalse(is_correct)
 
     def test_password_reset_token_success(self):

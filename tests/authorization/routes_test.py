@@ -20,6 +20,8 @@ class RoutesTest(TestCase):
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app_context.push()
+        self.request_context = self.app.test_request_context()
+        self.request_context.push()
         db.create_all()
 
     def tearDown(self):
@@ -28,6 +30,7 @@ class RoutesTest(TestCase):
         """
         db.session.remove()
         db.drop_all()
+        self.request_context.pop()
         self.app_context.pop()
 
     # region User Profile
@@ -116,7 +119,10 @@ class RoutesTest(TestCase):
         name = 'John Doe'
         password = '123456'
         user = User(email, name)
-        user.set_password(password)
+        with mail.record_messages() as outgoing:
+            user.set_password(password)
+            self.assertEqual(1, len(outgoing))
+            self.assertIn('Your Password Has Been Changed', outgoing[0].subject)
         db.session.add(user)
         db.session.commit()
 
@@ -138,7 +144,7 @@ class RoutesTest(TestCase):
             ))
             data = response.get_data(as_text=True)
 
-            self.assertEqual(0, len(outgoing))
+            self.assertEqual(1, len(outgoing))
 
             self.assertIn('User Profile', data)
             self.assertIn(f'value="{new_name}"', data)
@@ -163,7 +169,10 @@ class RoutesTest(TestCase):
         name = 'John Doe'
         password = '123456'
         user = User(email, name)
-        user.set_password(password)
+        with mail.record_messages() as outgoing:
+            user.set_password(password)
+            self.assertEqual(1, len(outgoing))
+            self.assertIn('Your Password Has Been Changed', outgoing[0].subject)
         db.session.add(user)
         db.session.commit()
 
@@ -186,9 +195,9 @@ class RoutesTest(TestCase):
             ))
             data = response.get_data(as_text=True)
 
-            self.assertEqual(1, len(outgoing))
-            self.assertIn('Change Your Email Address', outgoing[0].subject)
-            self.assertEqual([new_email], outgoing[0].recipients)
+            self.assertEqual(2, len(outgoing))
+            self.assertIn('Change Your Email Address', outgoing[1].subject)
+            self.assertEqual([new_email], outgoing[1].recipients)
 
             self.assertIn('User Profile', data)
             self.assertIn(f'value="{new_name}"', data)

@@ -1,0 +1,9 @@
+{% extends '_base_email_plain.txt' %}
+{% block content %}
+{{ _('Your email address has been changed to %(new_email)s.', new_email=new_email) }}
+
+{% if support_email %}
+{{ _('If you initiated this change yourself you can ignore this email. Otherwise, please contact us immediately. You can reach us under %(support_email)s.', program=g.title, support_email=support_email) }}
+{% endif %}
+
+{% endblock %}

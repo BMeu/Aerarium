@@ -1,0 +1,16 @@
+{% extends '_base_email_html.html' %}
+{% block content %}
+    <p>
+        {{ _('Your email address has been changed to %(new_email)s.',
+             new_email='<em>%(email)s</em>'|format(email=new_email)|safe) }}
+    </p>
+    {% if support_email %}
+    <p>
+        {{ _('If you initiated this change yourself you can ignore this email. Otherwise, please contact us immediately. You can reach us under %(support_email)s.',
+        program=g.title,
+        support_email='<a href="mailto:%(email)s" title="%(program)s Support">%(email)s</a>'
+            |format(email=support_email, program=g.title)
+            |safe) }}
+    </p>
+    {% endif %}
+{% endblock %}

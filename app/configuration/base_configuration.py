@@ -41,6 +41,7 @@ class BaseConfiguration:
     LANGUAGES: Iterable[str] = get_languages(TRANSLATION_DIR)
     SYS_ADMINS: Optional[Iterable[str]] = [mail for mail in str.split(environ.get('SYS_ADMINS'), ';')] \
         if environ.get('SYS_ADMINS') else None
+    SUPPORT_ADDRESS: Optional[str] = environ.get('SUPPORT_ADDRESS', None)
 
     # Security settings.
     BCRYPT_HANDLE_LONG_PASSWORDS: int = 1

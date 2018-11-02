@@ -19,6 +19,8 @@ class RoutesTest(TestCase):
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app_context.push()
+        self.request_context = self.app.test_request_context()
+        self.request_context.push()
         db.create_all()
 
     def tearDown(self):
@@ -27,6 +29,7 @@ class RoutesTest(TestCase):
         """
         db.session.remove()
         db.drop_all()
+        self.request_context.push()
         self.app_context.pop()
 
     def test_index_logged_out(self):

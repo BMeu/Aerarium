@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-11-01 20:56+0100\n"
-"PO-Revision-Date: 2018-11-01 20:57+0100\n"
+"POT-Creation-Date: 2018-11-01 22:06+0100\n"
+"PO-Revision-Date: 2018-11-01 22:09+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -52,7 +52,7 @@ msgstr "Das Token ist ungültig."
 msgid "Your email address has successfully been changed."
 msgstr "Deine E-Mail-Adresse wurde erfolgreich geändert."
 
-#: app/authorization/routes.py:91 app/authorization/user.py:386
+#: app/authorization/routes.py:91 app/authorization/user.py:410
 msgid "The email address already is in use."
 msgstr "Diese E-Mail-Adresse wird bereits von einem anderen Benutzer verwendet."
 
@@ -75,7 +75,7 @@ msgstr "Passwort vergessen?"
 msgid "Your password has successfully been changed."
 msgstr "Dein Passwort wurde erfolgreich geändert."
 
-#: app/authorization/routes.py:149 app/authorization/user.py:265
+#: app/authorization/routes.py:149 app/authorization/user.py:289
 #: app/templates/authorization/emails/reset_password_html.html:7
 msgid "Reset Your Password"
 msgstr "Passwort zurücksetzen"
@@ -89,7 +89,7 @@ msgstr "Willkommen, %(name)s!"
 msgid "Invalid email address or password."
 msgstr "Ungültige E-Mail-Adresse oder ungültiges Passwort."
 
-#: app/authorization/routes.py:184 app/authorization/user.py:439
+#: app/authorization/routes.py:184 app/authorization/user.py:463
 msgid "Log In"
 msgstr "Anmelden"
 
@@ -97,20 +97,28 @@ msgstr "Anmelden"
 msgid "You were successfully logged out."
 msgstr "Du wurdest erfolgreich abgemeldet."
 
-#: app/authorization/user.py:191
+#: app/authorization/user.py:167
+msgid "Your Email Address Has Been Changed"
+msgstr "Deine E-Mail-Adresse wurde geändert"
+
+#: app/authorization/user.py:203
 msgid "Change Your Email Address"
 msgstr "E-Mail-Adresse ändern"
 
-#: app/authorization/user.py:412
+#: app/authorization/user.py:247
+msgid "Your Password Has Been Changed"
+msgstr "Dein Passwort wurde geändert"
+
+#: app/authorization/user.py:436
 msgid "Name:"
 msgstr "Name:"
 
-#: app/authorization/user.py:413 app/authorization/user.py:427
-#: app/authorization/user.py:436
+#: app/authorization/user.py:437 app/authorization/user.py:451
+#: app/authorization/user.py:460
 msgid "Email:"
 msgstr "E-Mail:"
 
-#: app/authorization/user.py:414
+#: app/authorization/user.py:438
 msgid ""
 "We will send you an email to your new address with a link to confirm "
 "the                                         changes. The email address will "
@@ -120,35 +128,35 @@ msgstr ""
 "die neue Adresse schicken. Die E-Mail-Adresse wird erst aktualisiert, sobald "
 "Du diese Aktion bestätigst."
 
-#: app/authorization/user.py:416 app/authorization/user.py:447
+#: app/authorization/user.py:440 app/authorization/user.py:471
 msgid "New Password:"
 msgstr "Neues Passwort:"
 
-#: app/authorization/user.py:417
+#: app/authorization/user.py:441
 msgid "Leave this field empty if you do not want to change your password."
 msgstr "Lasse dieses Feld leer, um Dein Passwort nicht zu ändern."
 
-#: app/authorization/user.py:418 app/authorization/user.py:448
+#: app/authorization/user.py:442 app/authorization/user.py:472
 msgid "Confirm Your New Password:"
 msgstr "Bitte bestätige Dein neues Passwort:"
 
-#: app/authorization/user.py:419
+#: app/authorization/user.py:443
 msgid "Save"
 msgstr "Speichern"
 
-#: app/authorization/user.py:428
+#: app/authorization/user.py:452
 msgid "Submit"
 msgstr "Abschicken"
 
-#: app/authorization/user.py:437
+#: app/authorization/user.py:461
 msgid "Password:"
 msgstr "Passwort:"
 
-#: app/authorization/user.py:438
+#: app/authorization/user.py:462
 msgid "Remember Me"
 msgstr "Angemeldet bleiben"
 
-#: app/authorization/user.py:450
+#: app/authorization/user.py:474
 msgid "Change Password"
 msgstr "Passwort ändern"
 
@@ -332,6 +340,30 @@ msgstr ""
 "Wenn Du das Ändern Deiner E-Mail-Adresse nicht angefordert hast, kannst Du "
 "diese E-Mail ignorieren."
 
+#: app/templates/authorization/emails/email_changed_html.html:4
+#: app/templates/authorization/emails/email_changed_plain.txt:3
+#, python-format
+msgid "Your email address has been changed to %(new_email)s."
+msgstr "Deine E-Mail-Adresse wurde zu %(new_email)s geändert."
+
+#: app/templates/authorization/emails/email_changed_html.html:9
+#: app/templates/authorization/emails/email_changed_plain.txt:6
+#: app/templates/authorization/emails/password_changed_html.html:8
+#: app/templates/authorization/emails/password_changed_plain.txt:6
+#, python-format
+msgid ""
+"If you initiated this change yourself you can ignore this email. Otherwise, "
+"please contact us immediately. You can reach us under %(support_email)s."
+msgstr ""
+"Wenn Du diese Änderung veranlasst hast, kannst Du diese E-Mail ignorieren. "
+"Ansonsten kontaktiere uns bitte unverzüglich. Du erreichst uns unter "
+"%(support_email)s."
+
+#: app/templates/authorization/emails/password_changed_html.html:4
+#: app/templates/authorization/emails/password_changed_plain.txt:3
+msgid "Your password has been updated."
+msgstr "Dein Passwort wurde aktualisiert."
+
 #: app/templates/authorization/emails/reset_password_html.html:4
 #: app/templates/authorization/emails/reset_password_plain.txt:3
 msgid ""
@@ -356,11 +388,3 @@ msgstr "Abbrechen"
 #, python-format
 msgid "Fields marked with an asterisk (%(asterisk)s) are required."
 msgstr "Mit einem Sternchen (%(asterisk)s) markierte Felder sind Pflichtfelder."
-
-#~ msgid ""
-#~ "To change your email address from %(email_old)s to %(email_new)s, click on "
-#~ "the following link or copy               and paste it to your browser:"
-#~ msgstr ""
-#~ "Um Deine E-Mail-Adresse von %(email_old)s zu %(email_new)s zu ändern, "
-#~ "klicke auf den folgenden Link oder kopiere ihn und füge ihn in Deinen "
-#~ "Browser ein:"

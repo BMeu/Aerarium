@@ -32,6 +32,7 @@ from wtforms.validators import EqualTo
 
 from app import bcrypt
 from app import db
+from app import get_app
 from app import login as app_login
 from app import send_email
 from app.token import get_token
@@ -149,12 +150,23 @@ class User(UserMixin, db.Model):
             :param email: The user's new email address. Must not be used by a different user.
             :return: ``False`` if the email address already is in use by another user, ``True`` otherwise.
         """
+        if self.get_email() == email:
+            return True
+
         user = User.load_from_email(email)
         if user is not None and user != self:
             return False
 
-        # TODO: Send email to old address notifying the user about the change.
+        application = get_app()
+        support_address = application.config.get('SUPPORT_ADDRESS', None)
+        body_plain = render_template('authorization/emails/email_changed_plain.txt',
+                                     name=self.name, new_email=email, support_email=support_address)
+        body_html = render_template('authorization/emails/email_changed_html.html',
+                                    name=self.name, new_email=email, support_email=support_address)
 
+        send_email(_('Your Email Address Has Been Changed'), [self.get_email()], body_plain, body_html)
+
+        # TODO: Update all assignments to _email.
         self._email = email
         return True
 
@@ -221,7 +233,24 @@ class User(UserMixin, db.Model):
 
             :param password: The plaintext password.
         """
-        # TODO: Send email notifying the user about the change.
+
+        if not password:
+            return
+
+        # If the password stayed the same do not do anything; especially, do not send an email.
+        if self.check_password(password):
+            return
+
+        application = get_app()
+
+        support_address = application.config.get('SUPPORT_ADDRESS', None)
+        body_plain = render_template('authorization/emails/password_changed_plain.txt',
+                                     name=self.name, support_email=support_address)
+        body_html = render_template('authorization/emails/password_changed_html.html',
+                                    name=self.name, support_email=support_address)
+
+        send_email(_('Your Password Has Been Changed'), [self.get_email()], body_plain, body_html)
+
         self.password_hash = bcrypt.generate_password_hash(password)
 
     def check_password(self, password: str) -> bool:
@@ -231,6 +260,9 @@ class User(UserMixin, db.Model):
             :param password: The plaintext password to verify.
             :return: ``True`` if the ``password`` matches the user's password.
         """
+        if not self.password_hash:
+            return False
+
         return bcrypt.check_password_hash(self.password_hash, password)
 
     def _get_password_reset_token(self) -> Optional[str]:
