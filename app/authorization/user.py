@@ -35,9 +35,8 @@ from app import db
 from app import get_app
 from app import login as app_login
 from app import send_email
-from app.token import get_token
-from app.token import get_validity
-from app.token import verify_token
+from app.authorization.tokens import ChangeEmailAddressToken
+from app.authorization.tokens import ResetPasswordToken
 
 """
     The application's user model and related classes.
@@ -105,7 +104,6 @@ class User(UserMixin, db.Model):
             :param email: The user's email address.
             :param name: The user's (full) name.
         """
-        # TODO: Abort if the email already is in use.
         self.set_email(email)
         self.name = name
 
@@ -176,27 +174,21 @@ class User(UserMixin, db.Model):
 
         return True
 
-    def _get_change_email_address_token(self, new_email: str) -> Optional[str]:
-        """
-            Get a JWT for changing a user's email address.
-
-            :param new_email: The user's new email address.
-            :return: The JWT for this user. ``None`` if outside the application context.
-        """
-        return get_token(change_email=self.id, new_email=new_email)
-
-    def send_change_email_address_email(self, email: str) -> None:
+    def send_change_email_address_email(self, email: str) -> ChangeEmailAddressToken:
         """
             Send a token to the user to change their email address.
 
             :param email: The email address to which the token will be sent and to which the user's email will be
                           changed upon verification.
+            :return: The token send in the mail.
         """
 
-        validity = get_validity(in_minutes=True)
-        token = self._get_change_email_address_token(email)
-        if token is None:
-            return
+        token_obj = ChangeEmailAddressToken()
+        token_obj.user_id = self.id
+        token_obj.new_email = email
+
+        token = token_obj.create()
+        validity = token_obj.get_validity(in_minutes=True)
 
         link = url_for('authorization.change_email', token=token, _external=True)
 
@@ -207,6 +199,7 @@ class User(UserMixin, db.Model):
                                     name=self.name, link=link, validity=validity, email_old=email_old, email_new=email)
 
         send_email(_('Change Your Email Address'), [email], body_plain, body_html)
+        return token_obj
 
     @staticmethod
     def verify_change_email_address_token(token: str) -> Tuple[Optional['User'], Optional[str]]:
@@ -217,17 +210,9 @@ class User(UserMixin, db.Model):
             :return: The user to which the token belongs and the new email address; both are ``None`` if the token is
                      invalid.
         """
-        payload = verify_token(token)
-        if payload is None:
-            return None, None
-
-        user_id = payload.pop('change_email', None)
-        email = payload.pop('new_email', None)
-        if not user_id or not email:
-            return None, None
-
-        user = User.load_from_id(user_id)
-        return user, email
+        token_obj = ChangeEmailAddressToken.verify(token)
+        user = User.load_from_id(token_obj.user_id)
+        return user, token_obj.new_email
 
     # endregion
 
@@ -271,27 +256,21 @@ class User(UserMixin, db.Model):
 
         return bcrypt.check_password_hash(self.password_hash, password)
 
-    def _get_password_reset_token(self) -> Optional[str]:
-        """
-            Get a JWT for resetting the user's password.
-
-            :return: The JWT for this user. ``None`` if outside the application context.
-        """
-        return get_token(reset_password=self.id)
-
-    def send_password_reset_email(self) -> None:
+    def send_password_reset_email(self) -> Optional[ResetPasswordToken]:
         """
             Send a mail for resetting the user's password to their email address.
+
+            :return: The token send in the mail
         """
 
         if self.get_email() is None:
-            return
+            return None
 
-        token = self._get_password_reset_token()
-        if token is None:
-            return
+        token_obj = ResetPasswordToken()
+        token_obj.user_id = self.id
+        token = token_obj.create()
 
-        validity = get_validity(in_minutes=True)
+        validity = token_obj.get_validity(in_minutes=True)
 
         link = url_for('authorization.reset_password', token=token, _external=True)
 
@@ -301,6 +280,7 @@ class User(UserMixin, db.Model):
                                     name=self.name, link=link, validity=validity)
 
         send_email(_('Reset Your Password'), [self.get_email()], body_plain, body_html)
+        return token_obj
 
     @staticmethod
     def verify_password_reset_token(token: str) -> Optional['User']:
@@ -311,15 +291,8 @@ class User(UserMixin, db.Model):
             :return: The user for whom the token is valid. ``None`` if the token is invalid or if outside the
                      application context.
         """
-        payload = verify_token(token)
-        if payload is None:
-            return None
-
-        user_id = payload.pop('reset_password', None)
-        if user_id is None:
-            return None
-
-        return User.load_from_id(user_id)
+        token_obj = ResetPasswordToken.verify(token)
+        return User.load_from_id(token_obj.user_id)
 
     # endregion
 

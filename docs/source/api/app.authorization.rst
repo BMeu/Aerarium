@@ -12,6 +12,14 @@ app.authorization.routes module
     :undoc-members:
     :show-inheritance:
 
+app.authorization.tokens module
+-------------------------------
+
+.. automodule:: app.authorization.tokens
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 app.authorization.user module
 -----------------------------
 

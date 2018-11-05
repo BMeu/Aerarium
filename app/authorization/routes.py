@@ -15,6 +15,7 @@ from flask import url_for
 from flask_babel import _
 from flask_login import current_user
 from flask_login import fresh_login_required
+from jwt import PyJWTError
 from werkzeug.urls import url_parse
 
 from app import db
@@ -25,7 +26,8 @@ from app.authorization import LoginForm
 from app.authorization import PasswordResetForm
 from app.authorization import User
 from app.authorization import logout_required
-from app.token import get_validity
+from app.authorization.tokens import ChangeEmailAddressToken
+from app.exceptions import InvalidJWTokenPayloadError
 
 # region User Profile
 
@@ -53,11 +55,11 @@ def user_profile() -> str:
         # Write the changes to the database.
         db.session.commit()
 
-        # If the email address change send a confirmation mail to the new address.
+        # If the email address changed send a confirmation mail to the new address.
         if user.get_email() != form.email.data:
-            user.send_change_email_address_email(form.email.data)
+            token = user.send_change_email_address_email(form.email.data)
 
-            validity = get_validity(in_minutes=True)
+            validity = token.get_validity(in_minutes=True)
             flash(Markup(_('An email has been sent to the new address %(email)s. Please open the link included in the \
                             mail within the next %(validity)d minutes to confirm your new email address. Otherwise, \
                             your email address will not be changed.',
@@ -78,8 +80,9 @@ def change_email(token: str) -> str:
         :param token: The change-email JWT.
         :return: The HTML response.
     """
-    user, email = User.verify_change_email_address_token(token)
-    if user is None or not email:
+    try:
+        user, email = User.verify_change_email_address_token(token)
+    except (InvalidJWTokenPayloadError, PyJWTError):
         flash(_('The token is invalid.'), category='error')
         return redirect(url_for('main.index'))
 
@@ -106,12 +109,16 @@ def reset_password_request() -> str:
         :return: The HTML response.
     """
 
-    validity = get_validity(in_minutes=True)
     form = EmailForm()
     if form.validate_on_submit():
         user = User.load_from_email(form.email.data)
         if user is not None:
-            user.send_password_reset_email()
+            token = user.send_password_reset_email()
+        else:
+            # Create a fake token to get the validity.
+            token = ChangeEmailAddressToken()
+
+        validity = token.get_validity(in_minutes=True)
 
         # Display a success message even if the specified address does not belong to a user account. Otherwise,
         # infiltrators could deduce if an account exists and use this information for attacks.
@@ -119,8 +126,7 @@ def reset_password_request() -> str:
                 the password is only valid for %(validity)d minutes.', validity=validity))
         return redirect(url_for('authorization.login'))
 
-    return render_template('authorization/reset_password_request.html', title=_('Forgot Your Password?'), form=form,
-                           validity=validity, )
+    return render_template('authorization/reset_password_request.html', title=_('Forgot Your Password?'), form=form)
 
 
 @bp.route('/reset-password/<string:token>', methods=['GET', 'POST'])
@@ -133,8 +139,9 @@ def reset_password(token: str) -> str:
         :return: The HTML response.
     """
 
-    user = User.verify_password_reset_token(token)
-    if user is None:
+    try:
+        user = User.verify_password_reset_token(token)
+    except (InvalidJWTokenPayloadError, PyJWTError):
         flash(_('The token is invalid.'), category='error')
         return redirect(url_for('main.index'))
 

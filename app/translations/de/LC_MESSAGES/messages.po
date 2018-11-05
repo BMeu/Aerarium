@@ -5,158 +5,157 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Aerarium\n"
+"Project-Id-Version:  Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-11-01 22:06+0100\n"
+"POT-Creation-Date: 2018-11-05 06:58+0100\n"
 "PO-Revision-Date: 2018-11-01 22:09+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
-"X-Generator: Poedit 2.0.6\n"
 
 #: app/application.py:130
 msgid "Please log in to access this page."
 msgstr "Bitte melde Dich an, um diese Seite öffnen zu können."
 
-#: app/authorization/routes.py:64
+#: app/authorization/routes.py:65
 #, python-format
 msgid ""
-"An email has been sent to the new address %(email)s. Please open the link "
-"included in the                             mail within the next %(validity)d "
-"minutes to confirm your new email address. "
-"Otherwise,                             your email address will not be changed."
+"An email has been sent to the new address %(email)s. Please open the link"
+" included in the                             mail within the next "
+"%(validity)d minutes to confirm your new email address. Otherwise,"
+"                             your email address will not be changed."
 msgstr ""
-"Eine E-Mail wurde an die neue Adresse %(email)s geschickt. Bitte öffne den "
-"enthaltenen Link innerhalb der nächsten %(validity)d Minuten, um Deine neue E-"
-"Mail-Adresse zu bestätigen. Ansonsten wird Deine E-Mail-Adresse nicht "
-"geändert."
+"Eine E-Mail wurde an die neue Adresse %(email)s geschickt. Bitte öffne "
+"den enthaltenen Link innerhalb der nächsten %(validity)d Minuten, um "
+"Deine neue E-Mail-Adresse zu bestätigen. Ansonsten wird Deine E-Mail-"
+"Adresse nicht geändert."
 
-#: app/authorization/routes.py:67
+#: app/authorization/routes.py:68
 msgid "Your changes have been saved."
 msgstr "Deine Änderungen wurden gespeichert."
 
-#: app/authorization/routes.py:70 app/templates/_header.html:26
+#: app/authorization/routes.py:71 app/templates/_header.html:26
 msgid "User Profile"
 msgstr "Benutzerprofil"
 
-#: app/authorization/routes.py:83 app/authorization/routes.py:138
+#: app/authorization/routes.py:85 app/authorization/routes.py:144
 msgid "The token is invalid."
 msgstr "Das Token ist ungültig."
 
-#: app/authorization/routes.py:89
+#: app/authorization/routes.py:91
 msgid "Your email address has successfully been changed."
 msgstr "Deine E-Mail-Adresse wurde erfolgreich geändert."
 
-#: app/authorization/routes.py:91 app/authorization/user.py:410
+#: app/authorization/routes.py:93 app/authorization/user.py:397
 msgid "The email address already is in use."
 msgstr "Diese E-Mail-Adresse wird bereits von einem anderen Benutzer verwendet."
 
-#: app/authorization/routes.py:118
+#: app/authorization/routes.py:124
 #, python-format
 msgid ""
-"An email has been sent to the specified address. Please be aware that the "
-"included link for resetting                 the password is only valid for "
-"%(validity)d minutes."
+"An email has been sent to the specified address. Please be aware that the"
+" included link for resetting                 the password is only valid "
+"for %(validity)d minutes."
 msgstr ""
-"Eine E-Mail wurde an die angegebene Adresse versandt. Bitte beachte, dass der "
-"enthaltene Link zum Zurücksetzen des Passworts nur %(validity)d Minuten lang "
-"gültig ist."
+"Eine E-Mail wurde an die angegebene Adresse versandt. Bitte beachte, dass"
+" der enthaltene Link zum Zurücksetzen des Passworts nur %(validity)d "
+"Minuten lang gültig ist."
 
-#: app/authorization/routes.py:122 app/templates/authorization/login.html:5
+#: app/authorization/routes.py:128 app/templates/authorization/login.html:5
 msgid "Forgot Your Password?"
 msgstr "Passwort vergessen?"
 
-#: app/authorization/routes.py:146
+#: app/authorization/routes.py:152
 msgid "Your password has successfully been changed."
 msgstr "Dein Passwort wurde erfolgreich geändert."
 
-#: app/authorization/routes.py:149 app/authorization/user.py:289
+#: app/authorization/routes.py:155 app/authorization/user.py:282
 #: app/templates/authorization/emails/reset_password_html.html:7
 msgid "Reset Your Password"
 msgstr "Passwort zurücksetzen"
 
-#: app/authorization/routes.py:172
+#: app/authorization/routes.py:178
 #, python-format
 msgid "Welcome, %(name)s!"
 msgstr "Willkommen, %(name)s!"
 
-#: app/authorization/routes.py:182
+#: app/authorization/routes.py:188
 msgid "Invalid email address or password."
 msgstr "Ungültige E-Mail-Adresse oder ungültiges Passwort."
 
-#: app/authorization/routes.py:184 app/authorization/user.py:463
+#: app/authorization/routes.py:190 app/authorization/user.py:450
 msgid "Log In"
 msgstr "Anmelden"
 
-#: app/authorization/routes.py:197
+#: app/authorization/routes.py:203
 msgid "You were successfully logged out."
 msgstr "Du wurdest erfolgreich abgemeldet."
 
-#: app/authorization/user.py:167
+#: app/authorization/user.py:173
 msgid "Your Email Address Has Been Changed"
 msgstr "Deine E-Mail-Adresse wurde geändert"
 
-#: app/authorization/user.py:203
+#: app/authorization/user.py:201
 msgid "Change Your Email Address"
 msgstr "E-Mail-Adresse ändern"
 
-#: app/authorization/user.py:247
+#: app/authorization/user.py:243
 msgid "Your Password Has Been Changed"
 msgstr "Dein Passwort wurde geändert"
 
-#: app/authorization/user.py:436
+#: app/authorization/user.py:423
 msgid "Name:"
 msgstr "Name:"
 
-#: app/authorization/user.py:437 app/authorization/user.py:451
-#: app/authorization/user.py:460
+#: app/authorization/user.py:424 app/authorization/user.py:438
+#: app/authorization/user.py:447
 msgid "Email:"
 msgstr "E-Mail:"
 
-#: app/authorization/user.py:438
+#: app/authorization/user.py:425
 msgid ""
-"We will send you an email to your new address with a link to confirm "
-"the                                         changes. The email address will "
+"We will send you an email to your new address with a link to confirm the"
+"                                         changes. The email address will "
 "not be changed until you confirm this action."
 msgstr ""
-"Wir werden Dir eine E-Mail mit einem Link zur Bestätigung Deiner Änderung an "
-"die neue Adresse schicken. Die E-Mail-Adresse wird erst aktualisiert, sobald "
-"Du diese Aktion bestätigst."
+"Wir werden Dir eine E-Mail mit einem Link zur Bestätigung Deiner Änderung"
+" an die neue Adresse schicken. Die E-Mail-Adresse wird erst aktualisiert,"
+" sobald Du diese Aktion bestätigst."
 
-#: app/authorization/user.py:440 app/authorization/user.py:471
+#: app/authorization/user.py:427 app/authorization/user.py:458
 msgid "New Password:"
 msgstr "Neues Passwort:"
 
-#: app/authorization/user.py:441
+#: app/authorization/user.py:428
 msgid "Leave this field empty if you do not want to change your password."
 msgstr "Lasse dieses Feld leer, um Dein Passwort nicht zu ändern."
 
-#: app/authorization/user.py:442 app/authorization/user.py:472
+#: app/authorization/user.py:429 app/authorization/user.py:459
 msgid "Confirm Your New Password:"
 msgstr "Bitte bestätige Dein neues Passwort:"
 
-#: app/authorization/user.py:443
+#: app/authorization/user.py:430
 msgid "Save"
 msgstr "Speichern"
 
-#: app/authorization/user.py:452
+#: app/authorization/user.py:439
 msgid "Submit"
 msgstr "Abschicken"
 
-#: app/authorization/user.py:461
+#: app/authorization/user.py:448
 msgid "Password:"
 msgstr "Passwort:"
 
-#: app/authorization/user.py:462
+#: app/authorization/user.py:449
 msgid "Remember Me"
 msgstr "Angemeldet bleiben"
 
-#: app/authorization/user.py:474
+#: app/authorization/user.py:461
 msgid "Change Password"
 msgstr "Passwort ändern"
 
@@ -166,10 +165,11 @@ msgstr "Fehlerhafte Anfrage"
 
 #: app/main/errors.py:26
 msgid ""
-"Your request was malformed and could therefore not be handled by the server."
+"Your request was malformed and could therefore not be handled by the "
+"server."
 msgstr ""
-"Deine Anfrage war fehlerhaft aufgebaut und konnte deswegen nicht vom Server "
-"bearbeitet werden."
+"Deine Anfrage war fehlerhaft aufgebaut und konnte deswegen nicht vom "
+"Server bearbeitet werden."
 
 #: app/main/errors.py:39
 msgid "Unauthorized Access"
@@ -187,13 +187,13 @@ msgstr "Zugriff verweigert"
 msgid ""
 "You do not have sufficient permissions to access this page. You can try "
 "logging in. If you are logged\n"
-"                in and you still get this message, ask your administrator to "
-"raise your permissions."
+"                in and you still get this message, ask your administrator"
+" to raise your permissions."
 msgstr ""
-"Du hast unzulängliche Berechtigungen, um auf diese Seite zugreifen zu dürfen. "
-"Du kannst versuchen, Dich anzumelden. Wenn du bereits angemeldet bist und "
-"weiterhin diese Meldung erhältst, bitte Deinen Administrator um die "
-"entsprechenden Berechtigungen."
+"Du hast unzulängliche Berechtigungen, um auf diese Seite zugreifen zu "
+"dürfen. Du kannst versuchen, Dich anzumelden. Wenn du bereits angemeldet "
+"bist und weiterhin diese Meldung erhältst, bitte Deinen Administrator um "
+"die entsprechenden Berechtigungen."
 
 #: app/main/errors.py:68
 msgid "Page Not Found"
@@ -201,12 +201,12 @@ msgstr "Seite nicht gefunden"
 
 #: app/main/errors.py:69
 msgid ""
-"The page you requested was not found on the server. If you are positive the "
-"link you clicked is\n"
+"The page you requested was not found on the server. If you are positive "
+"the link you clicked is\n"
 "                correct contact your administrator."
 msgstr ""
-"Die von Dir angeforderte Seite wurde auf dem Server nicht gefunden. Wenn Du "
-"Dir sicher bist, dass der Link korrekt ist, kontaktiere bitte Deinen "
+"Die von Dir angeforderte Seite wurde auf dem Server nicht gefunden. Wenn "
+"Du Dir sicher bist, dass der Link korrekt ist, kontaktiere bitte Deinen "
 "Administrator."
 
 #: app/main/errors.py:83
@@ -228,8 +228,8 @@ msgid ""
 "                The administrator has been notified."
 msgstr ""
 "Beim Bearbeiten Deiner Anfrage kam es auf dem Server zu einem internen "
-"Fehler. Bitte versuche es später erneut. Der Administrator wurde hierüber "
-"benachrichtigt."
+"Fehler. Bitte versuche es später erneut. Der Administrator wurde hierüber"
+" benachrichtigt."
 
 #: app/main/routes.py:29 app/templates/_header.html:13
 msgid "Dashboard"
@@ -253,7 +253,8 @@ msgstr "Dein %(program)s-Team"
 #, python-format
 msgid "%(title)s. Written by %(author)s. Visit the project page on %(github)s."
 msgstr ""
-"%(title)s. Entwickelt von %(author)s. Besuche die Projektseite auf %(github)s."
+"%(title)s. Entwickelt von %(author)s. Besuche die Projektseite auf "
+"%(github)s."
 
 #: app/templates/_header.html:5 app/templates/_header.html:6
 msgid "Toggle Navigation"
@@ -298,26 +299,27 @@ msgid "Forgot your password?"
 msgstr "Passwort vergessen?"
 
 #: app/templates/authorization/reset_password_request.html:5
-#, python-format
 msgid ""
-"If you forgot your password you can enter the email address of your account "
-"here. We will send a link               allowing you to set a new password. "
-"This link will be valid for %(validity)d minutes."
-msgstr ""
-"Wenn Du Dein Passwort vergessen hast, kannst Du hier die an Deinem "
-"Benutzerkonto hinterlegte E-Mail-Adresse angeben. Wir werden Dir dann einen "
-"Link zuschicken, über den Du ein neues Passwort festlegen kannst. Dieser Link "
-"wird %(validity)d Minuten lang gültig sein."
+"If you forgot your password you can enter the email address of your "
+"account here. We will send a link               allowing you to set a new"
+" password."
+msgstr "Wenn Du Dein Passwort vergessen hast,"
+" kannst Du hier die an Deinem "
+"Benutzerkonto hinterlegte E-Mail-Adresse "
+"angeben. Wir werden Dir dann einen "
+"Link zuschicken, über den Du ein "
+"neues Passwort festlegen kannst."
 
 #: app/templates/authorization/emails/change_email_address_html.html:4
 #: app/templates/authorization/emails/change_email_address_plain.txt:3
 #, python-format
 msgid ""
-"To change your email address from %(email_old)s to %(email_new)s, click on "
-"the following link or copy and paste it to your browser:"
+"To change your email address from %(email_old)s to %(email_new)s, click "
+"on the following link or copy and paste it to your browser:"
 msgstr ""
-"Um Deine E-Mail-Adresse von %(email_old)s zu %(email_new)s zu ändern, klicke "
-"auf den folgenden Link oder kopiere ihn und füge ihn in Deinen Browser ein:"
+"Um Deine E-Mail-Adresse von %(email_old)s zu %(email_new)s zu ändern, "
+"klicke auf den folgenden Link oder kopiere ihn und füge ihn in Deinen "
+"Browser ein:"
 
 #: app/templates/authorization/emails/change_email_address_html.html:9
 msgid "Change Email Address"
@@ -334,11 +336,11 @@ msgstr "Dieser Link ist nur für die nächsten %(validity)d Minuten gültig."
 #: app/templates/authorization/emails/change_email_address_html.html:15
 #: app/templates/authorization/emails/change_email_address_plain.txt:10
 msgid ""
-"If you have not requested to change your email address simply ignore this "
-"message."
+"If you have not requested to change your email address simply ignore this"
+" message."
 msgstr ""
-"Wenn Du das Ändern Deiner E-Mail-Adresse nicht angefordert hast, kannst Du "
-"diese E-Mail ignorieren."
+"Wenn Du das Ändern Deiner E-Mail-Adresse nicht angefordert hast, kannst "
+"Du diese E-Mail ignorieren."
 
 #: app/templates/authorization/emails/email_changed_html.html:4
 #: app/templates/authorization/emails/email_changed_plain.txt:3
@@ -352,12 +354,13 @@ msgstr "Deine E-Mail-Adresse wurde zu %(new_email)s geändert."
 #: app/templates/authorization/emails/password_changed_plain.txt:6
 #, python-format
 msgid ""
-"If you initiated this change yourself you can ignore this email. Otherwise, "
-"please contact us immediately. You can reach us under %(support_email)s."
-msgstr ""
-"Wenn Du diese Änderung veranlasst hast, kannst Du diese E-Mail ignorieren. "
-"Ansonsten kontaktiere uns bitte unverzüglich. Du erreichst uns unter "
+"If you initiated this change yourself you can ignore this email. "
+"Otherwise, please contact us immediately. You can reach us under "
 "%(support_email)s."
+msgstr ""
+"Wenn Du diese Änderung veranlasst hast, kannst Du diese E-Mail "
+"ignorieren. Ansonsten kontaktiere uns bitte unverzüglich. Du erreichst "
+"uns unter %(support_email)s."
 
 #: app/templates/authorization/emails/password_changed_html.html:4
 #: app/templates/authorization/emails/password_changed_plain.txt:3
@@ -367,18 +370,18 @@ msgstr "Dein Passwort wurde aktualisiert."
 #: app/templates/authorization/emails/reset_password_html.html:4
 #: app/templates/authorization/emails/reset_password_plain.txt:3
 msgid ""
-"To reset your password, click on the following link or copy and paste it to "
-"your browser:"
+"To reset your password, click on the following link or copy and paste it "
+"to your browser:"
 msgstr ""
-"Klicke auf den folgenden Link oder kopiere ihn in Deinen Browser, um Dein "
-"Passwort zurückzusetzen:"
+"Klicke auf den folgenden Link oder kopiere ihn in Deinen Browser, um Dein"
+" Passwort zurückzusetzen:"
 
 #: app/templates/authorization/emails/reset_password_html.html:13
 #: app/templates/authorization/emails/reset_password_plain.txt:9
 msgid "If you have not requested a password reset simply ignore this message."
 msgstr ""
-"Wenn Du das Zurücksetzen Deines Passwortes nicht angefordert hast, kannst Du "
-"diese E-Mail ignorieren."
+"Wenn Du das Zurücksetzen Deines Passwortes nicht angefordert hast, kannst"
+" Du diese E-Mail ignorieren."
 
 #: app/templates/macros/form.html:53
 msgid "Cancel"

@@ -38,6 +38,14 @@ app.email module
     :undoc-members:
     :show-inheritance:
 
+app.exceptions module
+---------------------
+
+.. automodule:: app.exceptions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 app.request module
 ------------------
 

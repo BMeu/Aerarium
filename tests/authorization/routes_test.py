@@ -7,6 +7,8 @@ from app import create_app
 from app import db
 from app import mail
 from app.authorization import User
+from app.authorization.tokens import ChangeEmailAddressToken
+from app.authorization.tokens import ResetPasswordToken
 from app.configuration import TestConfiguration
 
 
@@ -156,7 +158,6 @@ class RoutesTest(TestCase):
             self.assertEqual(new_name, user.name)
             self.assertEqual(email, user.get_email())
             self.assertTrue(user.check_password(new_password))
-            self.assertIn('Your changes have been saved.', data)
 
     def test_user_profile_post_name_and_password_and_email(self):
         """
@@ -209,7 +210,6 @@ class RoutesTest(TestCase):
             self.assertEqual(new_name, user.name)
             self.assertEqual(email, user.get_email())
             self.assertTrue(user.check_password(new_password))
-            self.assertIn('Your changes have been saved.', data)
 
     def test_change_email_success(self):
         """
@@ -226,8 +226,10 @@ class RoutesTest(TestCase):
 
         user_id = user.id
         new_email = 'test2@example.com'
-        token = user._get_change_email_address_token(new_email)
-        self.assertIsNotNone(token)
+        token_obj = ChangeEmailAddressToken()
+        token_obj.user_id = user_id
+        token_obj.new_email = new_email
+        token = token_obj.create()
 
         response = self.client.get(f'/user/change-email/{token}', follow_redirects=True)
         data = response.get_data(as_text=True)
@@ -251,8 +253,10 @@ class RoutesTest(TestCase):
 
         user_id = user.id
         new_email = 'test2@example.com'
-        token = user._get_change_email_address_token(new_email)
-        self.assertIsNotNone(token)
+        token_obj = ChangeEmailAddressToken()
+        token_obj.user_id = user_id
+        token_obj.new_email = new_email
+        token = token_obj.create()
 
         response = self.client.get(f'/user/change-email/invalid-{token}', follow_redirects=True)
         data = response.get_data(as_text=True)
@@ -280,8 +284,10 @@ class RoutesTest(TestCase):
         db.session.commit()
 
         user_id = user.id
-        token = user._get_change_email_address_token(existing_email)
-        self.assertIsNotNone(token)
+        token_obj = ChangeEmailAddressToken()
+        token_obj.user_id = user_id
+        token_obj.new_email = existing_email
+        token = token_obj.create()
 
         response = self.client.get(f'/user/change-email/{token}', follow_redirects=True)
         data = response.get_data(as_text=True)
@@ -403,8 +409,9 @@ class RoutesTest(TestCase):
             password=password
         ))
 
-        token = user._get_password_reset_token()
-        self.assertIsNotNone(token)
+        token_obj = ResetPasswordToken()
+        token_obj.user_id = user_id
+        token = token_obj.create()
 
         response = self.client.get(f'/reset-password/{token}', follow_redirects=True)
         data = response.get_data(as_text=True)
@@ -427,8 +434,9 @@ class RoutesTest(TestCase):
         db.session.add(user)
         db.session.commit()
 
-        token = user._get_password_reset_token()
-        self.assertIsNotNone(token)
+        token_obj = ResetPasswordToken()
+        token_obj.user_id = user.id
+        token = token_obj.create()
 
         response = self.client.get(f'/reset-password/{token}', follow_redirects=True)
         data = response.get_data(as_text=True)
@@ -482,8 +490,9 @@ class RoutesTest(TestCase):
             password=password
         ))
 
-        token = user._get_password_reset_token()
-        self.assertIsNotNone(token)
+        token_obj = ResetPasswordToken()
+        token_obj.user_id = user_id
+        token = token_obj.create()
 
         new_password = 'abcdef'
         response = self.client.post(f'/reset-password/{token}', follow_redirects=True, data=dict(
@@ -515,8 +524,9 @@ class RoutesTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        token = user._get_password_reset_token()
-        self.assertIsNotNone(token)
+        token_obj = ResetPasswordToken()
+        token_obj.user_id = user_id
+        token = token_obj.create()
 
         new_password = 'abcdef'
         response = self.client.post(f'/reset-password/{token}', follow_redirects=True, data=dict(
@@ -549,8 +559,9 @@ class RoutesTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        token = user._get_password_reset_token()
-        self.assertIsNotNone(token)
+        token_obj = ResetPasswordToken()
+        token_obj.user_id = user_id
+        token = token_obj.create()
 
         new_password = 'abcdef'
         response = self.client.post(f'/reset-password/{token}', follow_redirects=True, data=dict(
