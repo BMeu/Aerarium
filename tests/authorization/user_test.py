@@ -280,6 +280,47 @@ class UserTest(TestCase):
             self.assertFalse(changed_email)
             self.assertEqual(old_email, user.get_email())
 
+    @patch('app.token.encode')
+    def test_send_change_email_address_email(self, mock_encode: MagicMock):
+        """
+            Test sending a email address change email to the user.
+
+            Expected result: An email with a link containing the token would be sent to the user.
+        """
+        # Fake a known token to be able to check for it in the mail.
+        token_bytes = b'AFakeTokenForCheckingIfItIsIncludedInTheMail'
+        token = token_bytes.decode('utf-8')
+        mock_encode.return_value = token_bytes
+        token_link = url_for('authorization.change_email', token=token, _external=True)
+
+        email = 'test@example.com'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+
+        db.session.add(user)
+        db.session.commit()
+
+        self.assertEqual(user_id, user.id)
+
+        new_email = 'test2@example.com'
+        with mail.record_messages() as outgoing:
+            token_obj = user.send_change_email_address_email(new_email)
+            validity_in_minutes = token_obj.get_validity(in_minutes=True)
+
+            self.assertIsNotNone(token_obj)
+            self.assertEqual(token, token_obj._token)
+            self.assertEqual(1, len(outgoing))
+            self.assertEqual([new_email], outgoing[0].recipients)
+            self.assertIn('Change Your Email Address', outgoing[0].subject)
+            self.assertIn(token_link, outgoing[0].body)
+            self.assertIn(token_link, outgoing[0].html)
+            self.assertIn(f'{validity_in_minutes} minutes', outgoing[0].body)
+            self.assertIn(f'{validity_in_minutes} minutes', outgoing[0].html)
+            self.assertIn(f'from {email}', outgoing[0].body)
+            self.assertIn(f'to {new_email}', outgoing[0].body)
+            self.assertIn(f'{email}', outgoing[0].html)
+
     def test_verify_change_email_address_token_success(self):
         """
             Test the email address change JWT without any failure.
@@ -328,47 +369,6 @@ class UserTest(TestCase):
             loaded_user, loaded_email = User.verify_change_email_address_token(token)
             self.assertIsNone(loaded_user)
             self.assertIsNone(loaded_email)
-
-    @patch('app.token.encode')
-    def test_send_change_email_address_email(self, mock_encode: MagicMock):
-        """
-            Test sending a email address change email to the user.
-
-            Expected result: An email with a link containing the token would be sent to the user.
-        """
-        # Fake a known token to be able to check for it in the mail.
-        token_bytes = b'AFakeTokenForCheckingIfItIsIncludedInTheMail'
-        token = token_bytes.decode('utf-8')
-        mock_encode.return_value = token_bytes
-        token_link = url_for('authorization.change_email', token=token, _external=True)
-
-        email = 'test@example.com'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-
-        db.session.add(user)
-        db.session.commit()
-
-        self.assertEqual(user_id, user.id)
-
-        new_email = 'test2@example.com'
-        with mail.record_messages() as outgoing:
-            token_obj = user.send_change_email_address_email(new_email)
-            validity_in_minutes = token_obj.get_validity(in_minutes=True)
-
-            self.assertIsNotNone(token_obj)
-            self.assertEqual(token, token_obj._token)
-            self.assertEqual(1, len(outgoing))
-            self.assertEqual([new_email], outgoing[0].recipients)
-            self.assertIn('Change Your Email Address', outgoing[0].subject)
-            self.assertIn(token_link, outgoing[0].body)
-            self.assertIn(token_link, outgoing[0].html)
-            self.assertIn(f'{validity_in_minutes} minutes', outgoing[0].body)
-            self.assertIn(f'{validity_in_minutes} minutes', outgoing[0].html)
-            self.assertIn(f'from {email}', outgoing[0].body)
-            self.assertIn(f'to {new_email}', outgoing[0].body)
-            self.assertIn(f'{email}', outgoing[0].html)
 
     # endregion
 
@@ -486,55 +486,6 @@ class UserTest(TestCase):
         is_correct = user.check_password(None)
         self.assertFalse(is_correct)
 
-    def test_verify_password_reset_token_success(self):
-        """
-            Test the password reset JWT without any failures.
-
-            Expected result: The token is generated and returns the correct user when verifying.
-        """
-        email = 'test@example.com'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-
-        db.session.add(user)
-        db.session.commit()
-
-        self.assertEqual(user_id, user.id)
-
-        token_obj = ResetPasswordToken()
-        token_obj.user_id = user_id
-        token = token_obj.create()
-
-        loaded_user = User.verify_password_reset_token(token)
-        self.assertIsNotNone(loaded_user)
-        self.assertEqual(user, loaded_user)
-
-    def test_verify_password_reset_token_failure_invalid(self):
-        """
-            Test the password reset JWT with an invalid token.
-
-            Expected result: The token is generated, but does not return a user when verifying.
-        """
-        email = 'test@example.com'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-
-        db.session.add(user)
-        db.session.commit()
-
-        self.assertEqual(user_id, user.id)
-
-        token_obj = ResetPasswordToken()
-        token_obj.user_id = user_id
-        token_obj.part_of_the_payload = True
-        token = token_obj.create()
-
-        with self.assertRaises(InvalidJWTokenPayloadError):
-            loaded_user = User.verify_password_reset_token(token)
-            self.assertIsNone(loaded_user)
-
     @patch('app.token.encode')
     def test_send_password_reset_email(self, mock_encode: MagicMock):
         """
@@ -586,6 +537,55 @@ class UserTest(TestCase):
             user.send_password_reset_email()
 
             self.assertEqual(0, len(outgoing))
+
+    def test_verify_password_reset_token_success(self):
+        """
+            Test the password reset JWT without any failures.
+
+            Expected result: The token is generated and returns the correct user when verifying.
+        """
+        email = 'test@example.com'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+
+        db.session.add(user)
+        db.session.commit()
+
+        self.assertEqual(user_id, user.id)
+
+        token_obj = ResetPasswordToken()
+        token_obj.user_id = user_id
+        token = token_obj.create()
+
+        loaded_user = User.verify_password_reset_token(token)
+        self.assertIsNotNone(loaded_user)
+        self.assertEqual(user, loaded_user)
+
+    def test_verify_password_reset_token_failure_invalid(self):
+        """
+            Test the password reset JWT with an invalid token.
+
+            Expected result: The token is generated, but does not return a user when verifying.
+        """
+        email = 'test@example.com'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+
+        db.session.add(user)
+        db.session.commit()
+
+        self.assertEqual(user_id, user.id)
+
+        token_obj = ResetPasswordToken()
+        token_obj.user_id = user_id
+        token_obj.part_of_the_payload = True
+        token = token_obj.create()
+
+        with self.assertRaises(InvalidJWTokenPayloadError):
+            loaded_user = User.verify_password_reset_token(token)
+            self.assertIsNone(loaded_user)
 
     # endregion
 
