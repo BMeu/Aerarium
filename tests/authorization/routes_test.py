@@ -121,6 +121,7 @@ class RoutesTest(TestCase):
         name = 'John Doe'
         password = '123456'
         user = User(email, name)
+        user.set_password(password + '!')
         with mail.record_messages() as outgoing:
             user.set_password(password)
             self.assertEqual(1, len(outgoing))
@@ -170,6 +171,7 @@ class RoutesTest(TestCase):
         name = 'John Doe'
         password = '123456'
         user = User(email, name)
+        user.set_password(password + '!')
         with mail.record_messages() as outgoing:
             user.set_password(password)
             self.assertEqual(1, len(outgoing))

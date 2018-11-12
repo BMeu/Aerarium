@@ -1,0 +1,15 @@
+{% extends '_base_email_html.html' %}
+{% block content %}
+    <p>
+        {{ _('To irrevocably delete your user profile, click on the following link or copy and paste it to your browser:') }}
+    </p>
+    <p>
+        <a href="{{ link }}" title="{{ _('Delete User Profile') }}">{{ link }}</a>
+    </p>
+    <p>
+        {{ _('This link is only valid for the next %(validity)d minutes.', validity=validity) }}
+    </p>
+    <p>
+        {{ _('If you have not requested to delete your user account simply ignore this message. However, we highly recommend to change your password immediately.') }}
+    </p>
+{% endblock %}

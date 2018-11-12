@@ -1,0 +1,10 @@
+{% extends '_base_email_plain.txt' %}
+{% block content %}
+{{ _('To irrevocably delete your user profile, click on the following link or copy and paste it to your browser:') }}
+
+{{ link }}
+
+{{ _('This link is only valid for the next %(validity)d minutes.', validity=validity) }}
+
+{{ _('If you have not requested to delete your user account simply ignore this message. However, we highly recommend to change your password immediately.') }}
+{% endblock %}

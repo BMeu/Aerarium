@@ -36,6 +36,7 @@ from app import get_app
 from app import login as app_login
 from app import send_email
 from app.authorization.tokens import ChangeEmailAddressToken
+from app.authorization.tokens import DeleteAccountToken
 from app.authorization.tokens import ResetPasswordToken
 
 """
@@ -232,15 +233,18 @@ class User(UserMixin, db.Model):
         if self.check_password(password):
             return
 
-        application = get_app()
+        # If the user does not have a password at the moment, their account has been newly created. Do not send an email
+        # in this case.
+        if self.password_hash is not None:
+            application = get_app()
 
-        support_address = application.config.get('SUPPORT_ADDRESS', None)
-        body_plain = render_template('authorization/emails/password_changed_plain.txt',
-                                     name=self.name, support_email=support_address)
-        body_html = render_template('authorization/emails/password_changed_html.html',
-                                    name=self.name, support_email=support_address)
+            support_address = application.config.get('SUPPORT_ADDRESS', None)
+            body_plain = render_template('authorization/emails/password_changed_plain.txt',
+                                         name=self.name, support_email=support_address)
+            body_html = render_template('authorization/emails/password_changed_html.html',
+                                        name=self.name, support_email=support_address)
 
-        send_email(_('Your Password Has Been Changed'), [self.get_email()], body_plain, body_html)
+            send_email(_('Your Password Has Been Changed'), [self.get_email()], body_plain, body_html)
 
         self.password_hash = bcrypt.generate_password_hash(password)
 
@@ -332,6 +336,64 @@ class User(UserMixin, db.Model):
 
         logged_out = logout_user()
         return logged_out
+
+    # endregion
+
+    # region Delete
+
+    def send_delete_account_email(self) -> DeleteAccountToken:
+        """
+            Send a token to the user to confirm their intention to delete their account.
+
+            :return: The token sent in the mail.
+        """
+        token_obj = DeleteAccountToken()
+        token_obj.user_id = self.id
+
+        token = token_obj.create()
+        validity = token_obj.get_validity(in_minutes=True)
+
+        link = url_for('authorization.delete_account', token=token, _external=True)
+
+        body_plain = render_template('authorization/emails/delete_account_request.txt',
+                                     name=self.name, link=link, validity=validity)
+
+        body_html = render_template('authorization/emails/delete_account_request.html',
+                                    name=self.name, link=link, validity=validity)
+        send_email(_('Delete Your User Profile'), [self.get_email()], body_plain, body_html)
+
+        return token_obj
+
+    @staticmethod
+    def verify_delete_account_token(token: str) -> Optional['User']:
+        """
+            Verify the JWT to delete a user's account.
+
+            :param token: The delete-account token.
+            :return: The user to which the token belongs; ``None`` if the token is invalid.
+        """
+        token_obj = DeleteAccountToken.verify(token)
+        user = User.load_from_id(token_obj.user_id)
+        return user
+
+    def delete(self) -> None:
+        """
+            Delete the user's account. Log them out first if necessary. Notify them via mail.
+        """
+        if self == current_user:
+            self.logout()
+
+        # Notify the user via email.
+        application = get_app()
+        support_address = application.config.get('SUPPORT_ADDRESS', None)
+        body_plain = render_template('authorization/emails/delete_account_confirmation.txt',
+                                     name=self.name, new_email=self.get_email(), support_email=support_address)
+        body_html = render_template('authorization/emails/delete_account_confirmation.html',
+                                    name=self.name, new_email=self.get_email(), support_email=support_address)
+        send_email(_('Your User Profile Has Been Deleted'), [self.get_email()], body_plain, body_html)
+
+        db.session.delete(self)
+        db.session.commit()
 
     # endregion
 
@@ -459,5 +521,15 @@ class PasswordResetForm(FlaskForm):
     password_confirmation = PasswordField(_l('Confirm Your New Password:'),
                                           validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField(_l('Change Password'))
+
+
+class DeleteAccountForm(FlaskForm):
+    """
+        A form to request the deletion of a user's account. The CSRF token is used so that a user cannot be tricked
+        to delete their profile by redirecting them to the URL.
+    """
+
+    submit = SubmitField(_l('Delete User Profile'),
+                         description=_l('Delete your user profile and all data linked to it.'))
 
 # endregion

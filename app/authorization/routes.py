@@ -5,6 +5,7 @@
     The routes of the authorization blueprint.
 """
 
+from flask import abort
 from flask import flash
 from flask import Markup
 from flask import redirect
@@ -21,6 +22,7 @@ from werkzeug.urls import url_parse
 from app import db
 from app.authorization import AccountForm
 from app.authorization import bp
+from app.authorization import DeleteAccountForm
 from app.authorization import EmailForm
 from app.authorization import LoginForm
 from app.authorization import PasswordResetForm
@@ -40,6 +42,8 @@ def user_profile() -> str:
 
         :return: The HTML response.
     """
+
+    delete_form=DeleteAccountForm()
 
     form = AccountForm(obj=current_user, email=current_user.get_email())
     if form.validate_on_submit():
@@ -69,7 +73,7 @@ def user_profile() -> str:
         flash(_('Your changes have been saved.'))
         return redirect(url_for('authorization.user_profile'))
 
-    return render_template('authorization/account.html', title=_('User Profile'), form=form)
+    return render_template('authorization/account.html', title=_('User Profile'), form=form, delete_form=delete_form)
 
 
 @bp.route('/user/change-email/<string:token>')
@@ -202,6 +206,52 @@ def logout() -> str:
     if current_user.is_authenticated:
         User.logout()
         flash(_('You were successfully logged out.'))
+
+    return redirect(url_for('main.index'))
+
+# endregion
+
+# region Delete User Account
+
+
+@bp.route('/delete-profile', methods=['POST'])
+@fresh_login_required
+def delete_account_request() -> str:
+    """
+        Send an email to the user to confirm the account deletion request.
+
+        :return: The HTML response.
+    """
+    form = DeleteAccountForm()
+    if form.validate_on_submit():
+        token = current_user.send_delete_account_email()
+
+        validity = token.get_validity(in_minutes=True)
+        flash(_('An email has been sent to your email address. Please open the link included in the mail within the \
+                 next %(validity)d minutes to delete your user profile. Otherwise, your user profile will not be \
+                 deleted.',
+                validity=validity),
+              category='warning')
+
+    return redirect(url_for('authorization.user_profile'))
+
+
+@bp.route('/delete-profile/<string:token>', methods=['GET'])
+@fresh_login_required
+def delete_account(token: str) -> str:
+    """
+        Delete account of the user given in the token.
+
+        :return: The HTML response.
+    """
+    try:
+        user = User.verify_delete_account_token(token)
+    except (InvalidJWTokenPayloadError, PyJWTError):
+        return abort(404)
+
+    user.delete()
+    flash(_('Your user profile and all data linked to it have been deleted. We would be happy to see you again in the \
+             future!'))
 
     return redirect(url_for('main.index'))
 

@@ -2,4 +2,12 @@
 {% from 'macros/form.html' import render_form %}
 {% block content %}
     {{ render_form(form, cancel_button=True) }}
+
+    <h2>
+        {{ _('Danger Zone') }}
+    </h2>
+    <p>
+        {{ _('Be careful! All actions below this point cannot be undone. Before actually performing these actions, we will send you a mail to confirm your intention.') }}
+        {{ render_form(delete_form, action_url=url_for('authorization.delete_account_request'), danger=True) }}
+    </p>
 {% endblock %}

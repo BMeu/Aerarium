@@ -129,6 +129,7 @@ def _initialize_extensions(application: Flask) -> None:
     login.init_app(application)
     login.login_message = _l('Please log in to access this page.')
     login.login_message_category = 'error'
+    login.login_view = 'authorization.login'
 
     mail.init_app(application)
 

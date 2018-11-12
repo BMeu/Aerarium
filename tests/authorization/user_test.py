@@ -20,6 +20,7 @@ from app.authorization import logout_required
 from app.authorization import User
 from app.authorization.user import UniqueEmail
 from app.authorization.tokens import ChangeEmailAddressToken
+from app.authorization.tokens import DeleteAccountToken
 from app.authorization.tokens import ResetPasswordToken
 from app.configuration import TestConfiguration
 from app.exceptions import InvalidJWTokenPayloadError
@@ -376,7 +377,7 @@ class UserTest(TestCase):
 
     def test_set_password_success(self):
         """
-            Test setting a new password.
+            Test setting a new password if one has been set before.
 
             Expected result: The password is set on the user, but not in plaintext.
         """
@@ -384,8 +385,7 @@ class UserTest(TestCase):
         name = 'John Doe'
         password = 'Aerarium123!'
         user = User(email, name)
-
-        self.assertIsNone(user.password_hash)
+        user.set_password(password + '?')
 
         with mail.record_messages() as outgoing:
             user.set_password(password)
@@ -397,6 +397,26 @@ class UserTest(TestCase):
             self.assertIn('Your password has been updated.', outgoing[0].html)
             self.assertIsNotNone(user.password_hash)
             self.assertNotEqual(password, user.password_hash)
+            self.assertTrue(user.check_password(password))
+
+    def test_set_password_success_first_password(self):
+        """
+            Test setting a new password if none has been set before.
+
+            Expected result: The password is set on the user, but no mail is sent.
+        """
+        email = 'test@example.com'
+        name = 'John Doe'
+        password = 'Aerarium123!'
+        user = User(email, name)
+
+        self.assertIsNone(user.password_hash)
+
+        with mail.record_messages() as outgoing:
+            user.set_password(password)
+
+            self.assertEqual(0, len(outgoing))
+            self.assertIsNotNone(user.password_hash)
             self.assertTrue(user.check_password(password))
 
     def test_set_password_success_unchanged_password(self):
@@ -714,6 +734,180 @@ class UserTest(TestCase):
         self.assertTrue(logged_out)
         self.assertFalse(current_user.is_authenticated)
         self.assertNotEqual(current_user.get_id(), user_id)
+
+    # endregion
+
+    # region Delete
+
+    @patch('app.token.encode')
+    def test_send_delete_account_email(self, mock_encode: MagicMock):
+        """
+            Test sending a delete account email to the user.
+
+            Expected result: An email with a link containing the token would be sent to the user.
+        """
+        # Fake a known token to be able to check for it in the mail.
+        token_bytes = b'AFakeTokenForCheckingIfItIsIncludedInTheMail'
+        token = token_bytes.decode('utf-8')
+        mock_encode.return_value = token_bytes
+        token_link = url_for('authorization.delete_account', token=token, _external=True)
+
+        email = 'test@example.com'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+
+        db.session.add(user)
+        db.session.commit()
+
+        self.assertEqual(user_id, user.id)
+
+        with mail.record_messages() as outgoing:
+            token_obj = user.send_delete_account_email()
+            validity_in_minutes = token_obj.get_validity(in_minutes=True)
+
+            self.assertIsNotNone(token_obj)
+            self.assertEqual(token, token_obj._token)
+            self.assertEqual(1, len(outgoing))
+            self.assertEqual([email], outgoing[0].recipients)
+            self.assertIn('Delete Your User Profile', outgoing[0].subject)
+            self.assertIn(token_link, outgoing[0].body)
+            self.assertIn(token_link, outgoing[0].html)
+            self.assertIn(f'{validity_in_minutes} minutes', outgoing[0].body)
+            self.assertIn(f'{validity_in_minutes} minutes', outgoing[0].html)
+
+    def test_verify_delete_account_token_success(self):
+        """
+            Test the delete account JWT without any failure.
+
+            Expected result: The token returns the correct user when verifying.
+        """
+        email = 'test@example.com'
+        name = 'John Doe'
+        user = User(email, name)
+
+        db.session.add(user)
+        db.session.commit()
+
+        token_obj = DeleteAccountToken()
+        token_obj.user_id = user.id
+        token = token_obj.create()
+
+        loaded_user = User.verify_delete_account_token(token)
+        self.assertIsNotNone(loaded_user)
+        self.assertEqual(user, loaded_user)
+
+    def test_verify_delete_account_token_invalid(self):
+        """
+            Test the delete account JWT without any failure.
+
+            Expected result: The token does not return a user when verifying.
+        """
+        email = 'test@example.com'
+        name = 'John Doe'
+        user = User(email, name)
+
+        db.session.add(user)
+        db.session.commit()
+
+        token_obj = DeleteAccountToken()
+        token_obj.user_id = user.id
+        token_obj.part_of_the_payload = True
+        token = token_obj.create()
+
+        with self.assertRaises(InvalidJWTokenPayloadError):
+            loaded_user = User.verify_delete_account_token(token)
+            self.assertIsNotNone(loaded_user)
+
+    def test_delete_logged_in(self):
+        """
+            Test deleting the user when they are logged in.
+
+            Expected result: The user is logged out, informed via mail, and deleted. Other users are not deleted.
+        """
+        other_email = 'info@example.com'
+        other_name = 'Jane Doe'
+        other_user = User(other_email, other_name)
+        db.session.add(other_user)
+
+        email = 'test@example.com'
+        name = 'John Doe'
+        password = 'Aerarium123!'
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        user = User.login(email, password)
+        other_id = other_user.id
+        user_id = user.id
+
+        self.assertEqual(current_user, user)
+
+        with mail.record_messages() as outgoing:
+            user.delete()
+
+            # Test that the user has been logged out.
+            self.assertNotEqual(current_user, user)
+
+            # Test that an email has been sent.
+            self.assertEqual(1, len(outgoing))
+            self.assertListEqual([email], outgoing[0].recipients)
+            self.assertIn('Your User Profile Has Been Deleted', outgoing[0].subject)
+
+            # Test that the user has actually been deleted.
+            loaded_user = User.load_from_id(user_id)
+            self.assertIsNone(loaded_user)
+
+            # Test that other users have not been deleted.
+            loaded_user = User.load_from_id(other_id)
+            self.assertEqual(other_user, loaded_user)
+
+    def test_delete_logged_out(self):
+        """
+            Test deleting the user when they are logged out.
+
+            Expected result: The user is informed via mail and deleted. Other users are not deleted.
+        """
+        other_email = 'info@example.com'
+        other_name = 'Jane Doe'
+        other_password = 'Aerarium123!'
+        other_user = User(other_email, other_name)
+        other_user.set_password(other_password)
+        db.session.add(other_user)
+
+        email = 'test@example.com'
+        name = 'John Doe'
+        user = User(email, name)
+
+        db.session.add(user)
+        db.session.commit()
+
+        other_user = User.login(other_email, other_password)
+        other_id = other_user.id
+        user_id = user.id
+
+        self.assertEqual(current_user, other_user)
+
+        with mail.record_messages() as outgoing:
+            user.delete()
+
+            # Test that the other user has not been logged out.
+            self.assertEqual(current_user, other_user)
+
+            # Test that an email has been sent.
+            self.assertEqual(1, len(outgoing))
+            self.assertListEqual([email], outgoing[0].recipients)
+            self.assertIn('Your User Profile Has Been Deleted', outgoing[0].subject)
+
+            # Test that the user has actually been deleted.
+            loaded_user = User.load_from_id(user_id)
+            self.assertIsNone(loaded_user)
+
+            # Test that other users have not been deleted.
+            loaded_user = User.load_from_id(other_id)
+            self.assertEqual(other_user, loaded_user)
 
     # endregion
 

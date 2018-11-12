@@ -1,0 +1,11 @@
+{% extends '_base_email_plain.txt' %}
+{% block content %}
+{{ _('Your user profile and all data linked to it have been deleted.') }}
+
+{% if support_email %}
+{{ _('If you have not initiated this action yourself, please contact us immediately. You can reach us under %(support_email)s.', support_email=support_email) }}
+{% endif %}
+
+{{ _('We would be happy to see you again in the future!') }}
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends '_base_email_html.html' %}
+{% block content %}
+    <p>
+        {{ _('Your user profile and all data linked to it have been deleted.') }}
+    </p>
+    {% if support_email %}
+    <p>
+        {{ _('If you have not initiated this action yourself, please contact us immediately. You can reach us under %(support_email)s.',
+        program=g.title,
+        support_email='<a href="mailto:%(email)s" title="%(program)s Support">%(email)s</a>'
+            |format(email=support_email, program=g.title)
+            |safe) }}
+    </p>
+    {% endif %}
+    <p>
+        {{ _('We would be happy to see you again in the future!') }}
+    </p>
+{% endblock %}

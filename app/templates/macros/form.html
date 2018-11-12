@@ -37,20 +37,33 @@
     Render a submit button.
 
     Params:
-        field  - WTForm SubmitField.
-        kwargs - Any arguments to put them into the HTML attributes.
-                 Exceptions: for - for_,
-                             class - class_,
-                             class__ - class_
+        field           - WTForm SubmitField.
+        cancel_button   - Whether to show a cancel button.
+        danger          - Whether to display the submit button in a danger style.
+        kwargs          - Any arguments to put them into the HTML attributes.
+                          Exceptions: for - for_,
+                                      class - class_,
+                                      class__ - class_
 
     Example usage:
         {{ macros.render_submit_field(form.email, placeholder='Input email', type='email') }}
 #}
-{% macro render_submit_field(field, label_visible=True, include_cancel_button=False) -%}
+{% macro render_submit_field(field, label_visible=True, include_cancel_button=False, danger=False) -%}
+    {% set submit_color='btn-dark' %}
+    {% set cancel_color='btn-outline-dark' %}
+    {% if danger %}
+        {% set submit_color='btn-danger' %}
+        {% set cancel_color='btn-outline-danger' %}
+    {% endif %}
     <div class="form-group {{ kwargs.pop('class_', '') }}">
-        {{ field(class_='btn btn-dark', **kwargs) }}
+        {{ field(class_='btn ' + submit_color, **kwargs) }}
         {% if include_cancel_button %}
-            <input type="reset" class="btn btn-outline-dark" value="{{ _('Cancel') }}" />
+            <input type="reset" class="btn {{ cancel_color }}" value="{{ _('Cancel') }}" />
+        {% endif %}
+        {% if field.description %}
+            <p>
+                <small class="text-form text-muted">{{ field.description }}</small>
+            </p>
         {% endif %}
     </div>
 {%- endmacro %}
@@ -131,6 +144,7 @@
         action_url      - URL to which the form will be submitted.
         class_          - CSS classes, separated by spaces.
         cancel_button   - Whether to show a cancel button.
+        danger          - Whether to display the submit button in a danger style.
 
      Example usage:
         {% call macros.render_form(form, action_url=url_for('login_view'), class_='login-form') %}
@@ -139,26 +153,36 @@
             {{ macros.render_checkbox_field(form.remember_me, type='checkbox') }}
         {% endcall %}
 #}
-{% macro render_form(form, action_url='', class_='', cancel_button=False) -%}
-    <form method="POST" action="{{ action_url }}" role="form" class="{{ class_ }}">
-        {{ form.hidden_tag() }}
-        {% if caller %}
-            {{ caller() }}
-        {% else %}
-            {% for field in form %}
-                {% if field.type == 'BooleanField' %}
-                    {{ render_checkbox_field(field) }}
-                {% elif field.type == 'RadioField' %}
-                    {{ render_radio_field(field) }}
-                {% elif field.type == 'SubmitField' %}
-                    {{ render_submit_field(field, include_cancel_button=cancel_button) }}
-                {% elif field.type != 'CSRFTokenField' %}
-                    {{ render_field(field) }}
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-        <p class="text-form text-muted mb-0">
-            {{ _('Fields marked with an asterisk (%(asterisk)s) are required.', asterisk=required_flag|safe) }}
-        </p>
-    </form>
+{% macro render_form(form, action_url='', class_='', cancel_button=False, danger=False) -%}
+    {% set ns = namespace(has_mandatory_fields=False) %}
+    <div class="mb-4">
+        <form method="POST" action="{{ action_url }}" role="form" class="{{ class_ }}">
+            {{ form.hidden_tag() }}
+            {% if caller %}
+                {{ caller() }}
+            {% else %}
+                {% for field in form %}
+                    {% if field.flags.required %}
+                        {% set ns.has_mandatory_fields=True %}
+                    {% endif %}
+
+                    {% if field.type == 'BooleanField' %}
+                        {{ render_checkbox_field(field) }}
+                    {% elif field.type == 'RadioField' %}
+                        {{ render_radio_field(field) }}
+                    {% elif field.type == 'SubmitField' %}
+                        {{ render_submit_field(field, include_cancel_button=cancel_button, danger=danger) }}
+                    {% elif field.type != 'CSRFTokenField' %}
+                        {{ render_field(field) }}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            {% if ns.has_mandatory_fields %}
+            <p class="text-form text-muted mb-0">
+                {{ _('Fields marked with an asterisk (%(asterisk)s) are required.', asterisk=required_flag|safe) }}
+            </p>
+            {% endif %}
+        </form>
+    </div>
 {%- endmacro %}
