@@ -41,7 +41,9 @@ class EmailTest(TestCase):
         sender = 'test@example.com'
         email = Email(subject, body_path, sender)
 
-        self.assertEqual(subject, email._subject)
+        subject_prefix = self.app.config['TITLE_SHORT']
+
+        self.assertEqual(f'{subject_prefix} » {subject}', email._subject)
         self.assertEqual(body_path, email._body_template_base_path)
         self.assertIsNone(email._body_plain)
         self.assertIsNone(email._body_html)
@@ -60,7 +62,9 @@ class EmailTest(TestCase):
         body_path = 'email/test'
         email = Email(subject, body_path)
 
-        self.assertEqual(subject, email._subject)
+        subject_prefix = self.app.config['TITLE_SHORT']
+
+        self.assertEqual(f'{subject_prefix} » {subject}', email._subject)
         self.assertEqual(body_path, email._body_template_base_path)
         self.assertIsNone(email._body_plain)
         self.assertIsNone(email._body_html)
@@ -173,7 +177,7 @@ class EmailTest(TestCase):
             email.send(recipient)
 
             self.assertEqual(1, len(outgoing))
-            self.assertEqual(subject, outgoing[0].subject)
+            self.assertIn(subject, outgoing[0].subject)
             self.assertEqual(sender, outgoing[0].sender)
             self.assertListEqual([recipient], outgoing[0].recipients)
             self.assertEqual(body_plain, outgoing[0].body)
@@ -201,7 +205,7 @@ class EmailTest(TestCase):
             email.send(recipients)
 
             self.assertEqual(1, len(outgoing))
-            self.assertEqual(subject, outgoing[0].subject)
+            self.assertIn(subject, outgoing[0].subject)
             self.assertEqual(sender, outgoing[0].sender)
             self.assertListEqual(recipients, outgoing[0].recipients)
             self.assertEqual(body_plain, outgoing[0].body)

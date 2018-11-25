@@ -38,14 +38,16 @@ class Email(object):
             :param sender: The sender of the mail. If not set, the sender will be taken from the app configuration.
             :raise NoMailSenderError: If no sender is given and none is configured in the app configuration.
         """
+        application = get_app()
+        title = application.config['TITLE_SHORT']
+
         self._body_template_base_path: str = body
         self._body_plain: Optional[str] = None
         self._body_html: Optional[str] = None
-        self._subject: str = subject
+        self._subject: str = f'{title} » {subject}'
 
         self._sender: str = sender
         if self._sender is None:
-            application = get_app()
             self._sender = application.config['MAIL_FROM']
 
         # If the sender is still not known, raise an error.
