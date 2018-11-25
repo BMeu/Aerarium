@@ -7,7 +7,7 @@
 <p>
     {{ _('%(login)s.',
          login='<a href="%(url)s" title="%(title)s">%(text)s</a>'
-            |format(url=url_for('authorization.login'), title=_('Log in'), text=_('Log in'))
+            |format(url=url_for('userprofile.login'), title=_('Log in'), text=_('Log in'))
             |safe
     ) }}
 </p>

@@ -177,7 +177,7 @@ class User(UserMixin, db.Model):
         token = token_obj.create()
         validity = token_obj.get_validity(in_minutes=True)
 
-        link = url_for('authorization.change_email', token=token, _external=True)
+        link = url_for('userprofile.change_email', token=token, _external=True)
         email_old = self.get_email()
 
         email_obj = Email(_('Change Your Email Address'), 'authorization/emails/change_email_address_request')
@@ -258,7 +258,7 @@ class User(UserMixin, db.Model):
 
         validity = token_obj.get_validity(in_minutes=True)
 
-        link = url_for('authorization.reset_password', token=token, _external=True)
+        link = url_for('userprofile.reset_password', token=token, _external=True)
 
         email = Email(_('Reset Your Password'), 'authorization/emails/reset_password_request')
         email.prepare(name=self.name, link=link, validity=validity)
@@ -333,7 +333,7 @@ class User(UserMixin, db.Model):
         token = token_obj.create()
         validity = token_obj.get_validity(in_minutes=True)
 
-        link = url_for('authorization.delete_account', token=token, _external=True)
+        link = url_for('userprofile.delete_account', token=token, _external=True)
 
         email = Email(_('Delete Your User Profile'), 'authorization/emails/delete_account_request')
         email.prepare(name=self.name, link=link, validity=validity)

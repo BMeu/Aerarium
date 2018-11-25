@@ -24,12 +24,12 @@ from app.exceptions import InvalidJWTokenPayloadError
 from app.userprofile import logout_required
 from app.userprofile import User
 from app.userprofile.tokens import ChangeEmailAddressToken
-from app.views.authorization.forms import AccountForm
-from app.views.authorization import bp
-from app.views.authorization.forms import DeleteAccountForm
-from app.views.authorization.forms import EmailForm
-from app.views.authorization.forms import LoginForm
-from app.views.authorization.forms import PasswordResetForm
+from app.views.userprofile.forms import AccountForm
+from app.views.userprofile import bp
+from app.views.userprofile.forms import DeleteAccountForm
+from app.views.userprofile.forms import EmailForm
+from app.views.userprofile.forms import LoginForm
+from app.views.userprofile.forms import PasswordResetForm
 
 # region User Profile
 
@@ -71,7 +71,7 @@ def user_profile() -> str:
                   category='warning')
 
         flash(_('Your changes have been saved.'))
-        return redirect(url_for('authorization.user_profile'))
+        return redirect(url_for('userprofile.user_profile'))
 
     return render_template('authorization/account.html', title=_('User Profile'), form=form, delete_form=delete_form)
 
@@ -127,7 +127,7 @@ def reset_password_request() -> str:
         # infiltrators could deduce if an account exists and use this information for attacks.
         flash(_('An email has been sent to the specified address. Please be aware that the included link for resetting \
                 the password is only valid for %(validity)d minutes.', validity=validity))
-        return redirect(url_for('authorization.login'))
+        return redirect(url_for('userprofile.login'))
 
     return render_template('authorization/reset_password_request.html', title=_('Forgot Your Password?'), form=form)
 
@@ -153,7 +153,7 @@ def reset_password(token: str) -> str:
         db.session.commit()
 
         flash(_('Your password has successfully been changed.'))
-        return redirect(url_for('authorization.login'))
+        return redirect(url_for('userprofile.login'))
 
     return render_template('authorization/reset_password.html', title=_('Reset Your Password'), form=form)
 
@@ -231,7 +231,7 @@ def delete_account_request() -> str:
                 validity=validity),
               category='warning')
 
-    return redirect(url_for('authorization.user_profile'))
+    return redirect(url_for('userprofile.user_profile'))
 
 
 @bp.route('/delete-profile/<string:token>', methods=['GET'])

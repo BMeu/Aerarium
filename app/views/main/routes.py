@@ -24,6 +24,6 @@ def index() -> str:
 
     # If the user is not yet logged in, direct them to the login form.
     if not current_user.is_authenticated:
-        return redirect(url_for('authorization.login'))
+        return redirect(url_for('userprofile.login'))
 
     return render_template('dashboard.html', title=_('Dashboard'))

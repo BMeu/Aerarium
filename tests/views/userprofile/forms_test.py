@@ -12,7 +12,7 @@ from app import create_app
 from app import db
 from app.configuration import TestConfiguration
 from app.userprofile import User
-from app.views.authorization.forms import UniqueEmail
+from app.views.userprofile.forms import UniqueEmail
 
 
 class FormsTest(TestCase):

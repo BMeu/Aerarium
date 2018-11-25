@@ -12,7 +12,7 @@ from app.userprofile import User
 from app.userprofile.tokens import ChangeEmailAddressToken
 from app.userprofile.tokens import DeleteAccountToken
 from app.userprofile.tokens import ResetPasswordToken
-from app.views.authorization.forms import DeleteAccountForm
+from app.views.userprofile.forms import DeleteAccountForm
 
 
 class RoutesTest(TestCase):
