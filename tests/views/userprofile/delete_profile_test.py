@@ -173,7 +173,7 @@ class DeleteProfileTest(TestCase):
             password=password
         ))
 
-        response = self.client.get('/delete-profile/invalid-token', follow_redirects=True)
+        response = self.client.get('/user/delete/invalid-token', follow_redirects=True)
         data = response.get_data(as_text=True)
 
         self.assertEqual(404, response.status_code)
