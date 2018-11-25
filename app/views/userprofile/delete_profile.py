@@ -21,7 +21,7 @@ from app.views.userprofile import bp
 from app.views.userprofile.forms import DeleteUserProfileForm
 
 
-@bp.route('/delete-profile', methods=['POST'])
+@bp.route('/delete', methods=['POST'])
 @fresh_login_required
 def delete_profile_request() -> str:
     """
@@ -43,7 +43,7 @@ def delete_profile_request() -> str:
     return redirect(url_for('userprofile.user_profile'))
 
 
-@bp.route('/delete-profile/<string:token>', methods=['GET'])
+@bp.route('/delete/<string:token>', methods=['GET'])
 @fresh_login_required
 def delete_profile(token: str) -> str:
     """

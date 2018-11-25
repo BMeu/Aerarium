@@ -108,7 +108,7 @@ def _initialize_blueprints(application: Flask) -> None:
     from app.views.userprofile import bp as userprofile_bp
 
     application.register_blueprint(main_bp)
-    application.register_blueprint(userprofile_bp)
+    application.register_blueprint(userprofile_bp, url_prefix='/user')
 
 
 def _initialize_extensions(application: Flask) -> None:

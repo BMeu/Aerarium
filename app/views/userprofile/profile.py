@@ -25,7 +25,7 @@ from app.views.userprofile import bp
 from app.views.userprofile.forms import DeleteUserProfileForm
 
 
-@bp.route('/user', methods=['GET', 'POST'])
+@bp.route('/profile', methods=['GET', 'POST'])
 @fresh_login_required
 def user_profile() -> str:
     """
@@ -67,7 +67,7 @@ def user_profile() -> str:
     return render_template('authorization/account.html', title=_('User Profile'), form=form, delete_form=delete_form)
 
 
-@bp.route('/user/change-email/<string:token>')
+@bp.route('/change-email-address/<string:token>')
 def change_email(token: str) -> str:
     """
         Change the email address of the user given in the token to the new address specified in the token.
