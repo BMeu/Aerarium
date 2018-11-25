@@ -20,9 +20,9 @@ from jwt import PyJWTError
 from app import db
 from app.exceptions import InvalidJWTokenPayloadError
 from app.userprofile import User
-from app.views.userprofile.forms import AccountForm
+from app.views.userprofile.forms import UserProfileForm
 from app.views.userprofile import bp
-from app.views.userprofile.forms import DeleteAccountForm
+from app.views.userprofile.forms import DeleteUserProfileForm
 
 
 @bp.route('/user', methods=['GET', 'POST'])
@@ -34,9 +34,9 @@ def user_profile() -> str:
         :return: The HTML response.
     """
 
-    delete_form = DeleteAccountForm()
+    delete_form = DeleteUserProfileForm()
 
-    form = AccountForm(obj=current_user, email=current_user.get_email())
+    form = UserProfileForm(obj=current_user, email=current_user.get_email())
     if form.validate_on_submit():
 
         # Always change the name.

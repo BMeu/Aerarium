@@ -54,9 +54,9 @@ class UniqueEmail(object):
             raise ValidationError(self.message)
 
 
-class AccountForm(FlaskForm):
+class UserProfileForm(FlaskForm):
     """
-        A form allowing a user to change their account details.
+        A form allowing a user to change their profile.
     """
     name = StringField(_l('Name:'), validators=[DataRequired()])
     email = StringField(_l('Email:'), validators=[DataRequired(), IsEmail(), UniqueEmail()],
@@ -99,9 +99,9 @@ class PasswordResetForm(FlaskForm):
     submit = SubmitField(_l('Change Password'))
 
 
-class DeleteAccountForm(FlaskForm):
+class DeleteUserProfileForm(FlaskForm):
     """
-        A form to request the deletion of a user's account. The CSRF token is used so that a user cannot be tricked
+        A form to request the deletion of a user's profile. The CSRF token is used so that a user cannot be tricked
         to delete their profile by redirecting them to the URL.
     """
 

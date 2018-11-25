@@ -10,7 +10,7 @@ from app import mail
 from app.configuration import TestConfiguration
 from app.userprofile import User
 from app.userprofile.tokens import DeleteAccountToken
-from app.views.userprofile.forms import DeleteAccountForm
+from app.views.userprofile.forms import DeleteUserProfileForm
 
 
 class DeleteProfileTest(TestCase):
@@ -80,7 +80,7 @@ class DeleteProfileTest(TestCase):
             self.assertIn('to delete your user profile.', data)
             self.assertIn('<h1>User Profile</h1>', data)
 
-    @patch.object(DeleteAccountForm, 'validate_on_submit', validate_on_submit)
+    @patch.object(DeleteUserProfileForm, 'validate_on_submit', validate_on_submit)
     def test_delete_profile_request_failure(self):
         """
             Test requesting the deletion of the user's account with an invalid form.

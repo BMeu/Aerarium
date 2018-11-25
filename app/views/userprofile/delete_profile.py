@@ -18,7 +18,7 @@ from jwt import PyJWTError
 from app.exceptions import InvalidJWTokenPayloadError
 from app.userprofile import User
 from app.views.userprofile import bp
-from app.views.userprofile.forms import DeleteAccountForm
+from app.views.userprofile.forms import DeleteUserProfileForm
 
 
 @bp.route('/delete-profile', methods=['POST'])
@@ -29,7 +29,7 @@ def delete_account_request() -> str:
 
         :return: The HTML response.
     """
-    form = DeleteAccountForm()
+    form = DeleteUserProfileForm()
     if form.validate_on_submit():
         token = current_user.send_delete_account_email()
 
