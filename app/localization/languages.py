@@ -1,9 +1,10 @@
 #!venv/bin/python
 # -*- coding: utf-8 -*-
 
+from typing import Iterable
+
 from os import listdir
 import re
-from typing import Iterable
 
 from flask import current_app
 from flask import request

@@ -5,11 +5,12 @@
     Functions creating logging handlers.
 """
 
+from typing import List
+
 from logging import Formatter
 from logging import StreamHandler
 from logging.handlers import RotatingFileHandler
 from sys import stdout
-from typing import List
 
 from app.logging import SecureSMTPHandler
 

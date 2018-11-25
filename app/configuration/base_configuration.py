@@ -6,10 +6,11 @@
     configuration variables used in the application.
 """
 
-from os import environ
-from os import path
 from typing import Iterable
 from typing import Optional
+
+from os import environ
+from os import path
 
 # noinspection PyPackageRequirements
 from dotenv import load_dotenv

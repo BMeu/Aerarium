@@ -5,6 +5,11 @@
     An extension of the default SMTP handler.
 """
 
+from typing import List
+from typing import Optional
+from typing import Tuple
+from typing import Union
+
 # noinspection PyProtectedMember
 from email.message import EmailMessage
 import email.utils
@@ -16,10 +21,6 @@ from smtplib import SMTP_PORT
 from smtplib import SMTP_SSL
 # noinspection PyProtectedMember
 from smtplib import SMTP_SSL_PORT
-from typing import List
-from typing import Optional
-from typing import Tuple
-from typing import Union
 
 
 class SecureSMTPHandler(SMTPHandler):

@@ -5,10 +5,11 @@
     Extensions to the command-line interface provided by Flask.
 """
 
+from typing import Optional
+
 import os
 import sys
 from time import time
-from typing import Optional
 
 import click
 from flask import Flask
