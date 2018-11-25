@@ -11,7 +11,7 @@ from flask import url_for
 # noinspection PyProtectedMember
 from flask_babel import _
 from flask_login import current_user
-from app.main import bp
+from app.views.main import bp
 
 
 @bp.route('/')

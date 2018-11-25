@@ -10,6 +10,6 @@ from flask import Blueprint
 bp = Blueprint('main', __name__)
 
 # noinspection PyPep8
-from app.main import errors  # noqa: E402,F401
+from app.views.main import errors  # noqa: E402,F401
 # noinspection PyPep8
-from app.main import routes  # noqa: E402,F401
+from app.views.main import routes  # noqa: E402,F401

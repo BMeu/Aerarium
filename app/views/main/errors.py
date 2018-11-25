@@ -10,7 +10,7 @@ from flask import render_template
 from flask_babel import _
 from werkzeug.exceptions import HTTPException
 
-from app.main import bp
+from app.views.main import bp
 
 
 # noinspection PyUnusedLocal
