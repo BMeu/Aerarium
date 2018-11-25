@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-11-25 14:03+0100\n"
+"POT-Creation-Date: 2018-11-25 21:21+0100\n"
 "PO-Revision-Date: 2018-11-11 20:14+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
@@ -21,252 +21,6 @@ msgstr ""
 #: app/application.py:130
 msgid "Please log in to access this page."
 msgstr "Bitte melde Dich an, um diese Seite öffnen zu können."
-
-#: app/authorization/routes.py:70
-#, python-format
-msgid ""
-"An email has been sent to the new address %(email)s. Please open the link"
-" included in the                             mail within the next "
-"%(validity)d minutes to confirm your new email address. Otherwise,"
-"                             your email address will not be changed."
-msgstr ""
-"Eine E-Mail wurde an die neue Adresse %(email)s geschickt. Bitte öffne "
-"den enthaltenen Link innerhalb der nächsten %(validity)d Minuten, um "
-"Deine neue E-Mail-Adresse zu bestätigen. Ansonsten wird Deine E-Mail-"
-"Adresse nicht geändert."
-
-#: app/authorization/routes.py:73
-msgid "Your changes have been saved."
-msgstr "Deine Änderungen wurden gespeichert."
-
-#: app/authorization/routes.py:76 app/templates/_header.html:26
-msgid "User Profile"
-msgstr "Benutzerprofil"
-
-#: app/authorization/routes.py:95
-msgid "Your email address has successfully been changed."
-msgstr "Deine E-Mail-Adresse wurde erfolgreich geändert."
-
-#: app/authorization/routes.py:97 app/authorization/user.py:447
-msgid "The email address already is in use."
-msgstr "Diese E-Mail-Adresse wird bereits von einem anderen Benutzer verwendet."
-
-#: app/authorization/routes.py:128
-#, python-format
-msgid ""
-"An email has been sent to the specified address. Please be aware that the"
-" included link for resetting                 the password is only valid "
-"for %(validity)d minutes."
-msgstr ""
-"Eine E-Mail wurde an die angegebene Adresse versandt. Bitte beachte, dass"
-" der enthaltene Link zum Zurücksetzen des Passworts nur %(validity)d "
-"Minuten lang gültig ist."
-
-#: app/authorization/routes.py:132 app/templates/authorization/login.html:5
-msgid "Forgot Your Password?"
-msgstr "Passwort vergessen?"
-
-#: app/authorization/routes.py:155
-msgid "Your password has successfully been changed."
-msgstr "Dein Passwort wurde erfolgreich geändert."
-
-#: app/authorization/routes.py:158 app/authorization/user.py:275
-#: app/templates/authorization/emails/reset_password_request.html:7
-msgid "Reset Your Password"
-msgstr "Passwort zurücksetzen"
-
-#: app/authorization/routes.py:181
-#, python-format
-msgid "Welcome, %(name)s!"
-msgstr "Willkommen, %(name)s!"
-
-#: app/authorization/routes.py:191
-msgid "Invalid email address or password."
-msgstr "Ungültige E-Mail-Adresse oder ungültiges Passwort."
-
-#: app/authorization/routes.py:193 app/authorization/user.py:500
-msgid "Log In"
-msgstr "Anmelden"
-
-#: app/authorization/routes.py:206
-msgid "You were successfully logged out."
-msgstr "Du wurdest erfolgreich abgemeldet."
-
-#: app/authorization/routes.py:228
-#, python-format
-msgid ""
-"An email has been sent to your email address. Please open the link "
-"included in the mail within the                  next %(validity)d "
-"minutes to delete your user profile. Otherwise, your user profile will "
-"not be                  deleted."
-msgstr ""
-"Eine E-Mail wurde an Deine Adresse geschickt. Bitte öffne den enthaltenen"
-" Link innerhalb der nächsten %(validity)d Minuten, um Dein Benutzerprofil"
-" zu löschen. Ansonsten wird dein Benutzerprofil nicht gelöscht."
-
-#: app/authorization/routes.py:251
-msgid ""
-"Your user profile and all data linked to it have been deleted. We would "
-"be happy to see you again in the              future!"
-msgstr ""
-"Dein Benutzerprofil und alle damit verbundenen Daten wurden gelöscht. Wir"
-" würden uns freuen, Dich in Zukunft wiederzusehen!"
-
-#: app/authorization/user.py:169
-msgid "Your Email Address Has Been Changed"
-msgstr "Deine E-Mail-Adresse wurde geändert"
-
-#: app/authorization/user.py:195
-msgid "Change Your Email Address"
-msgstr "E-Mail-Adresse ändern"
-
-#: app/authorization/user.py:239
-msgid "Your Password Has Been Changed"
-msgstr "Dein Passwort wurde geändert"
-
-#: app/authorization/user.py:350
-msgid "Delete Your User Profile"
-msgstr "Benutzerprofil löschen"
-
-#: app/authorization/user.py:379
-msgid "Your User Profile Has Been Deleted"
-msgstr "Dein Benutzerprofil wurde gelöscht"
-
-#: app/authorization/user.py:473
-msgid "Name:"
-msgstr "Name:"
-
-#: app/authorization/user.py:474 app/authorization/user.py:488
-#: app/authorization/user.py:497
-msgid "Email:"
-msgstr "E-Mail:"
-
-#: app/authorization/user.py:475
-msgid ""
-"We will send you an email to your new address with a link to confirm the"
-"                                         changes. The email address will "
-"not be changed until you confirm this action."
-msgstr ""
-"Wir werden Dir eine E-Mail mit einem Link zur Bestätigung Deiner Änderung"
-" an die neue Adresse schicken. Die E-Mail-Adresse wird erst aktualisiert,"
-" sobald Du diese Aktion bestätigst."
-
-#: app/authorization/user.py:477 app/authorization/user.py:508
-msgid "New Password:"
-msgstr "Neues Passwort:"
-
-#: app/authorization/user.py:478
-msgid "Leave this field empty if you do not want to change your password."
-msgstr "Lasse dieses Feld leer, um Dein Passwort nicht zu ändern."
-
-#: app/authorization/user.py:479 app/authorization/user.py:509
-msgid "Confirm Your New Password:"
-msgstr "Bitte bestätige Dein neues Passwort:"
-
-#: app/authorization/user.py:480
-msgid "Save"
-msgstr "Speichern"
-
-#: app/authorization/user.py:489
-msgid "Submit"
-msgstr "Abschicken"
-
-#: app/authorization/user.py:498
-msgid "Password:"
-msgstr "Passwort:"
-
-#: app/authorization/user.py:499
-msgid "Remember Me"
-msgstr "Angemeldet bleiben"
-
-#: app/authorization/user.py:511
-msgid "Change Password"
-msgstr "Passwort ändern"
-
-#: app/authorization/user.py:520
-#: app/templates/authorization/emails/delete_account_request.html:7
-msgid "Delete User Profile"
-msgstr "Benutzerprofil löschen"
-
-#: app/authorization/user.py:521
-msgid "Delete your user profile and all data linked to it."
-msgstr "Lösche Dein Benutzerprofil und alle damit verbundenen Daten."
-
-#: app/main/errors.py:25
-msgid "Bad Request"
-msgstr "Fehlerhafte Anfrage"
-
-#: app/main/errors.py:26
-msgid ""
-"Your request was malformed and could therefore not be handled by the "
-"server."
-msgstr ""
-"Deine Anfrage war fehlerhaft aufgebaut und konnte deswegen nicht vom "
-"Server bearbeitet werden."
-
-#: app/main/errors.py:39
-msgid "Unauthorized Access"
-msgstr "Unauthorisierter Zugriff"
-
-#: app/main/errors.py:40
-msgid "The page you want to access requires you to login."
-msgstr "Du musst Dich anmelden, um diese Seite öffnen zu können."
-
-#: app/main/errors.py:53
-msgid "Permission Denied"
-msgstr "Zugriff verweigert"
-
-#: app/main/errors.py:54
-msgid ""
-"You do not have sufficient permissions to access this page. You can try "
-"logging in. If you are logged\n"
-"                in and you still get this message, ask your administrator"
-" to raise your permissions."
-msgstr ""
-"Du hast unzulängliche Berechtigungen, um auf diese Seite zugreifen zu "
-"dürfen. Du kannst versuchen, Dich anzumelden. Wenn du bereits angemeldet "
-"bist und weiterhin diese Meldung erhältst, bitte Deinen Administrator um "
-"die entsprechenden Berechtigungen."
-
-#: app/main/errors.py:68
-msgid "Page Not Found"
-msgstr "Seite nicht gefunden"
-
-#: app/main/errors.py:69
-msgid ""
-"The page you requested was not found on the server. If you are positive "
-"the link you clicked is\n"
-"                correct contact your administrator."
-msgstr ""
-"Die von Dir angeforderte Seite wurde auf dem Server nicht gefunden. Wenn "
-"Du Dir sicher bist, dass der Link korrekt ist, kontaktiere bitte Deinen "
-"Administrator."
-
-#: app/main/errors.py:83
-msgid "Method Not Allowed"
-msgstr "Methode nicht erlaubt"
-
-#: app/main/errors.py:84
-msgid "The HTTP method you used is not allowed to access this page."
-msgstr "Die von Dir genutzte HTTP-Methode ist für diese Seite nicht zugelassen."
-
-#: app/main/errors.py:97
-msgid "Internal Error"
-msgstr "Interner Fehler"
-
-#: app/main/errors.py:98
-msgid ""
-"The server encountered an internal error while processing your request. "
-"Please try again later.\n"
-"                The administrator has been notified."
-msgstr ""
-"Beim Bearbeiten Deiner Anfrage kam es auf dem Server zu einem internen "
-"Fehler. Bitte versuche es später erneut. Der Administrator wurde hierüber"
-" benachrichtigt."
-
-#: app/main/routes.py:29 app/templates/_header.html:13
-msgid "Dashboard"
-msgstr "Dashboard"
 
 #: app/templates/_base_email.html:14 app/templates/_base_email.txt:1
 #, python-format
@@ -292,6 +46,14 @@ msgstr ""
 #: app/templates/_header.html:5 app/templates/_header.html:6
 msgid "Toggle Navigation"
 msgstr "Navigation umschalten"
+
+#: app/templates/_header.html:13 app/views/main/routes.py:30
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: app/templates/_header.html:26 app/views/userprofile/profile.py:67
+msgid "User Profile"
+msgstr "Benutzerprofil"
 
 #: app/templates/_header.html:28
 msgid "Logout"
@@ -341,6 +103,11 @@ msgstr ""
 "gemacht werden. Bevor wir diese Aktionen aber tatsächlich ausführen, "
 "werden wir Dir noch eine E-Mail schicken, damit Du Deine Absicht "
 "bestätigen kannst."
+
+#: app/templates/authorization/login.html:5
+#: app/views/userprofile/password_reset.py:53
+msgid "Forgot Your Password?"
+msgstr "Passwort vergessen?"
 
 #: app/templates/authorization/login.html:6
 msgid "Forgot your password?"
@@ -439,6 +206,11 @@ msgstr ""
 "Um Dein Benutzerprofil unwiederbringlich zu löschen, klicke auf den "
 "folgenden Link oder öffne ihn in Deinem Browser"
 
+#: app/templates/authorization/emails/delete_account_request.html:7
+#: app/views/userprofile/forms.py:108
+msgid "Delete User Profile"
+msgstr "Benutzerprofil löschen"
+
 #: app/templates/authorization/emails/delete_account_request.html:13
 #: app/templates/authorization/emails/delete_account_request.txt:9
 msgid ""
@@ -464,6 +236,11 @@ msgstr ""
 "Klicke auf den folgenden Link oder kopiere ihn in Deinen Browser, um Dein"
 " Passwort zurückzusetzen:"
 
+#: app/templates/authorization/emails/reset_password_request.html:7
+#: app/userprofile/user.py:299 app/views/userprofile/password_reset.py:79
+msgid "Reset Your Password"
+msgstr "Passwort zurücksetzen"
+
 #: app/templates/authorization/emails/reset_password_request.html:13
 #: app/templates/authorization/emails/reset_password_request.txt:9
 msgid "If you have not requested a password reset simply ignore this message."
@@ -479,3 +256,228 @@ msgstr "Abbrechen"
 #, python-format
 msgid "Fields marked with an asterisk (%(asterisk)s) are required."
 msgstr "Mit einem Sternchen (%(asterisk)s) markierte Felder sind Pflichtfelder."
+
+#: app/userprofile/user.py:193
+msgid "Your Email Address Has Been Changed"
+msgstr "Deine E-Mail-Adresse wurde geändert"
+
+#: app/userprofile/user.py:219
+msgid "Change Your Email Address"
+msgstr "E-Mail-Adresse ändern"
+
+#: app/userprofile/user.py:263
+msgid "Your Password Has Been Changed"
+msgstr "Dein Passwort wurde geändert"
+
+#: app/userprofile/user.py:335
+msgid "Delete Your User Profile"
+msgstr "Benutzerprofil löschen"
+
+#: app/userprofile/user.py:364
+msgid "Your User Profile Has Been Deleted"
+msgstr "Dein Benutzerprofil wurde gelöscht"
+
+#: app/views/main/errors.py:25
+msgid "Bad Request"
+msgstr "Fehlerhafte Anfrage"
+
+#: app/views/main/errors.py:26
+msgid ""
+"Your request was malformed and could therefore not be handled by the "
+"server."
+msgstr ""
+"Deine Anfrage war fehlerhaft aufgebaut und konnte deswegen nicht vom "
+"Server bearbeitet werden."
+
+#: app/views/main/errors.py:39
+msgid "Unauthorized Access"
+msgstr "Unauthorisierter Zugriff"
+
+#: app/views/main/errors.py:40
+msgid "The page you want to access requires you to login."
+msgstr "Du musst Dich anmelden, um diese Seite öffnen zu können."
+
+#: app/views/main/errors.py:53
+msgid "Permission Denied"
+msgstr "Zugriff verweigert"
+
+#: app/views/main/errors.py:54
+msgid ""
+"You do not have sufficient permissions to access this page. You can try "
+"logging in. If you are logged\n"
+"                in and you still get this message, ask your administrator"
+" to raise your permissions."
+msgstr ""
+"Du hast unzulängliche Berechtigungen, um auf diese Seite zugreifen zu "
+"dürfen. Du kannst versuchen, Dich anzumelden. Wenn du bereits angemeldet "
+"bist und weiterhin diese Meldung erhältst, bitte Deinen Administrator um "
+"die entsprechenden Berechtigungen."
+
+#: app/views/main/errors.py:68
+msgid "Page Not Found"
+msgstr "Seite nicht gefunden"
+
+#: app/views/main/errors.py:69
+msgid ""
+"The page you requested was not found on the server. If you are positive "
+"the link you clicked is\n"
+"                correct contact your administrator."
+msgstr ""
+"Die von Dir angeforderte Seite wurde auf dem Server nicht gefunden. Wenn "
+"Du Dir sicher bist, dass der Link korrekt ist, kontaktiere bitte Deinen "
+"Administrator."
+
+#: app/views/main/errors.py:83
+msgid "Method Not Allowed"
+msgstr "Methode nicht erlaubt"
+
+#: app/views/main/errors.py:84
+msgid "The HTTP method you used is not allowed to access this page."
+msgstr "Die von Dir genutzte HTTP-Methode ist für diese Seite nicht zugelassen."
+
+#: app/views/main/errors.py:97
+msgid "Internal Error"
+msgstr "Interner Fehler"
+
+#: app/views/main/errors.py:98
+msgid ""
+"The server encountered an internal error while processing your request. "
+"Please try again later.\n"
+"                The administrator has been notified."
+msgstr ""
+"Beim Bearbeiten Deiner Anfrage kam es auf dem Server zu einem internen "
+"Fehler. Bitte versuche es später erneut. Der Administrator wurde hierüber"
+" benachrichtigt."
+
+#: app/views/userprofile/authentication.py:40
+#, python-format
+msgid "Welcome, %(name)s!"
+msgstr "Willkommen, %(name)s!"
+
+#: app/views/userprofile/authentication.py:50
+msgid "Invalid email address or password."
+msgstr "Ungültige E-Mail-Adresse oder ungültiges Passwort."
+
+#: app/views/userprofile/authentication.py:52 app/views/userprofile/forms.py:88
+msgid "Log In"
+msgstr "Anmelden"
+
+#: app/views/userprofile/authentication.py:65
+msgid "You were successfully logged out."
+msgstr "Du wurdest erfolgreich abgemeldet."
+
+#: app/views/userprofile/delete_profile.py:37
+#, python-format
+msgid ""
+"An email has been sent to your email address. Please open the link "
+"included in the mail within the                  next %(validity)d "
+"minutes to delete your user profile. Otherwise, your user profile will "
+"not be                  deleted."
+msgstr ""
+"Eine E-Mail wurde an Deine Adresse geschickt. Bitte öffne den enthaltenen"
+" Link innerhalb der nächsten %(validity)d Minuten, um Dein Benutzerprofil"
+" zu löschen. Ansonsten wird dein Benutzerprofil nicht gelöscht."
+
+#: app/views/userprofile/delete_profile.py:60
+msgid ""
+"Your user profile and all data linked to it have been deleted. We would "
+"be happy to see you again in the              future!"
+msgstr ""
+"Dein Benutzerprofil und alle damit verbundenen Daten wurden gelöscht. Wir"
+" würden uns freuen, Dich in Zukunft wiederzusehen!"
+
+#: app/views/userprofile/forms.py:35 app/views/userprofile/profile.py:88
+msgid "The email address already is in use."
+msgstr "Diese E-Mail-Adresse wird bereits von einem anderen Benutzer verwendet."
+
+#: app/views/userprofile/forms.py:61
+msgid "Name:"
+msgstr "Name:"
+
+#: app/views/userprofile/forms.py:62 app/views/userprofile/forms.py:76
+#: app/views/userprofile/forms.py:85
+msgid "Email:"
+msgstr "E-Mail:"
+
+#: app/views/userprofile/forms.py:63
+msgid ""
+"We will send you an email to your new address with a link to confirm the"
+"                                         changes. The email address will "
+"not be changed until you confirm this action."
+msgstr ""
+"Wir werden Dir eine E-Mail mit einem Link zur Bestätigung Deiner Änderung"
+" an die neue Adresse schicken. Die E-Mail-Adresse wird erst aktualisiert,"
+" sobald Du diese Aktion bestätigst."
+
+#: app/views/userprofile/forms.py:65 app/views/userprofile/forms.py:96
+msgid "New Password:"
+msgstr "Neues Passwort:"
+
+#: app/views/userprofile/forms.py:66
+msgid "Leave this field empty if you do not want to change your password."
+msgstr "Lasse dieses Feld leer, um Dein Passwort nicht zu ändern."
+
+#: app/views/userprofile/forms.py:67 app/views/userprofile/forms.py:97
+msgid "Confirm Your New Password:"
+msgstr "Bitte bestätige Dein neues Passwort:"
+
+#: app/views/userprofile/forms.py:68
+msgid "Save"
+msgstr "Speichern"
+
+#: app/views/userprofile/forms.py:77
+msgid "Submit"
+msgstr "Abschicken"
+
+#: app/views/userprofile/forms.py:86
+msgid "Password:"
+msgstr "Passwort:"
+
+#: app/views/userprofile/forms.py:87
+msgid "Remember Me"
+msgstr "Angemeldet bleiben"
+
+#: app/views/userprofile/forms.py:99
+msgid "Change Password"
+msgstr "Passwort ändern"
+
+#: app/views/userprofile/forms.py:109
+msgid "Delete your user profile and all data linked to it."
+msgstr "Lösche Dein Benutzerprofil und alle damit verbundenen Daten."
+
+#: app/views/userprofile/password_reset.py:49
+#, python-format
+msgid ""
+"An email has been sent to the specified address. Please be aware that the"
+" included link for resetting                 the password is only valid "
+"for %(validity)d minutes."
+msgstr ""
+"Eine E-Mail wurde an die angegebene Adresse versandt. Bitte beachte, dass"
+" der enthaltene Link zum Zurücksetzen des Passworts nur %(validity)d "
+"Minuten lang gültig ist."
+
+#: app/views/userprofile/password_reset.py:76
+msgid "Your password has successfully been changed."
+msgstr "Dein Passwort wurde erfolgreich geändert."
+
+#: app/views/userprofile/profile.py:61
+#, python-format
+msgid ""
+"An email has been sent to the new address %(email)s. Please open the link"
+" included in the                             mail within the next "
+"%(validity)d minutes to confirm your new email address. Otherwise,"
+"                             your email address will not be changed."
+msgstr ""
+"Eine E-Mail wurde an die neue Adresse %(email)s geschickt. Bitte öffne "
+"den enthaltenen Link innerhalb der nächsten %(validity)d Minuten, um "
+"Deine neue E-Mail-Adresse zu bestätigen. Ansonsten wird Deine E-Mail-"
+"Adresse nicht geändert."
+
+#: app/views/userprofile/profile.py:64
+msgid "Your changes have been saved."
+msgstr "Deine Änderungen wurden gespeichert."
+
+#: app/views/userprofile/profile.py:86
+msgid "Your email address has successfully been changed."
+msgstr "Deine E-Mail-Adresse wurde erfolgreich geändert."
+
