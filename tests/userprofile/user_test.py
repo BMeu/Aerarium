@@ -172,6 +172,134 @@ class UserTest(TestCase):
 
     # endregion
 
+    # region Login/Logout
+
+    def test_login_success(self):
+        """
+            Test logging in a user with valid credentials.
+
+            Expected result: The user is successfully logged in and returned.
+        """
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        self.assertEqual(user_id, user.id)
+        self.assertTrue(user.is_active)
+
+        logged_in_user = User.login(email, password)
+        self.assertIsNotNone(logged_in_user)
+        self.assertEqual(logged_in_user, current_user)
+        self.assertEqual(logged_in_user.id, user_id)
+        self.assertTrue(current_user.is_authenticated)
+
+    def test_login_failure_invalid_email(self):
+        """
+            Test logging in a user with an invalid email address.
+
+            Expected result: The user is not logged in.
+        """
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        self.assertEqual(user_id, user.id)
+        self.assertTrue(user.is_active)
+
+        logged_in_user = User.login('invalid-' + email, password)
+        self.assertIsNone(logged_in_user)
+        self.assertNotEqual(current_user.get_id(), user_id)
+        self.assertFalse(current_user.is_authenticated)
+
+    def test_login_failure_invalid_password(self):
+        """
+            Test logging in a user with an invalid password.
+
+            Expected result: The user is not logged in.
+        """
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        self.assertEqual(user_id, user.id)
+        self.assertTrue(user.is_active)
+
+        logged_in_user = User.login(email, 'invalid-' + password)
+        self.assertIsNone(logged_in_user)
+        self.assertNotEqual(current_user.get_id(), user_id)
+        self.assertFalse(current_user.is_authenticated)
+
+    def test_login_failure_not_activated(self):
+        """
+            Test logging in a user with valid credentials but whose account is not activated.
+
+            Expected result: The user is not logged in.
+        """
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+        user.set_password(password)
+        user.is_active = False
+
+        db.session.add(user)
+        db.session.commit()
+
+        self.assertEqual(user_id, user.id)
+        self.assertFalse(user.is_active)
+
+        logged_in_user = User.login(email, password)
+        self.assertIsNone(logged_in_user)
+        self.assertNotEqual(current_user.get_id(), user_id)
+        self.assertFalse(current_user.is_authenticated)
+
+    def test_logout(self):
+        """
+            Test logging out a user.
+
+            Expected result: The user is no longer logged in.
+        """
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        self.assertEqual(user_id, user.id)
+
+        User.login(email, password)
+        self.assertTrue(current_user.is_authenticated)
+
+        logged_out = User.logout()
+        self.assertTrue(logged_out)
+        self.assertFalse(current_user.is_authenticated)
+        self.assertNotEqual(current_user.get_id(), user_id)
+
+    # endregion
+
     # region Email
 
     def test_get_email(self):
@@ -500,7 +628,7 @@ class UserTest(TestCase):
         self.assertFalse(is_correct)
 
     @patch('app.token.encode')
-    def test_send_password_reset_email(self, mock_encode: MagicMock):
+    def test_send_password_reset_email_success(self, mock_encode: MagicMock):
         """
             Test sending a password reset email to the user.
 
@@ -599,134 +727,6 @@ class UserTest(TestCase):
         with self.assertRaises(InvalidJWTokenPayloadError):
             loaded_user = User.verify_password_reset_token(token)
             self.assertIsNone(loaded_user)
-
-    # endregion
-
-    # region Login/Logout
-
-    def test_login_success(self):
-        """
-            Test logging in a user with valid credentials.
-
-            Expected result: The user is successfully logged in and returned.
-        """
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-
-        self.assertEqual(user_id, user.id)
-        self.assertTrue(user.is_active)
-
-        logged_in_user = User.login(email, password)
-        self.assertIsNotNone(logged_in_user)
-        self.assertEqual(logged_in_user, current_user)
-        self.assertEqual(logged_in_user.id, user_id)
-        self.assertTrue(current_user.is_authenticated)
-
-    def test_login_failure_email(self):
-        """
-            Test logging in a user with an invalid email address.
-
-            Expected result: The user is not logged in.
-        """
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-
-        self.assertEqual(user_id, user.id)
-        self.assertTrue(user.is_active)
-
-        logged_in_user = User.login('invalid-' + email, password)
-        self.assertIsNone(logged_in_user)
-        self.assertNotEqual(current_user.get_id(), user_id)
-        self.assertFalse(current_user.is_authenticated)
-
-    def test_login_failure_password(self):
-        """
-            Test logging in a user with an invalid password.
-
-            Expected result: The user is not logged in.
-        """
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-
-        self.assertEqual(user_id, user.id)
-        self.assertTrue(user.is_active)
-
-        logged_in_user = User.login(email, 'invalid-' + password)
-        self.assertIsNone(logged_in_user)
-        self.assertNotEqual(current_user.get_id(), user_id)
-        self.assertFalse(current_user.is_authenticated)
-
-    def test_login_failure_not_activated(self):
-        """
-            Test logging in a user with valid credentials but whose account is not activated.
-
-            Expected result: The user is not logged in.
-        """
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-        user.is_active = False
-
-        db.session.add(user)
-        db.session.commit()
-
-        self.assertEqual(user_id, user.id)
-        self.assertFalse(user.is_active)
-
-        logged_in_user = User.login(email, password)
-        self.assertIsNone(logged_in_user)
-        self.assertNotEqual(current_user.get_id(), user_id)
-        self.assertFalse(current_user.is_authenticated)
-
-    def test_logout(self):
-        """
-            Test logging out a user.
-
-            Expected result: The user is no longer logged in.
-        """
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-
-        self.assertEqual(user_id, user.id)
-
-        User.login(email, password)
-        self.assertTrue(current_user.is_authenticated)
-
-        logged_out = User.logout()
-        self.assertTrue(logged_out)
-        self.assertFalse(current_user.is_authenticated)
-        self.assertNotEqual(current_user.get_id(), user_id)
 
     # endregion
 

@@ -115,6 +115,45 @@ class User(UserMixin, db.Model):
 
     # endregion
 
+    # region Login/Logout
+
+    @staticmethod
+    def login(email: str, password: str, remember_me: bool = False) -> Optional['User']:
+        """
+            Try to log in the user given by their email address and password.
+
+            :param email: The user's email address.
+            :param password: The user's (plaintext) password.
+            :param remember_me: ``True`` if the user shall be kept logged in across sessions.
+            :return: The user if the email/password combination is valid and the user is logged in, ``None`` otherwise.
+        """
+
+        user = User.load_from_email(email)
+        if user is None:
+            return None
+
+        if not user.check_password(password):
+            return None
+
+        logged_in = login_user(user, remember=remember_me)
+        if not logged_in:
+            return None
+
+        return user
+
+    @staticmethod
+    def logout() -> bool:
+        """
+            Log out the user.
+
+            :return: ``True`` on successful logout.
+        """
+
+        logged_out = logout_user()
+        return logged_out
+
+    # endregion
+
     # region Email
 
     def get_email(self) -> str:
@@ -272,45 +311,6 @@ class User(UserMixin, db.Model):
         """
         token_obj = ResetPasswordToken.verify(token)
         return User.load_from_id(token_obj.user_id)
-
-    # endregion
-
-    # region Login/Logout
-
-    @staticmethod
-    def login(email: str, password: str, remember_me: bool = False) -> Optional['User']:
-        """
-            Try to log in the user given by their email address and password.
-
-            :param email: The user's email address.
-            :param password: The user's (plaintext) password.
-            :param remember_me: ``True`` if the user shall be kept logged in across sessions.
-            :return: The user if the email/password combination is valid and the user is logged in, ``None`` otherwise.
-        """
-
-        user = User.load_from_email(email)
-        if user is None:
-            return None
-
-        if not user.check_password(password):
-            return None
-
-        logged_in = login_user(user, remember=remember_me)
-        if not logged_in:
-            return None
-
-        return user
-
-    @staticmethod
-    def logout() -> bool:
-        """
-            Log out the user.
-
-            :return: ``True`` on successful logout.
-        """
-
-        logged_out = logout_user()
-        return logged_out
 
     # endregion
 
