@@ -247,7 +247,7 @@ class RoutesTest(TestCase):
         """
             Test accessing the change email page with an invalid token.
 
-            Expected result: The email address is not changed.
+            Expected result: The email address is not changed and a 404 error page is shown.
         """
         email = 'test@example.com'
         name = 'John Doe'
@@ -264,10 +264,9 @@ class RoutesTest(TestCase):
         token = token_obj.create()
 
         response = self.client.get(f'/user/change-email/invalid-{token}', follow_redirects=True)
-        data = response.get_data(as_text=True)
         user = User.load_from_id(user_id)
 
-        self.assertIn('The token is invalid.', data)
+        self.assertEqual(404, response.status_code)
         self.assertEqual(email, user.get_email())
 
     def test_change_email_failure_email_in_use(self):
@@ -456,7 +455,7 @@ class RoutesTest(TestCase):
         """
             Test accessing the password reset form with an anonymous user and an invalid token.
 
-            Expected result: The user is redirected to the home page.
+            Expected result: A 404 error page is shown.
         """
         email = 'test@example.com'
         name = 'John Doe'
@@ -468,9 +467,7 @@ class RoutesTest(TestCase):
         response = self.client.get('/reset-password/just-some-token', follow_redirects=True)
         data = response.get_data(as_text=True)
 
-        self.assertNotIn('Reset Your Password', data)
-        self.assertIn('Dashboard', data)
-        self.assertIn('The token is invalid.', data)
+        self.assertEqual(404, response.status_code)
         self.assertNotIn('Your password has successfully been changed.', data)
 
     def test_reset_password_post_logged_in(self):
@@ -585,7 +582,7 @@ class RoutesTest(TestCase):
         """
             Test posting to the password reset form with an anonymous user, an invalid token, and a valid form.
 
-            Expected result: The password is not updated and the user is redirected to the home page.
+            Expected result: The password is not updated and the user is shown a 404 error page.
         """
         email = 'test@example.com'
         password = '123456'
@@ -605,9 +602,7 @@ class RoutesTest(TestCase):
         ))
         data = response.get_data(as_text=True)
 
-        self.assertIn('Log In', data)
-        self.assertIn('The token is invalid.', data)
-        self.assertNotIn('Reset Your Password', data)
+        self.assertEqual(404, response.status_code)
         self.assertNotIn('Your password has successfully been changed.', data)
         self.assertFalse(user.check_password(new_password))
         self.assertTrue(user.check_password(password))

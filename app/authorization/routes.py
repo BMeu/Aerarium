@@ -87,8 +87,7 @@ def change_email(token: str) -> str:
     try:
         user, email = User.verify_change_email_address_token(token)
     except (InvalidJWTokenPayloadError, PyJWTError):
-        flash(_('The token is invalid.'), category='error')
-        return redirect(url_for('main.index'))
+        return abort(404)
 
     changed_email = user.set_email(email)
     if changed_email:
@@ -146,8 +145,7 @@ def reset_password(token: str) -> str:
     try:
         user = User.verify_password_reset_token(token)
     except (InvalidJWTokenPayloadError, PyJWTError):
-        flash(_('The token is invalid.'), category='error')
-        return redirect(url_for('main.index'))
+        return abort(404)
 
     form = PasswordResetForm()
     if form.validate_on_submit():
