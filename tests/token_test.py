@@ -90,10 +90,10 @@ class JWTokenTest(TestCase):
 
         token = jwtoken_creation.create()
 
-        with self.assertRaises(InvalidJWTokenPayloadError) as exception:
+        with self.assertRaises(InvalidJWTokenPayloadError) as exception_cm:
             jwtoken_verification = JWToken.verify(token)
             self.assertIsNone(jwtoken_verification)
-            self.assertIn(fake_field, exception)
+            self.assertIn(fake_field, str(exception_cm.exception))
 
     def test_create_uncached(self):
         """
@@ -244,9 +244,9 @@ class JWTokenTest(TestCase):
         payload = jwtoken._get_payload()
         del payload['_jwtoken_class']
 
-        with self.assertRaises(InvalidJWTokenPayloadError) as exception:
+        with self.assertRaises(InvalidJWTokenPayloadError) as exception_cm:
             jwtoken._verify_payload(payload)
-            self.assertIn('Missing class specification', exception)
+            self.assertIn('Missing class specification', str(exception_cm.exception))
 
     def test_verify_payload_failure_wrong_class(self):
         """
@@ -258,9 +258,9 @@ class JWTokenTest(TestCase):
         payload = jwtoken._get_payload()
         payload['_jwtoken_class'] = 'InheritedJWToken'
 
-        with self.assertRaises(InvalidJWTokenPayloadError) as exception:
+        with self.assertRaises(InvalidJWTokenPayloadError) as exception_cm:
             jwtoken._verify_payload(payload)
-            self.assertIn('Wrong class: expected JWToken, got InheritedJWToken', exception)
+            self.assertIn('Wrong class: expected JWToken, got InheritedJWToken', str(exception_cm.exception))
 
     def test_verify_payload_failure_missing_fields(self):
         """
@@ -272,9 +272,9 @@ class JWTokenTest(TestCase):
         payload = jwtoken._get_payload()
         del payload['_validity']
 
-        with self.assertRaises(InvalidJWTokenPayloadError) as exception:
+        with self.assertRaises(InvalidJWTokenPayloadError) as exception_cm:
             jwtoken._verify_payload(payload)
-            self.assertIn('Missing fields: {_validity}. Unexpected fields: {}', exception)
+            self.assertIn('Missing fields: {_validity}. Unexpected fields: {}', str(exception_cm.exception))
 
     def test_verify_payload_failure_unexpected_fields(self):
         """
@@ -286,9 +286,9 @@ class JWTokenTest(TestCase):
         payload = jwtoken._get_payload()
         payload['user_id'] = 1
 
-        with self.assertRaises(InvalidJWTokenPayloadError) as exception:
+        with self.assertRaises(InvalidJWTokenPayloadError) as exception_cm:
             jwtoken._verify_payload(payload)
-            self.assertIn('Missing fields: {}. Unexpected fields: {user_id}', exception)
+            self.assertIn('Missing fields: {}. Unexpected fields: {user_id}', str(exception_cm.exception))
 
     def test_verify_payload_failure_missing_and_unexpected_fields(self):
         """
@@ -301,9 +301,9 @@ class JWTokenTest(TestCase):
         del payload['_validity']
         payload['user_id'] = 1
 
-        with self.assertRaises(InvalidJWTokenPayloadError) as exception:
+        with self.assertRaises(InvalidJWTokenPayloadError) as exception_cm:
             jwtoken._verify_payload(payload)
-            self.assertIn('Missing fields: {_validity}. Unexpected fields: {user_id}', exception)
+            self.assertIn('Missing fields: {_validity}. Unexpected fields: {user_id}', str(exception_cm.exception))
 
     def test_get_class_name(self):
         """
@@ -501,11 +501,11 @@ class InheritedJWTokenTest(TestCase):
         token = jwtoken_creation.create()
         self.assertIsNotNone(token)
 
-        with self.assertRaises(InvalidJWTokenPayloadError) as exception:
+        with self.assertRaises(InvalidJWTokenPayloadError) as exception_cm:
             jwtoken_verification = InheritedJWToken.verify(token)
 
             self.assertIsNone(jwtoken_verification)
-            self.assertIn('Wrong class: expected InheritedJWToken, got JWToken', exception)
+            self.assertIn('Wrong class: expected InheritedJWToken, got JWToken', str(exception_cm.exception))
 
     def test_reset(self):
         """

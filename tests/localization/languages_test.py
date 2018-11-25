@@ -58,7 +58,7 @@ class LanguagesTest(TestCase):
         languages = get_languages(self.path)
 
         mock_listdir.assert_called_with(self.path)
-        self.assertListEqual([self.default_language, 'de', 'en-US'], languages)
+        self.assertListEqual([self.default_language, 'de', 'en-US'], list(languages))
 
     @patch('app.localization.languages.listdir')
     def test_get_languages_non_default(self, mock_listdir: MagicMock):
@@ -72,7 +72,7 @@ class LanguagesTest(TestCase):
         languages = get_languages(self.path, 'fr')
 
         mock_listdir.assert_called_with(self.path)
-        self.assertListEqual(['fr', 'de', 'en-US'], languages)
+        self.assertListEqual(['fr', 'de', 'en-US'], list(languages))
 
     @patch('app.localization.languages.listdir')
     def test_get_languages_nonexistent_path(self, mock_listdir: MagicMock):
@@ -85,7 +85,7 @@ class LanguagesTest(TestCase):
 
         languages = get_languages(self.path)
 
-        self.assertListEqual([self.default_language], languages)
+        self.assertListEqual([self.default_language], list(languages))
 
     @patch('app.localization.languages.request')
     def test_get_locale(self, mock_request: MagicMock):

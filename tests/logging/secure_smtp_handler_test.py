@@ -192,6 +192,7 @@ class SecureSMTPHandlerTest(TestCase):
         instance = mock_smtp_ssl.return_value
         instance.send_message.side_effect = KeyboardInterrupt
 
+        # noinspection PyTypeChecker
         with self.assertRaises(KeyboardInterrupt):
             self.handler_ssl.emit(self.log_record)
 
@@ -209,6 +210,7 @@ class SecureSMTPHandlerTest(TestCase):
         instance = mock_smtp_ssl.return_value
         instance.send_message.side_effect = SystemExit
 
+        # noinspection PyTypeChecker
         with self.assertRaises(SystemExit):
             self.handler_ssl.emit(self.log_record)
 
@@ -230,4 +232,5 @@ class SecureSMTPHandlerTest(TestCase):
         self.handler_ssl.emit(self.log_record)
 
         instance.send_message.assert_called_once()
+        # noinspection PyUnresolvedReferences
         self.handler_ssl.handleError.assert_called_once_with(self.log_record)
