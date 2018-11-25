@@ -16,12 +16,12 @@ from wtforms import ValidationError
 from app import create_app
 from app import db
 from app import mail
-from app.authorization import logout_required
-from app.authorization import User
-from app.authorization.user import UniqueEmail
-from app.authorization.tokens import ChangeEmailAddressToken
-from app.authorization.tokens import DeleteAccountToken
-from app.authorization.tokens import ResetPasswordToken
+from app.views.authorization import logout_required
+from app.views.authorization import User
+from app.views.authorization.tokens import ChangeEmailAddressToken
+from app.views.authorization.tokens import DeleteAccountToken
+from app.views.authorization.tokens import ResetPasswordToken
+from app.views.authorization.user import UniqueEmail
 from app.configuration import TestConfiguration
 from app.exceptions import InvalidJWTokenPayloadError
 

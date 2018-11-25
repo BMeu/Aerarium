@@ -7,13 +7,13 @@
 
 from flask import Blueprint
 
-from app.authorization.user import AccountForm
-from app.authorization.user import DeleteAccountForm
-from app.authorization.user import EmailForm
-from app.authorization.user import LoginForm
-from app.authorization.user import logout_required
-from app.authorization.user import PasswordResetForm
-from app.authorization.user import User
+from app.views.authorization.user import AccountForm
+from app.views.authorization.user import DeleteAccountForm
+from app.views.authorization.user import EmailForm
+from app.views.authorization.user import LoginForm
+from app.views.authorization.user import logout_required
+from app.views.authorization.user import PasswordResetForm
+from app.views.authorization.user import User
 
 bp = Blueprint('authorization', __name__)
 
@@ -29,4 +29,4 @@ __all__ = [
           ]
 
 # noinspection PyPep8
-from app.authorization import routes  # noqa: E402,F401
+from app.views.authorization import routes  # noqa: E402,F401

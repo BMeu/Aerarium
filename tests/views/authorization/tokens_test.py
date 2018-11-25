@@ -5,9 +5,9 @@ from unittest import TestCase
 
 from app import create_app
 from app import db
-from app.authorization.tokens import ChangeEmailAddressToken
-from app.authorization.tokens import DeleteAccountToken
-from app.authorization.tokens import ResetPasswordToken
+from app.views.authorization.tokens import ChangeEmailAddressToken
+from app.views.authorization.tokens import DeleteAccountToken
+from app.views.authorization.tokens import ResetPasswordToken
 from app.configuration import TestConfiguration
 
 

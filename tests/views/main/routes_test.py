@@ -5,8 +5,8 @@ from unittest import TestCase
 
 from app import create_app
 from app import db
-from app.authorization import User
 from app.configuration import TestConfiguration
+from app.views.authorization import User
 
 
 class RoutesTest(TestCase):

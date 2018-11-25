@@ -104,7 +104,7 @@ def _initialize_blueprints(application: Flask) -> None:
 
         :param application: The application instance for which the blueprints will be registered.
     """
-    from app.authorization import bp as authorization_bp
+    from app.views.authorization import bp as authorization_bp
     from app.views.main import bp as main_bp
 
     application.register_blueprint(authorization_bp)
