@@ -1,4 +1,4 @@
-{% extends '_base_email_plain.txt' %}
+{% extends '_base_email.txt' %}
 {% block content %}
 {{ _('To irrevocably delete your user profile, click on the following link or copy and paste it to your browser:') }}
 

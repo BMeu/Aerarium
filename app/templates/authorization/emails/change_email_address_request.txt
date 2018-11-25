@@ -1,4 +1,4 @@
-{% extends '_base_email_plain.txt' %}
+{% extends '_base_email.txt' %}
 {% block content %}
 {{ _('To change your email address from %(email_old)s to %(email_new)s, click on the following link or copy and paste it to your browser:',
      email_old=email_old, email_new=email_new) }}

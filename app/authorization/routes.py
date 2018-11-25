@@ -43,7 +43,7 @@ def user_profile() -> str:
         :return: The HTML response.
     """
 
-    delete_form=DeleteAccountForm()
+    delete_form = DeleteAccountForm()
 
     form = AccountForm(obj=current_user, email=current_user.get_email())
     if form.validate_on_submit():

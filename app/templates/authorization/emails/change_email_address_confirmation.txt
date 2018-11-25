@@ -1,4 +1,4 @@
-{% extends '_base_email_plain.txt' %}
+{% extends '_base_email.txt' %}
 {% block content %}
 {{ _('Your email address has been changed to %(new_email)s.', new_email=new_email) }}
 

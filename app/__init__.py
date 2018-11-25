@@ -16,7 +16,7 @@ from app.application import get_app
 from app.application import login
 from app.application import mail
 from app.application import migrate
-from app.email import send_email
+from app.email import Email
 
 __all__ = [
             'babel',
@@ -24,11 +24,11 @@ __all__ = [
             'create_app',
             'csrf',
             'db',
+            'Email',
             'get_app',
             'login',
             'mail',
             'migrate',
             'register_after_request_handlers',
             'register_before_request_handlers',
-            'send_email',
            ]

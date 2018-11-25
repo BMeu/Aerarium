@@ -1,4 +1,4 @@
-{% extends '_base_email_plain.txt' %}
+{% extends '_base_email.txt' %}
 {% block content %}
 {{ _('Your user profile and all data linked to it have been deleted.') }}
 

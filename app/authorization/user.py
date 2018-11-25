@@ -9,7 +9,6 @@ from typing import Tuple
 from functools import wraps
 
 from flask import redirect
-from flask import render_template
 from flask import url_for
 # noinspection PyProtectedMember
 from flask_babel import _
@@ -27,14 +26,14 @@ from wtforms import StringField
 from wtforms import SubmitField
 from wtforms import ValidationError
 from wtforms.validators import DataRequired
-from wtforms.validators import Email
+from wtforms.validators import Email as IsEmail
 from wtforms.validators import EqualTo
 
 from app import bcrypt
 from app import db
+from app import Email
 from app import get_app
 from app import login as app_login
-from app import send_email
 from app.authorization.tokens import ChangeEmailAddressToken
 from app.authorization.tokens import DeleteAccountToken
 from app.authorization.tokens import ResetPasswordToken
@@ -166,12 +165,11 @@ class User(UserMixin, db.Model):
 
         application = get_app()
         support_address = application.config.get('SUPPORT_ADDRESS', None)
-        body_plain = render_template('authorization/emails/email_changed_plain.txt',
-                                     name=self.name, new_email=email, support_email=support_address)
-        body_html = render_template('authorization/emails/email_changed_html.html',
-                                    name=self.name, new_email=email, support_email=support_address)
 
-        send_email(_('Your Email Address Has Been Changed'), [old_email], body_plain, body_html)
+        email_obj = Email(_('Your Email Address Has Been Changed'),
+                          'authorization/emails/change_email_address_confirmation')
+        email_obj.prepare(name=self.name, new_email=email, support_email=support_address)
+        email_obj.send(old_email)
 
         return True
 
@@ -192,14 +190,12 @@ class User(UserMixin, db.Model):
         validity = token_obj.get_validity(in_minutes=True)
 
         link = url_for('authorization.change_email', token=token, _external=True)
-
         email_old = self.get_email()
-        body_plain = render_template('authorization/emails/change_email_address_plain.txt',
-                                     name=self.name, link=link, validity=validity, email_old=email_old, email_new=email)
-        body_html = render_template('authorization/emails/change_email_address_html.html',
-                                    name=self.name, link=link, validity=validity, email_old=email_old, email_new=email)
 
-        send_email(_('Change Your Email Address'), [email], body_plain, body_html)
+        email_obj = Email(_('Change Your Email Address'), 'authorization/emails/change_email_address_request')
+        email_obj.prepare(name=self.name, link=link, validity=validity, email_old=email_old, email_new=email)
+        email_obj.send(email)
+
         return token_obj
 
     @staticmethod
@@ -239,12 +235,10 @@ class User(UserMixin, db.Model):
             application = get_app()
 
             support_address = application.config.get('SUPPORT_ADDRESS', None)
-            body_plain = render_template('authorization/emails/password_changed_plain.txt',
-                                         name=self.name, support_email=support_address)
-            body_html = render_template('authorization/emails/password_changed_html.html',
-                                        name=self.name, support_email=support_address)
 
-            send_email(_('Your Password Has Been Changed'), [self.get_email()], body_plain, body_html)
+            email = Email(_('Your Password Has Been Changed'), 'authorization/emails/reset_password_confirmation')
+            email.prepare(name=self.name, support_email=support_address)
+            email.send(self.get_email())
 
         self.password_hash = bcrypt.generate_password_hash(password)
 
@@ -278,12 +272,10 @@ class User(UserMixin, db.Model):
 
         link = url_for('authorization.reset_password', token=token, _external=True)
 
-        body_plain = render_template('authorization/emails/reset_password_plain.txt',
-                                     name=self.name, link=link, validity=validity)
-        body_html = render_template('authorization/emails/reset_password_html.html',
-                                    name=self.name, link=link, validity=validity)
+        email = Email(_('Reset Your Password'), 'authorization/emails/reset_password_request')
+        email.prepare(name=self.name, link=link, validity=validity)
+        email.send(self.get_email())
 
-        send_email(_('Reset Your Password'), [self.get_email()], body_plain, body_html)
         return token_obj
 
     @staticmethod
@@ -355,12 +347,9 @@ class User(UserMixin, db.Model):
 
         link = url_for('authorization.delete_account', token=token, _external=True)
 
-        body_plain = render_template('authorization/emails/delete_account_request.txt',
-                                     name=self.name, link=link, validity=validity)
-
-        body_html = render_template('authorization/emails/delete_account_request.html',
-                                    name=self.name, link=link, validity=validity)
-        send_email(_('Delete Your User Profile'), [self.get_email()], body_plain, body_html)
+        email = Email(_('Delete Your User Profile'), 'authorization/emails/delete_account_request')
+        email.prepare(name=self.name, link=link, validity=validity)
+        email.send(self.get_email())
 
         return token_obj
 
@@ -386,11 +375,10 @@ class User(UserMixin, db.Model):
         # Notify the user via email.
         application = get_app()
         support_address = application.config.get('SUPPORT_ADDRESS', None)
-        body_plain = render_template('authorization/emails/delete_account_confirmation.txt',
-                                     name=self.name, new_email=self.get_email(), support_email=support_address)
-        body_html = render_template('authorization/emails/delete_account_confirmation.html',
-                                    name=self.name, new_email=self.get_email(), support_email=support_address)
-        send_email(_('Your User Profile Has Been Deleted'), [self.get_email()], body_plain, body_html)
+
+        email = Email(_('Your User Profile Has Been Deleted'), 'authorization/emails/delete_account_confirmation')
+        email.prepare(name=self.name, new_email=self.get_email(), support_email=support_address)
+        email.send(self.get_email())
 
         db.session.delete(self)
         db.session.commit()
@@ -483,7 +471,7 @@ class AccountForm(FlaskForm):
         A form allowing a user to change their account details.
     """
     name = StringField(_l('Name:'), validators=[DataRequired()])
-    email = StringField(_l('Email:'), validators=[DataRequired(), Email(), UniqueEmail()],
+    email = StringField(_l('Email:'), validators=[DataRequired(), IsEmail(), UniqueEmail()],
                         description=_l('We will send you an email to your new address with a link to confirm the \
                                         changes. The email address will not be changed until you confirm this action.'))
     password = PasswordField(_l('New Password:'),
@@ -497,7 +485,7 @@ class EmailForm(FlaskForm):
         A form requesting a user to enter their email address.
     """
 
-    email = StringField(_l('Email:'), validators=[DataRequired(), Email()])
+    email = StringField(_l('Email:'), validators=[DataRequired(), IsEmail()])
     submit = SubmitField(_l('Submit'))
 
 
@@ -506,7 +494,7 @@ class LoginForm(FlaskForm):
         A form allowing a user to log in.
     """
 
-    email = StringField(_l('Email:'), validators=[DataRequired(), Email()])
+    email = StringField(_l('Email:'), validators=[DataRequired(), IsEmail()])
     password = PasswordField(_l('Password:'), validators=[DataRequired()])
     remember_me = BooleanField(_l('Remember Me'))
     submit = SubmitField(_l('Log In'))
