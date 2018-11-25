@@ -5,7 +5,7 @@
     Classes and functionality related to user profiles.
 """
 
-from app.userprofile.user import logout_required
+from app.userprofile.decorators import logout_required
 from app.userprofile.user import User
 
 __all__ = [
