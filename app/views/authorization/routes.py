@@ -20,16 +20,16 @@ from jwt import PyJWTError
 from werkzeug.urls import url_parse
 
 from app import db
+from app.exceptions import InvalidJWTokenPayloadError
+from app.userprofile import logout_required
+from app.userprofile import User
+from app.userprofile.tokens import ChangeEmailAddressToken
 from app.views.authorization.forms import AccountForm
 from app.views.authorization import bp
 from app.views.authorization.forms import DeleteAccountForm
 from app.views.authorization.forms import EmailForm
 from app.views.authorization.forms import LoginForm
-from app.views.authorization import logout_required
 from app.views.authorization.forms import PasswordResetForm
-from app.views.authorization import User
-from app.views.authorization.tokens import ChangeEmailAddressToken
-from app.exceptions import InvalidJWTokenPayloadError
 
 # region User Profile
 

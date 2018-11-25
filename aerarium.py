@@ -10,7 +10,7 @@ from typing import Dict
 from app import create_app
 from app import db
 from app import cli
-from app.views.authorization import User
+from app.userprofile import User
 
 app = create_app()
 cli.register(app)

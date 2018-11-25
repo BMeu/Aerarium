@@ -22,9 +22,9 @@ from app import db
 from app import Email
 from app import get_app
 from app import login as app_login
-from app.views.authorization.tokens import ChangeEmailAddressToken
-from app.views.authorization.tokens import DeleteAccountToken
-from app.views.authorization.tokens import ResetPasswordToken
+from app.userprofile.tokens import ChangeEmailAddressToken
+from app.userprofile.tokens import DeleteAccountToken
+from app.userprofile.tokens import ResetPasswordToken
 
 """
     The application's user model and related classes.

@@ -6,7 +6,7 @@ from unittest import TestCase
 from app import create_app
 from app import db
 from app.configuration import TestConfiguration
-from app.views.authorization import User
+from app.userprofile import User
 
 
 class RoutesTest(TestCase):

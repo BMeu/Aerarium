@@ -15,7 +15,7 @@ from wtforms.validators import DataRequired
 from wtforms.validators import Email as IsEmail
 from wtforms.validators import EqualTo
 
-from app.views.authorization import User
+from app.userprofile import User
 
 
 class UniqueEmail(object):

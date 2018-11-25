@@ -10,9 +10,9 @@ from wtforms import ValidationError
 
 from app import create_app
 from app import db
-from app.views.authorization import User
-from app.views.authorization.forms import UniqueEmail
 from app.configuration import TestConfiguration
+from app.userprofile import User
+from app.views.authorization.forms import UniqueEmail
 
 
 class FormsTest(TestCase):

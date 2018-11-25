@@ -13,13 +13,13 @@ from werkzeug.wrappers import Response
 from app import create_app
 from app import db
 from app import mail
-from app.views.authorization import logout_required
-from app.views.authorization import User
-from app.views.authorization.tokens import ChangeEmailAddressToken
-from app.views.authorization.tokens import DeleteAccountToken
-from app.views.authorization.tokens import ResetPasswordToken
 from app.configuration import TestConfiguration
 from app.exceptions import InvalidJWTokenPayloadError
+from app.userprofile import logout_required
+from app.userprofile import User
+from app.userprofile.tokens import ChangeEmailAddressToken
+from app.userprofile.tokens import DeleteAccountToken
+from app.userprofile.tokens import ResetPasswordToken
 
 
 class UserTest(TestCase):
