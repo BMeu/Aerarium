@@ -64,13 +64,13 @@ class DeleteProfileTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
 
         with mail.record_messages() as outgoing:
-            response = self.client.post('/delete-profile', follow_redirects=True, data=dict())
+            response = self.client.post('/user/delete', follow_redirects=True, data=dict())
             data = response.get_data(as_text=True)
 
             self.assertEqual(1, len(outgoing))
@@ -98,13 +98,13 @@ class DeleteProfileTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
 
         with mail.record_messages() as outgoing:
-            response = self.client.post('/delete-profile', follow_redirects=True, data=dict())
+            response = self.client.post('/user/delete', follow_redirects=True, data=dict())
             data = response.get_data(as_text=True)
 
             self.assertEqual(0, len(outgoing))
@@ -135,7 +135,7 @@ class DeleteProfileTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
@@ -144,7 +144,7 @@ class DeleteProfileTest(TestCase):
         token_obj.user_id = user.id
 
         token = token_obj.create()
-        response = self.client.get('/delete-profile/' + token, follow_redirects=True)
+        response = self.client.get('/user/delete/' + token, follow_redirects=True)
         data = response.get_data(as_text=True)
 
         self.assertIsNone(User.load_from_id(user_id))
@@ -168,7 +168,7 @@ class DeleteProfileTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))

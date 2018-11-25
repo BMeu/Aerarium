@@ -53,12 +53,12 @@ class PasswordResetTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
 
-        response = self.client.get('/reset-password', follow_redirects=True)
+        response = self.client.get('/user/reset-password', follow_redirects=True)
         data = response.get_data(as_text=True)
 
         self.assertIn('Dashboard', data)
@@ -70,7 +70,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: The password reset request form is displayed.
         """
-        response = self.client.get('/reset-password', follow_redirects=True)
+        response = self.client.get('/user/reset-password', follow_redirects=True)
         data = response.get_data(as_text=True)
 
         self.assertIn('Forgot Your Password?', data)
@@ -93,7 +93,7 @@ class PasswordResetTest(TestCase):
         self.assertEqual(user_id, user.id)
 
         with mail.record_messages() as outgoing:
-            response = self.client.post('/reset-password', follow_redirects=True, data=dict(
+            response = self.client.post('/user/reset-password', follow_redirects=True, data=dict(
                 email=email
             ))
             data = response.get_data(as_text=True)
@@ -113,7 +113,7 @@ class PasswordResetTest(TestCase):
         email = 'test@example.com'
 
         with mail.record_messages() as outgoing:
-            response = self.client.post('/reset-password', follow_redirects=True, data=dict(
+            response = self.client.post('/user/reset-password', follow_redirects=True, data=dict(
                 email=email
             ))
             data = response.get_data(as_text=True)
@@ -144,7 +144,7 @@ class PasswordResetTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
@@ -153,7 +153,7 @@ class PasswordResetTest(TestCase):
         token_obj.user_id = user_id
         token = token_obj.create()
 
-        response = self.client.get(f'/reset-password/{token}', follow_redirects=True)
+        response = self.client.get(f'/user/reset-password/{token}', follow_redirects=True)
         data = response.get_data(as_text=True)
 
         self.assertIn('Dashboard', data)
@@ -178,7 +178,7 @@ class PasswordResetTest(TestCase):
         token_obj.user_id = user.id
         token = token_obj.create()
 
-        response = self.client.get(f'/reset-password/{token}', follow_redirects=True)
+        response = self.client.get(f'/user/reset-password/{token}', follow_redirects=True)
         data = response.get_data(as_text=True)
 
         self.assertIn('Reset Your Password', data)
@@ -200,7 +200,7 @@ class PasswordResetTest(TestCase):
         db.session.add(user)
         db.session.commit()
 
-        response = self.client.get('/reset-password/just-some-token', follow_redirects=True)
+        response = self.client.get('/user/reset-password/just-some-token', follow_redirects=True)
         data = response.get_data(as_text=True)
 
         self.assertEqual(404, response.status_code)
@@ -223,7 +223,7 @@ class PasswordResetTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
@@ -233,7 +233,7 @@ class PasswordResetTest(TestCase):
         token = token_obj.create()
 
         new_password = 'abcdef'
-        response = self.client.post(f'/reset-password/{token}', follow_redirects=True, data=dict(
+        response = self.client.post(f'/user/reset-password/{token}', follow_redirects=True, data=dict(
             password=new_password,
             password_confirmation=new_password
         ))
@@ -267,7 +267,7 @@ class PasswordResetTest(TestCase):
         token = token_obj.create()
 
         new_password = 'abcdef'
-        response = self.client.post(f'/reset-password/{token}', follow_redirects=True, data=dict(
+        response = self.client.post(f'/user/reset-password/{token}', follow_redirects=True, data=dict(
             password=new_password,
             password_confirmation=new_password
         ))
@@ -302,7 +302,7 @@ class PasswordResetTest(TestCase):
         token = token_obj.create()
 
         new_password = 'abcdef'
-        response = self.client.post(f'/reset-password/{token}', follow_redirects=True, data=dict(
+        response = self.client.post(f'/user/reset-password/{token}', follow_redirects=True, data=dict(
             password=new_password,
             password_confirmation=new_password + 'ghi'
         ))
@@ -332,7 +332,7 @@ class PasswordResetTest(TestCase):
         self.assertEqual(user_id, user.id)
 
         new_password = 'abcdef'
-        response = self.client.post('/reset-password/just-some-token', follow_redirects=True, data=dict(
+        response = self.client.post('/user/reset-password/just-some-token', follow_redirects=True, data=dict(
             password=new_password,
             password_confirmation=new_password
         ))

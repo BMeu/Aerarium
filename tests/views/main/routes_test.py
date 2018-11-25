@@ -61,7 +61,7 @@ class RoutesTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))

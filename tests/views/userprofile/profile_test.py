@@ -50,13 +50,13 @@ class ProfileTest(TestCase):
         db.session.add(user)
         db.session.commit()
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
 
         with mail.record_messages() as outgoing:
-            response = self.client.get('/user', follow_redirects=True)
+            response = self.client.get('/user/profile', follow_redirects=True)
             data = response.get_data(as_text=True)
 
             self.assertEqual(0, len(outgoing))
@@ -87,14 +87,14 @@ class ProfileTest(TestCase):
 
         user_id = user.id
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
 
         new_name = 'Jane Doe'
         with mail.record_messages() as outgoing:
-            response = self.client.post('/user', follow_redirects=True, data=dict(
+            response = self.client.post('/user/profile', follow_redirects=True, data=dict(
                 name=new_name,
                 email=email
             ))
@@ -134,7 +134,7 @@ class ProfileTest(TestCase):
 
         user_id = user.id
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
@@ -142,7 +142,7 @@ class ProfileTest(TestCase):
         new_name = 'Jane Doe'
         new_password = '654321'
         with mail.record_messages() as outgoing:
-            response = self.client.post('/user', follow_redirects=True, data=dict(
+            response = self.client.post('/user/profile', follow_redirects=True, data=dict(
                 name=new_name,
                 email=email,
                 password=new_password,
@@ -184,7 +184,7 @@ class ProfileTest(TestCase):
 
         user_id = user.id
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
@@ -193,7 +193,7 @@ class ProfileTest(TestCase):
         new_password = '654321'
         new_email = 'test2@example.com'
         with mail.record_messages() as outgoing:
-            response = self.client.post('/user', follow_redirects=True, data=dict(
+            response = self.client.post('/user/profile', follow_redirects=True, data=dict(
                 name=new_name,
                 email=new_email,
                 password=new_password,
@@ -240,7 +240,7 @@ class ProfileTest(TestCase):
         token_obj.new_email = new_email
         token = token_obj.create()
 
-        response = self.client.get(f'/user/change-email/{token}', follow_redirects=True)
+        response = self.client.get(f'/user/change-email-address/{token}', follow_redirects=True)
         data = response.get_data(as_text=True)
         user = User.load_from_id(user_id)
 
@@ -267,7 +267,7 @@ class ProfileTest(TestCase):
         token_obj.new_email = new_email
         token = token_obj.create()
 
-        response = self.client.get(f'/user/change-email/invalid-{token}', follow_redirects=True)
+        response = self.client.get(f'/user/change-email-address/invalid-{token}', follow_redirects=True)
         user = User.load_from_id(user_id)
 
         self.assertEqual(404, response.status_code)
@@ -297,7 +297,7 @@ class ProfileTest(TestCase):
         token_obj.new_email = existing_email
         token = token_obj.create()
 
-        response = self.client.get(f'/user/change-email/{token}', follow_redirects=True)
+        response = self.client.get(f'/user/change-email-address/{token}', follow_redirects=True)
         data = response.get_data(as_text=True)
         user = User.load_from_id(user_id)
 

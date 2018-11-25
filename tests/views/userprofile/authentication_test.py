@@ -40,7 +40,7 @@ class AuthenticationTest(TestCase):
 
             Expected result: The user is displayed the login form.
         """
-        response = self.client.get('/login', follow_redirects=True)
+        response = self.client.get('/user/login', follow_redirects=True)
         data = response.get_data(as_text=True)
 
         self.assertIn('<h1>Log In</h1>', data)
@@ -63,12 +63,12 @@ class AuthenticationTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
 
-        response = self.client.get('/login', follow_redirects=True)
+        response = self.client.get('/user/login', follow_redirects=True)
         data = response.get_data(as_text=True)
 
         self.assertNotIn('<h1>Log In</h1>', data)
@@ -91,7 +91,7 @@ class AuthenticationTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        response = self.client.post('/login', follow_redirects=True, data=dict(
+        response = self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
@@ -118,7 +118,7 @@ class AuthenticationTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        response = self.client.post('/login?next=some-other-page', follow_redirects=True, data=dict(
+        response = self.client.post('/user/login?next=some-other-page', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
@@ -145,7 +145,7 @@ class AuthenticationTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        response = self.client.post('/login', follow_redirects=True, data=dict(
+        response = self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password='invalid' + password
         ))
@@ -177,12 +177,12 @@ class AuthenticationTest(TestCase):
         db.session.commit()
         self.assertEqual(user_id, user.id)
 
-        self.client.post('/login', follow_redirects=True, data=dict(
+        self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
 
-        response = self.client.get('/logout', follow_redirects=True)
+        response = self.client.get('/user/logout', follow_redirects=True)
         data = response.get_data(as_text=True)
 
         self.assertIn('You were successfully logged out.', data)
@@ -195,7 +195,7 @@ class AuthenticationTest(TestCase):
             Expected result: The user is redirected to the home page (and from there to the login page),
                              but not shown a success message.
         """
-        response = self.client.get('/logout', follow_redirects=True)
+        response = self.client.get('/user/logout', follow_redirects=True)
         data = response.get_data(as_text=True)
 
         self.assertNotIn('You were successfully logged out.', data)
