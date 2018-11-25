@@ -8,6 +8,6 @@
     </h2>
     <p>
         {{ _('Be careful! All actions below this point cannot be undone. Before actually performing these actions, we will send you a mail to confirm your intention.') }}
-        {{ render_form(delete_form, action_url=url_for('userprofile.delete_account_request'), danger=True) }}
+        {{ render_form(delete_form, action_url=url_for('userprofile.delete_profile_request'), danger=True) }}
     </p>
 {% endblock %}

@@ -743,7 +743,7 @@ class UserTest(TestCase):
         token_bytes = b'AFakeTokenForCheckingIfItIsIncludedInTheMail'
         token = token_bytes.decode('utf-8')
         mock_encode.return_value = token_bytes
-        token_link = url_for('userprofile.delete_account', token=token, _external=True)
+        token_link = url_for('userprofile.delete_profile', token=token, _external=True)
 
         email = 'test@example.com'
         name = 'John Doe'

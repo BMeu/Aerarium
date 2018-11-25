@@ -23,7 +23,7 @@ from app.views.userprofile.forms import DeleteUserProfileForm
 
 @bp.route('/delete-profile', methods=['POST'])
 @fresh_login_required
-def delete_account_request() -> str:
+def delete_profile_request() -> str:
     """
         Send an email to the user to confirm the account deletion request.
 
@@ -45,7 +45,7 @@ def delete_account_request() -> str:
 
 @bp.route('/delete-profile/<string:token>', methods=['GET'])
 @fresh_login_required
-def delete_account(token: str) -> str:
+def delete_profile(token: str) -> str:
     """
         Delete account of the user given in the token.
 
