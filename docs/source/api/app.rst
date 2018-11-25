@@ -6,10 +6,10 @@ Subpackages
 
 .. toctree::
 
-    app.authorization
     app.localization
     app.logging
-    app.main
+    app.userprofile
+    app.views
 
 Submodules
 ----------
