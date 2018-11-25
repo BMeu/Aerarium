@@ -7,24 +7,14 @@
 
 from flask import Blueprint
 
-from app.views.authorization.user import AccountForm
-from app.views.authorization.user import DeleteAccountForm
-from app.views.authorization.user import EmailForm
-from app.views.authorization.user import LoginForm
 from app.views.authorization.user import logout_required
-from app.views.authorization.user import PasswordResetForm
 from app.views.authorization.user import User
 
 bp = Blueprint('authorization', __name__)
 
 __all__ = [
-            'AccountForm',
             'bp',
-            'DeleteAccountForm',
-            'EmailForm',
-            'LoginForm',
             'logout_required',
-            'PasswordResetForm',
             'User'
           ]
 
