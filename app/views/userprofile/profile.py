@@ -64,7 +64,7 @@ def user_profile() -> str:
         flash(_('Your changes have been saved.'))
         return redirect(url_for('userprofile.user_profile'))
 
-    return render_template('userprofile/account.html', title=_('User Profile'), form=form, delete_form=delete_form)
+    return render_template('userprofile/profile.html', title=_('User Profile'), form=form, delete_form=delete_form)
 
 
 @bp.route('/change-email-address/<string:token>')
