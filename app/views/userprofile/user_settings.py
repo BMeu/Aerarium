@@ -36,4 +36,4 @@ def user_settings() -> str:
         flash(_('Your changes have been saved.'))
         return redirect(url_for('.user_settings'))
 
-    return render_template('authorization/user_settings.html', title=_('Settings'), form=form)
+    return render_template('userprofile/user_settings.html', title=_('Settings'), form=form)

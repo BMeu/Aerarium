@@ -194,7 +194,7 @@ class User(UserMixin, db.Model):
         support_address = application.config.get('SUPPORT_ADDRESS', None)
 
         email_obj = Email(_('Your Email Address Has Been Changed'),
-                          'authorization/emails/change_email_address_confirmation')
+                          'userprofile/emails/change_email_address_confirmation')
         email_obj.prepare(name=self.name, new_email=email, support_email=support_address)
         email_obj.send(old_email)
 
@@ -219,7 +219,7 @@ class User(UserMixin, db.Model):
         link = url_for('userprofile.change_email', token=token, _external=True)
         email_old = self.get_email()
 
-        email_obj = Email(_('Change Your Email Address'), 'authorization/emails/change_email_address_request')
+        email_obj = Email(_('Change Your Email Address'), 'userprofile/emails/change_email_address_request')
         email_obj.prepare(name=self.name, link=link, validity=validity, email_old=email_old, email_new=email)
         email_obj.send(email)
 
@@ -263,7 +263,7 @@ class User(UserMixin, db.Model):
 
             support_address = application.config.get('SUPPORT_ADDRESS', None)
 
-            email = Email(_('Your Password Has Been Changed'), 'authorization/emails/reset_password_confirmation')
+            email = Email(_('Your Password Has Been Changed'), 'userprofile/emails/reset_password_confirmation')
             email.prepare(name=self.name, support_email=support_address)
             email.send(self.get_email())
 
@@ -299,7 +299,7 @@ class User(UserMixin, db.Model):
 
         link = url_for('userprofile.reset_password', token=token, _external=True)
 
-        email = Email(_('Reset Your Password'), 'authorization/emails/reset_password_request')
+        email = Email(_('Reset Your Password'), 'userprofile/emails/reset_password_request')
         email.prepare(name=self.name, link=link, validity=validity)
         email.send(self.get_email())
 
@@ -335,7 +335,7 @@ class User(UserMixin, db.Model):
 
         link = url_for('userprofile.delete_profile', token=token, _external=True)
 
-        email = Email(_('Delete Your User Profile'), 'authorization/emails/delete_account_request')
+        email = Email(_('Delete Your User Profile'), 'userprofile/emails/delete_account_request')
         email.prepare(name=self.name, link=link, validity=validity)
         email.send(self.get_email())
 
@@ -366,7 +366,7 @@ class User(UserMixin, db.Model):
         application = get_app()
         support_address = application.config.get('SUPPORT_ADDRESS', None)
 
-        email = Email(_('Your User Profile Has Been Deleted'), 'authorization/emails/delete_account_confirmation')
+        email = Email(_('Your User Profile Has Been Deleted'), 'userprofile/emails/delete_account_confirmation')
         email.prepare(name=self.name, new_email=self.get_email(), support_email=support_address)
         email.send(self.get_email())
 

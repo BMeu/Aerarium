@@ -49,7 +49,7 @@ def login() -> str:
         # Login failed. Just show the login form again.
         flash(_('Invalid email address or password.'), 'error')
 
-    return render_template('authorization/login.html', title=_('Log In'), form=form)
+    return render_template('userprofile/login.html', title=_('Log In'), form=form)
 
 
 @bp.route('/logout')

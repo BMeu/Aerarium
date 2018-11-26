@@ -50,7 +50,7 @@ def reset_password_request() -> str:
                 the password is only valid for %(validity)d minutes.', validity=validity))
         return redirect(url_for('userprofile.login'))
 
-    return render_template('authorization/reset_password_request.html', title=_('Forgot Your Password?'), form=form)
+    return render_template('userprofile/reset_password_request.html', title=_('Forgot Your Password?'), form=form)
 
 
 @bp.route('/reset-password/<string:token>', methods=['GET', 'POST'])
@@ -76,4 +76,4 @@ def reset_password(token: str) -> str:
         flash(_('Your password has successfully been changed.'))
         return redirect(url_for('userprofile.login'))
 
-    return render_template('authorization/reset_password.html', title=_('Reset Your Password'), form=form)
+    return render_template('userprofile/reset_password.html', title=_('Reset Your Password'), form=form)
