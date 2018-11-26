@@ -20,9 +20,9 @@ from jwt import PyJWTError
 from app import db
 from app.exceptions import InvalidJWTokenPayloadError
 from app.userprofile import User
-from app.views.userprofile.forms import UserProfileForm
 from app.views.userprofile import bp
 from app.views.userprofile.forms import DeleteUserProfileForm
+from app.views.userprofile.forms import UserProfileForm
 
 
 @bp.route('/profile', methods=['GET', 'POST'])
