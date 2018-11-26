@@ -114,4 +114,11 @@ class UserProfileForm(FlaskForm):
     password_confirmation = PasswordField(_l('Confirm Your New Password:'), validators=[EqualTo('password')])
     submit = SubmitField(_l('Save'))
 
+
+class UserSettingsForm(FlaskForm):
+    """
+        A form for changing a user's settings.
+    """
+    submit = SubmitField(_l('Save'))
+
 # endregion

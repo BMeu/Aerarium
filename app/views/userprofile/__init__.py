@@ -17,3 +17,5 @@ from app.views.userprofile import delete_profile  # noqa: E402,F401
 from app.views.userprofile import password_reset  # noqa: E402,F401
 # noinspection PyPep8
 from app.views.userprofile import profile  # noqa: E402,F401
+# noinspection PyPep8
+from app.views.userprofile import user_settings  # noqa: E402,F401

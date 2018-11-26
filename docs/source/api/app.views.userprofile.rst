@@ -44,6 +44,14 @@ app.views.userprofile.profile module
     :undoc-members:
     :show-inheritance:
 
+app.views.userprofile.user\_settings module
+-------------------------------------------
+
+.. automodule:: app.views.userprofile.user_settings
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

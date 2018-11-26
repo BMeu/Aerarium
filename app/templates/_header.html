@@ -24,6 +24,7 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
                     <a class="dropdown-item" href="{{ url_for('userprofile.user_profile') }}">{{ _('User Profile') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('userprofile.user_settings') }}">{{ _('Settings') }}</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ url_for('userprofile.logout') }}">{{ _('Logout') }}</a>
                 </div>

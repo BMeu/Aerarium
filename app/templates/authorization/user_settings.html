@@ -1,0 +1,5 @@
+{% extends '_base_standard.html' %}
+{% from 'macros/form.html' import render_form %}
+{% block content %}
+    {{ render_form(form, cancel_button=True) }}
+{% endblock %}
