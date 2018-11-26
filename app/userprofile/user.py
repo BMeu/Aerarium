@@ -17,6 +17,7 @@ from app import db
 from app import Email
 from app import get_app
 from app import login as app_login
+from app.userprofile import UserSettings
 from app.userprofile.tokens import ChangeEmailAddressToken
 from app.userprofile.tokens import DeleteAccountToken
 from app.userprofile.tokens import ResetPasswordToken
@@ -58,6 +59,8 @@ class User(UserMixin, db.Model):
         Whether the user has activated their account.
     """
 
+    settings = db.relationship('UserSettings', backref='user', cascade='all, delete-orphan', uselist=False)
+
     @property
     def is_active(self) -> bool:
         """
@@ -89,6 +92,8 @@ class User(UserMixin, db.Model):
         """
         self.set_email(email)
         self.name = name
+
+        self.settings = UserSettings()
 
     @staticmethod
     @app_login.user_loader
@@ -351,6 +356,8 @@ class User(UserMixin, db.Model):
     def delete(self) -> None:
         """
             Delete the user's account. Log them out first if necessary. Notify them via mail.
+
+            This action will directly be committed to the database.
         """
         if self == current_user:
             self.logout()

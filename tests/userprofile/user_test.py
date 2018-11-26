@@ -14,6 +14,7 @@ from app import mail
 from app.configuration import TestConfiguration
 from app.exceptions import InvalidJWTokenPayloadError
 from app.userprofile import User
+from app.userprofile import UserSettings
 from app.userprofile.tokens import ChangeEmailAddressToken
 from app.userprofile.tokens import DeleteAccountToken
 from app.userprofile.tokens import ResetPasswordToken
@@ -102,11 +103,15 @@ class UserTest(TestCase):
             self.assertEqual(name, user.name)
             self.assertIsNone(user._is_activated)
 
+            self.assertIsNotNone(user.settings)
+            self.assertIsNone(user.settings._user_id)
+
             db.session.add(user)
             db.session.commit()
 
             self.assertEqual(1, user.id)
             self.assertTrue(user._is_activated)
+            self.assertEqual(user.id, user.settings._user_id)
 
     def test_load_from_id_success(self):
         """
@@ -857,6 +862,10 @@ class UserTest(TestCase):
             loaded_user = User.load_from_id(other_id)
             self.assertEqual(other_user, loaded_user)
 
+            # Test that the user's data has been deleted from other tables as well.
+            settings = UserSettings.query.get(user_id)
+            self.assertIsNone(settings)
+
     def test_delete_logged_out(self):
         """
             Test deleting the user when they are logged out.
@@ -901,6 +910,10 @@ class UserTest(TestCase):
             # Test that other users have not been deleted.
             loaded_user = User.load_from_id(other_id)
             self.assertEqual(other_user, loaded_user)
+
+            # Test that the user's data has been deleted from other tables as well.
+            settings = UserSettings.query.get(user_id)
+            self.assertIsNone(settings)
 
     # endregion
 

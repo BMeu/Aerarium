@@ -12,6 +12,14 @@ app.userprofile.decorators module
     :undoc-members:
     :show-inheritance:
 
+app.userprofile.settings module
+-------------------------------
+
+.. automodule:: app.userprofile.settings
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 app.userprofile.tokens module
 -----------------------------
 
