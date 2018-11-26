@@ -17,6 +17,8 @@ from wtforms.validators import EqualTo
 
 from app.userprofile import User
 
+# region Validators
+
 
 class UniqueEmail(object):
     """
@@ -53,19 +55,19 @@ class UniqueEmail(object):
         if user and user != current_user:
             raise ValidationError(self.message)
 
+# endregion
 
-class UserProfileForm(FlaskForm):
+# region Forms
+
+
+class DeleteUserProfileForm(FlaskForm):
     """
-        A form allowing a user to change their profile.
+        A form to request the deletion of a user's profile. The CSRF token is used so that a user cannot be tricked
+        to delete their profile by redirecting them to the URL.
     """
-    name = StringField(_l('Name:'), validators=[DataRequired()])
-    email = StringField(_l('Email:'), validators=[DataRequired(), IsEmail(), UniqueEmail()],
-                        description=_l('We will send you an email to your new address with a link to confirm the \
-                                        changes. The email address will not be changed until you confirm this action.'))
-    password = PasswordField(_l('New Password:'),
-                             description=_l('Leave this field empty if you do not want to change your password.'))
-    password_confirmation = PasswordField(_l('Confirm Your New Password:'), validators=[EqualTo('password')])
-    submit = SubmitField(_l('Save'))
+
+    submit = SubmitField(_l('Delete User Profile'),
+                         description=_l('Delete your user profile and all data linked to it.'))
 
 
 class EmailForm(FlaskForm):
@@ -99,11 +101,17 @@ class PasswordResetForm(FlaskForm):
     submit = SubmitField(_l('Change Password'))
 
 
-class DeleteUserProfileForm(FlaskForm):
+class UserProfileForm(FlaskForm):
     """
-        A form to request the deletion of a user's profile. The CSRF token is used so that a user cannot be tricked
-        to delete their profile by redirecting them to the URL.
+        A form allowing a user to change their profile.
     """
+    name = StringField(_l('Name:'), validators=[DataRequired()])
+    email = StringField(_l('Email:'), validators=[DataRequired(), IsEmail(), UniqueEmail()],
+                        description=_l('We will send you an email to your new address with a link to confirm the \
+                                        changes. The email address will not be changed until you confirm this action.'))
+    password = PasswordField(_l('New Password:'),
+                             description=_l('Leave this field empty if you do not want to change your password.'))
+    password_confirmation = PasswordField(_l('Confirm Your New Password:'), validators=[EqualTo('password')])
+    submit = SubmitField(_l('Save'))
 
-    submit = SubmitField(_l('Delete User Profile'),
-                         description=_l('Delete your user profile and all data linked to it.'))
+# endregion
