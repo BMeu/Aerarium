@@ -57,11 +57,14 @@ class UserSettingsTest(TestCase):
         self.assertIn('Settings', data)
         self.assertNotIn('Your changes have been saved.', data)
 
+        # Ensure that the user's current language is preselected in the form.
+        self.assertIn(f'<option selected value="{user.settings.language}">', data)
+
     def test_user_settings_post(self):
         """
             Test posting to the user settings page.
 
-            Expected result: The form is shown with the new data.
+            Expected result: The form is shown with the new data, the language is updated.
         """
         email = 'test@example.com'
         name = 'Jane Doe'
@@ -71,13 +74,22 @@ class UserSettingsTest(TestCase):
         db.session.add(user)
         db.session.commit()
 
+        self.assertEqual('en', user.settings.language)
+
         self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password
         ))
 
-        response = self.client.post('/user/settings', follow_redirects=True, data=dict())
+        new_language = 'de'
+        response = self.client.post('/user/settings', follow_redirects=True, data=dict(
+            language=new_language,
+        ))
         data = response.get_data(as_text=True)
 
-        self.assertIn('Settings', data)
-        self.assertIn('Your changes have been saved.', data)
+        self.assertNotIn('Settings', data)
+        self.assertNotIn('Your changes have been saved.', data)
+        self.assertIn('Einstellungen', data)
+        self.assertIn('Deine Änderungen wurden gespeichert.', data)
+
+        self.assertEqual(new_language, user.settings.language)

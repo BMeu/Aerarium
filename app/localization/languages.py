@@ -2,16 +2,66 @@
 # -*- coding: utf-8 -*-
 
 from typing import Iterable
+from typing import Tuple
 
 from os import listdir
 import re
 
 from flask import current_app
 from flask import request
+from flask_babel import get_locale as get_current_locale
+from flask_babel import Locale
+from flask_login import current_user
 
 """
     Helpers regarding language functionality.
 """
+
+
+def get_default_language() -> str:
+    """
+        Get the application's default language.
+
+        :return: The language code of the default language.
+    """
+    return 'en'
+
+
+def get_language_names(translation_dir: str, with_native_names: bool = True) -> Iterable[Tuple[str, str]]:
+    """
+        Get a list of languages supported by the application, each with their name in the current language
+
+        :param translation_dir: The directory within which the GetText translation folders can be found.
+        :param with_native_names: If set to `True`, the languages' names will not only be given in the current language,
+                                  but also in their native language.
+        :return: A list of tuples, with the first element being the language code and the second one being the
+                 language's name.
+    """
+    # The language in which the application is currently running.
+    current_locale = get_current_locale()
+    current_language = current_locale.language
+
+    names = []
+    languages = get_languages(translation_dir, get_default_language())
+    for language in languages:
+        # Get the locale for the currently looked at language.
+        locale = Locale(language)
+
+        # Get the language's name in the current language.
+        name = locale.get_display_name(current_language)
+
+        # If native names are requested, and the current language is not the one we are currently looking at,
+        # determine the native name.
+        if with_native_names and language != current_language:
+            native_name = locale.get_display_name(language)
+
+            name = f'{name} ({native_name})'
+
+        names.append((language, name))
+
+    # Sort the list of language names by their name, i.e. the second element in the tuple.
+    names.sort(key=lambda x: x[1])
+    return names
 
 
 def get_languages(translation_dir: str, default_language: str = 'en') -> Iterable[str]:
@@ -66,6 +116,12 @@ def get_locale() -> str:
         :return: The chosen language code.
     """
 
+    # Get the language from the user if they are logged in.
+    if current_user and not current_user.is_anonymous and current_user.settings.language:
+        return current_user.settings.language
+
     # TODO: Set from user settings, accept header, global settings.
+
+    # Choose the best matching language from the request headers.
     locale = request.accept_languages.best_match(current_app.config['LANGUAGES'])
     return locale

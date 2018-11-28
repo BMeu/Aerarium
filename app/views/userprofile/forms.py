@@ -8,6 +8,7 @@ from wtforms import BooleanField
 from wtforms import Field
 from wtforms import Form
 from wtforms import PasswordField
+from wtforms import SelectField
 from wtforms import StringField
 from wtforms import SubmitField
 from wtforms import ValidationError
@@ -15,6 +16,8 @@ from wtforms.validators import DataRequired
 from wtforms.validators import Email as IsEmail
 from wtforms.validators import EqualTo
 
+from app.configuration import BaseConfiguration
+from app.localization import get_language_names
 from app.userprofile import User
 
 # region Validators
@@ -119,6 +122,18 @@ class UserSettingsForm(FlaskForm):
     """
         A form for changing a user's settings.
     """
+    language = SelectField(_l('Language:'), validators=[DataRequired()],
+                           description=_l('The language in which you want to use the application.'))
     submit = SubmitField(_l('Save'))
+
+    def __init__(self, *args, **kwargs) -> None:
+        """
+
+            :param args:
+            :param kwargs:
+        """
+        super().__init__(*args, **kwargs)
+
+        self.language.choices = get_language_names(BaseConfiguration.TRANSLATION_DIR)
 
 # endregion

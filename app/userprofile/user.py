@@ -60,6 +60,9 @@ class User(UserMixin, db.Model):
     """
 
     settings = db.relationship('UserSettings', backref='user', cascade='all, delete-orphan', uselist=False)
+    """
+        The user's settings (:class:`.UserSettings`).
+    """
 
     @property
     def is_active(self) -> bool:
