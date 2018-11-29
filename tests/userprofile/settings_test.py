@@ -100,7 +100,7 @@ class UserSettingsTest(TestCase):
 
     def test_language_set_failure(self):
         """
-            Test setting n invalid language.
+            Test setting an invalid language.
 
             Expected result: The language is not set, instead an error is raised.
         """
@@ -116,3 +116,31 @@ class UserSettingsTest(TestCase):
 
             self.assertEqual(language, settings.language)
             self.assertEqual(f'Invalid language "{invalid_language}"', str(exception_cm.exception))
+
+    def test_reset(self):
+        """
+            Test resetting the settings to their default values.
+
+            Expected result: All values (except the primary key) are reset to their default values.
+        """
+        user_id = 1
+
+        settings = UserSettings()
+        self.assertIsNone(settings._user_id)
+
+        settings._user_id = user_id
+
+        db.session.add(settings)
+        db.session.commit()
+
+        default_language = settings.language
+        self.assertEqual(get_default_language(), default_language)
+        self.assertEqual(user_id, settings._user_id)
+
+        new_language = 'de'
+        settings.language = new_language
+        self.assertEqual(new_language, settings.language)
+
+        settings.reset()
+        self.assertEqual(user_id, settings._user_id)
+        self.assertEqual(default_language, settings.language)

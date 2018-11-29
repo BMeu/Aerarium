@@ -136,4 +136,14 @@ class UserSettingsForm(FlaskForm):
 
         self.language.choices = get_language_names(BaseConfiguration.TRANSLATION_DIR)
 
+
+class UserSettingsResetForm(FlaskForm):
+    """
+        A form to reset the user's settings. The CSRF token is used so that a user cannot be tricked to reset their
+        settings by redirecting them to the URL.
+    """
+
+    submit = SubmitField(_l('Reset'),
+                         description=_l('Reset these settings to their default values.'))
+
 # endregion

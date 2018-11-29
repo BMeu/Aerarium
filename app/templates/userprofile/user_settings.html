@@ -1,5 +1,8 @@
 {% extends '_base_standard.html' %}
 {% from 'macros/form.html' import render_form %}
 {% block content %}
-    {{ render_form(form, cancel_button=True) }}
+    {{ render_form(settings_form, cancel_button=True) }}
+    <p>
+        {{ render_form(reset_form, action_url=url_for('userprofile.user_settings_reset'), danger=True) }}
+    </p>
 {% endblock %}

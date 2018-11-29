@@ -42,7 +42,7 @@ class UserSettings(db.Model):
             Set the user's language.
 
             :param value: The new language.
-            :raise :
+            :raise ValueError: If the new language is not supported by the application.
         """
         languages = get_languages(BaseConfiguration.TRANSLATION_DIR, get_default_language())
         if value not in languages:
@@ -50,3 +50,22 @@ class UserSettings(db.Model):
 
         self._language = value
         return
+
+    def reset(self) -> None:
+        """
+            Reset the settings to their original values.
+        """
+
+        for setting, column in self.__class__.__table__.columns.items():
+            is_key = column.primary_key or len(column.foreign_keys) > 0
+            if is_key:
+                # Do not reset the keys, otherwise the object will be disassociated.
+                continue
+
+            # Reset to the default value. If there is no default column, reset to None.
+            if column.default is not None:
+                setattr(self, setting, column.default.execute(bind=db.engine))
+            else:  # pragma: nocover
+                # TODO: Currently there are no columns without a default value.
+                #       Remove the nocover statement once a column without a default value is added.
+                setattr(self, setting, None)
