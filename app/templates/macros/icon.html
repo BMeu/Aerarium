@@ -1,0 +1,10 @@
+{#
+    Render an icon.
+
+    Params:
+        name    - Name of the icon.
+        class_  - CSS classes, separated by spaces.
+#}
+{% macro icon(name, class_='') -%}
+    <span class="oi oi-{{ name }} icon {{ class_ }}" aria-hidden="true"></span>
+{%- endmacro %}

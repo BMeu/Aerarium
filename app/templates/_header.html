@@ -1,3 +1,5 @@
+{% from 'macros/icon.html' import icon %}
+
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <a class="navbar-brand" href="{{ url_for('main.index') }}">{{ g.title }}</a>
 
@@ -10,7 +12,7 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('main.index') }}">{{ _('Dashboard') }}</a>
+                <a class="nav-link" href="{{ url_for('main.index') }}">{{ icon('dashboard') }} {{ _('Dashboard') }}</a>
             </li>
         </ul>
 
@@ -23,16 +25,16 @@
                     {{ g.user.name }}
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
-                    <a class="dropdown-item" href="{{ url_for('userprofile.user_profile') }}">{{ _('User Profile') }}</a>
-                    <a class="dropdown-item" href="{{ url_for('userprofile.user_settings') }}">{{ _('Settings') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('userprofile.user_profile') }}">{{ icon('person') }} {{ _('User Profile') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('userprofile.user_settings') }}">{{ icon('cog') }} {{ _('Settings') }}</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{ url_for('userprofile.logout') }}">{{ _('Logout') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('userprofile.logout') }}">{{ icon('account-logout') }} {{ _('Logout') }}</a>
                 </div>
             </li>
             {% else %}
-            {# Anonymous user: logout link. #}
+            {# Anonymous user: login link. #}
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('userprofile.login') }}">{{ _('Login') }}</a>
+                <a class="nav-link" href="{{ url_for('userprofile.login') }}">{{ icon('account-login') }} {{ _('Login') }}</a>
             </li>
             {% endif %}
         </ul>

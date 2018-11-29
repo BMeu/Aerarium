@@ -27,3 +27,7 @@ body > .container {
         border: 1px solid #dee2e6;
     }
 }
+
+.icon {
+    margin-right: 0.25em;
+}
