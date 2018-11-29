@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-11-29 06:48+0100\n"
-"PO-Revision-Date: 2018-11-29 06:49+0100\n"
+"POT-Creation-Date: 2018-11-29 17:03+0100\n"
+"PO-Revision-Date: 2018-11-29 17:04+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -43,27 +43,31 @@ msgid "%(title)s. Written by %(author)s. Visit the project page on %(github)s."
 msgstr ""
 "%(title)s. Entwickelt von %(author)s. Besuche die Projektseite auf %(github)s."
 
-#: app/templates/_header.html:5 app/templates/_header.html:6
+#: app/templates/_header.html:7 app/templates/_header.html:8
 msgid "Toggle Navigation"
 msgstr "Navigation umschalten"
 
-#: app/templates/_header.html:13 app/views/main/routes.py:30
+#: app/templates/_header.html:15 app/views/main/routes.py:30
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: app/templates/_header.html:26 app/views/userprofile/profile.py:67
+#: app/templates/_header.html:24
+msgid "Your Profile"
+msgstr "Dein Profil"
+
+#: app/templates/_header.html:28 app/views/userprofile/profile.py:66
 msgid "User Profile"
 msgstr "Benutzerprofil"
 
-#: app/templates/_header.html:27 app/views/userprofile/user_settings.py:48
+#: app/templates/_header.html:29 app/views/userprofile/user_settings.py:48
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: app/templates/_header.html:29
+#: app/templates/_header.html:31
 msgid "Logout"
 msgstr "Abmelden"
 
-#: app/templates/_header.html:35
+#: app/templates/_header.html:37
 msgid "Login"
 msgstr "Anmelden"
 
@@ -473,7 +477,7 @@ msgstr ""
 msgid "Your password has successfully been changed."
 msgstr "Dein Passwort wurde erfolgreich geändert."
 
-#: app/views/userprofile/profile.py:61
+#: app/views/userprofile/profile.py:59
 #, python-format
 msgid ""
 "An email has been sent to the new address %(email)s. Please open the link "
@@ -486,7 +490,7 @@ msgstr ""
 "Mail-Adresse zu bestätigen. Ansonsten wird Deine E-Mail-Adresse nicht "
 "geändert."
 
-#: app/views/userprofile/profile.py:64 app/views/userprofile/user_settings.py:44
+#: app/views/userprofile/profile.py:62 app/views/userprofile/user_settings.py:44
 msgid "Your changes have been saved."
 msgstr "Deine Änderungen wurden gespeichert."
 
