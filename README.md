@@ -18,7 +18,7 @@
   
   Depending on your database, you might need to install additional SQL drivers. For additional information, see the
   documentation of [SQLAlchemy](https://docs.sqlalchemy.org/en/latest/dialects/index.html). For MySQL, the
-  [PyMySQL](https://github.com/PyMySQL/PyMySQL) is included in the requirements.  
+  [PyMySQL](https://github.com/PyMySQL/PyMySQL) driver is included in the requirements.  
 
 ### Installation
 
