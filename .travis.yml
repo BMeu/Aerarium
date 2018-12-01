@@ -18,9 +18,14 @@ env:
     - FLASK_DEBUG=1
     - FLASK_DEBUG=0
 
+services:
+  - mysql
 
 before_install:
+  - mysql -e 'CREATE DATABASE aerarium_test;'
   - cp instance/example.env instance/.env
+  - sed -i -e 's/# DATABASE_URI=/DATABASE_URI=mysql+pymysql://root@localhost/aerarium_test/g' instance.env
+  - cat instance/.env
 
 install:
   - pip install -r requirements.txt
