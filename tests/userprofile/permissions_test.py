@@ -19,9 +19,9 @@ class PermissionTest(TestCase):
         self.assertEqual(2, Permission.EditUser.value)
         self.assertEqual(4, Permission.EditGlobalSettings.value)
 
-    def test_bitwise_and(self):
+    def test_bitwise_and_success(self):
         """
-            Test the bitwise or method.
+            Test the bitwise and method.
 
             Expected result: The method returns the same result as performing the operation manually.
         """
@@ -43,7 +43,17 @@ class PermissionTest(TestCase):
         result = Permission.bitwise_and(combination_1, combination_2, combination_3)
         self.assertEqual(expectation, result)
 
-    def test_bitwise_or(self):
+    def test_bitwise_and_failure(self):
+        """
+            Test the bitwise and method with an invalid permission..
+
+            Expected result: The method returns the same result as performing the operation manually.
+        """
+        with self.assertRaises(ValueError) as exception_cm:
+            Permission.bitwise_and(Permission.EditGlobalSettings, None, Permission.EditRole)
+            self.assertEqual('None is not a valid permission', str(exception_cm.exception))
+
+    def test_bitwise_or_success(self):
         """
             Test the bitwise or method.
 
@@ -61,3 +71,13 @@ class PermissionTest(TestCase):
         expectation = Permission.EditRole | Permission.EditUser | Permission.EditGlobalSettings
         result = Permission.bitwise_or(Permission.EditRole, Permission.EditUser, Permission.EditGlobalSettings)
         self.assertEqual(expectation, result)
+
+    def test_bitwise_or_failure(self):
+        """
+            Test the bitwise or method with an invalid permission.
+
+            Expected result: The method returns the same result as performing the operation manually.
+        """
+        with self.assertRaises(ValueError) as exception_cm:
+            Permission.bitwise_or(Permission.EditGlobalSettings, None, Permission.EditRole)
+            self.assertEqual('None is not a valid permission', str(exception_cm.exception))

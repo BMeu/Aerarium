@@ -405,7 +405,7 @@ class User(UserMixin, db.Model):
         except AttributeError:
             return False
 
-        if role is None or not role.has_permission(permission):
+        if role is None or not role.has_permissions_all(permission):
             return False
 
         return True
@@ -432,7 +432,7 @@ class User(UserMixin, db.Model):
 
         has_permission = False
         for permission in permissions:
-            has_permission = has_permission or role.has_permission(permission)
+            has_permission = has_permission or role.has_permissions_all(permission)
 
         return has_permission
 

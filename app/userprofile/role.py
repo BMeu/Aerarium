@@ -90,30 +90,58 @@ class Role(db.Model):
 
     def has_permission(self, permission: Permission) -> bool:
         """
-            Determine if the role has a given permission.
+            Determine if the role has the given permission.
 
-            If the empty permission `Permission(0)` is given, the result will always be `False`
+            Alias of :meth:`has_permissions_all` with only a single permission.
 
-            :param permission: The :class:`Permission` to check for.
-            :return: `True` if the role has the requested :class:`Permission`, `False` otherwise.
+            :param permission: The permission to check for.
+            :return: `True` if the role has the requested permission, `False` otherwise.
         """
+        return self.has_permissions_all(permission)
+
+    def has_permissions_all(self, *permissions: Permission) -> bool:
+        """
+            Determine if the role has all of the given permissions.
+
+            If the empty permission `Permission(0)` is given, the result will always be `False`.
+
+            :param permissions: The permissions to check for.
+            :return: `True` if the role has all of the requested permissions, `False` otherwise.
+        """
+        permission = Permission.bitwise_or(*permissions)
+
         if permission.value == 0:
             return False
 
         return permission & self.permissions == permission
 
-    def add_permission(self, permission: Permission) -> None:
+    def has_permissions_one_of(self, *permissions: Permission) -> bool:
+        """
+            Determine if the role has (at least) one of the given permissions.
+
+            If the empty permission `Permission(0)` is given, the result will always be `False`.
+
+            :param permissions: The permissions to check for.
+            :return: `True` if the role has one of the requested permission, `False` otherwise.
+        """
+        has_permission = False
+        for permission in permissions:
+            if permission == Permission(0):
+                continue
+
+            has_permission = has_permission or self.has_permission(permission)
+
+        return has_permission
+
+    def add_permissions(self, *permissions: Permission) -> None:
         """
             Add the given permission to this role.
 
             Existing permissions will be kept.
 
-            :param permission: The :class:`Permission` that will be added to the role.
+            :param permissions: The permissions that will be added to the role.
         """
-        if permission is None:
-            raise ValueError('None is not a valid permission')
-
-        self.permissions |= permission
+        self.permissions = Permission.bitwise_or(self.permissions, *permissions)
 
     def remove_permission(self, permission: Permission) -> None:
         """

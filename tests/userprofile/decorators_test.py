@@ -140,7 +140,7 @@ class DecoratorsTest(TestCase):
         user.login(email, password)
 
         permission = Permission.EditRole
-        user.role.add_permission(permission)
+        user.role.add_permissions(permission)
 
         self.assertTrue(user.role.has_permission(permission))
 

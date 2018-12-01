@@ -41,10 +41,14 @@ class Permission(Flag):
 
             :param permissions: The permissions to perform the bitwise and on.
             :return: The resulting permission.
+            :raise ValueError: if one of the permissions is `None`.
         """
         # Get all combinations at once as the basis for the and.
         result = Permission(-1)
         for permission in permissions:
+            if permission is None:
+                raise ValueError('None is not a valid permission')
+
             result &= permission
 
         return result
@@ -56,9 +60,13 @@ class Permission(Flag):
 
             :param permissions: The permissions to perform the bitwise or on.
             :return: The result permission.
+            :raise ValueError: if one of the permissions is `None`.
         """
         result = Permission(0)
         for permission in permissions:
+            if permission is None:
+                raise ValueError('None is not a valid permission')
+
             result |= permission
 
         return result

@@ -197,22 +197,6 @@ class RoleTest(TestCase):
         self.assertFalse(role.has_permission(Permission.EditRole))
         self.assertFalse(role.has_permission(Permission.EditUser))
 
-    def test_has_permission_empty_permission(self):
-        """
-            Test the has_permission() method with the empty permission.
-
-            Expected result: `False`.
-        """
-        role = Role()
-        db.session.add(role)
-        db.session.commit()
-
-        self.assertEqual(0, role._permissions)
-        self.assertFalse(role.has_permission(Permission(0)))
-
-        role._permissions = Permission.EditRole.value
-        self.assertFalse(role.has_permission(Permission(0)))
-
     def test_has_permission_single_permission(self):
         """
             Test the has_permission() method if a role has the request permission (and only this one).
@@ -235,20 +219,139 @@ class RoleTest(TestCase):
         # If a combination of multiple permissions is requested, the role does not have this permission.
         self.assertFalse(role.has_permission(Permission.EditRole | Permission.EditUser))
 
-    def test_has_permission_multiple_permissions(self):
+    def test_has_permissions_all_no_permissions(self):
         """
-            Test the has_permission() method if a role has the requested permission (and others).
+            Test the has_permissions_all() method if a role does not have any permissions.
+
+            Expected result: `False`.
+        """
+        role = Role()
+        db.session.add(role)
+        db.session.commit()
+
+        self.assertEqual(0, role._permissions)
+
+        self.assertFalse(role.has_permissions_all(Permission.EditRole))
+        self.assertFalse(role.has_permissions_all(Permission.EditUser))
+
+    def test_has_permissions_all_empty_permission(self):
+        """
+            Test the has_permissions_all() method with the empty permission.
+
+            Expected result: `False`.
+        """
+        role = Role()
+        db.session.add(role)
+        db.session.commit()
+
+        self.assertEqual(0, role._permissions)
+        self.assertFalse(role.has_permissions_all(Permission(0)))
+
+        role._permissions = Permission.EditRole.value
+        self.assertFalse(role.has_permissions_all(Permission(0)))
+
+    def test_has_permissions_all_single_permission(self):
+        """
+            Test the has_permissions_all() method if a role has the request permission (and only this one).
+
+            Expected result: `True` when requesting this permission, `False` otherwise.
+        """
+        role = Role()
+
+        role._permissions = Permission.EditRole.value
+        self.assertTrue(role.has_permissions_all(Permission.EditRole))
+        self.assertFalse(role.has_permissions_all(Permission.EditUser))
+
+        # If a combination of multiple permissions is requested, the role does not have this permission.
+        self.assertFalse(role.has_permissions_all(Permission.EditRole | Permission.EditUser))
+
+        role._permissions = Permission.EditUser.value
+        self.assertFalse(role.has_permissions_all(Permission.EditRole))
+        self.assertTrue(role.has_permissions_all(Permission.EditUser))
+
+        # If a combination of multiple permissions is requested, the role does not have this permission.
+        self.assertFalse(role.has_permissions_all(Permission.EditRole | Permission.EditUser))
+
+    def test_has_permissions_all_multiple_permissions(self):
+        """
+            Test the has_permissions_all() method if a role has the requested permission (and others).
 
             Expected result: `True` when requesting the set permissions.
         """
         role = Role()
 
         role._permissions = (Permission.EditRole | Permission.EditUser).value
-        self.assertTrue(role.has_permission(Permission.EditRole))
-        self.assertTrue(role.has_permission(Permission.EditUser))
-        self.assertTrue(role.has_permission(Permission.EditRole | Permission.EditUser))
+        self.assertTrue(role.has_permissions_all(Permission.EditRole))
+        self.assertTrue(role.has_permissions_all(Permission.EditUser))
+        self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditUser, Permission(0)))
 
-    def test_add_permission_none(self):
+    def test_has_permissions_one_of_no_permissions(self):
+        """
+            Test the has_permissions_one_of() method if a role does not have any permissions.
+
+            Expected result: `False`.
+        """
+        role = Role()
+        db.session.add(role)
+        db.session.commit()
+
+        self.assertEqual(0, role._permissions)
+
+        self.assertFalse(role.has_permissions_one_of(Permission.EditRole))
+        self.assertFalse(role.has_permissions_one_of(Permission.EditUser))
+
+    def test_has_permissions_one_of_empty_permission(self):
+        """
+            Test the has_permissions_one_of() method with the empty permission.
+
+            Expected result: `False`.
+        """
+        role = Role()
+        db.session.add(role)
+        db.session.commit()
+
+        self.assertEqual(0, role._permissions)
+        self.assertFalse(role.has_permissions_one_of(Permission(0)))
+
+        role._permissions = Permission.EditRole.value
+        self.assertFalse(role.has_permissions_one_of(Permission(0)))
+
+    def test_has_permissions_one_of_single_permission(self):
+        """
+            Test the has_permissions_one_of() method if a role has the request permission (and only this one).
+
+            Expected result: `True` when requesting this permission, `False` otherwise.
+        """
+        role = Role()
+
+        role._permissions = Permission.EditRole.value
+        self.assertTrue(role.has_permissions_one_of(Permission.EditRole))
+        self.assertFalse(role.has_permissions_one_of(Permission.EditUser))
+
+        # If a combination of multiple permissions is requested, the role does not have this permission.
+        self.assertFalse(role.has_permissions_one_of(Permission.EditRole | Permission.EditUser))
+
+        role._permissions = Permission.EditUser.value
+        self.assertFalse(role.has_permissions_one_of(Permission.EditRole))
+        self.assertTrue(role.has_permissions_one_of(Permission.EditUser))
+
+        # If a combination of multiple permissions is requested, the role does not have this permission.
+        self.assertFalse(role.has_permissions_one_of(Permission.EditRole | Permission.EditUser))
+
+    def test_has_permissions_one_of_multiple_permissions(self):
+        """
+            Test the has_permissions_one_of() method if a role has the requested permission (and others).
+
+            Expected result: `True` when requesting the set permissions.
+        """
+        role = Role()
+
+        role._permissions = (Permission.EditRole | Permission.EditUser).value
+        self.assertTrue(role.has_permissions_one_of(Permission.EditRole))
+        self.assertTrue(role.has_permissions_one_of(Permission.EditUser))
+        self.assertTrue(role.has_permissions_one_of(Permission.EditRole, Permission.EditUser, Permission(0)))
+
+    def test_add_permissions_none(self):
         """
             Test adding the value `None` as a permission.
 
@@ -257,10 +360,10 @@ class RoleTest(TestCase):
         role = Role()
         with self.assertRaises(ValueError) as exception_cm:
             # noinspection PyTypeChecker
-            role.add_permission(None)
+            role.add_permissions(None)
             self.assertEqual('None is not a valid permission', str(exception_cm.exception))
 
-    def test_add_permission_empty(self):
+    def test_add_permissions_empty(self):
         """
             Test adding the empty permission.
 
@@ -270,10 +373,10 @@ class RoleTest(TestCase):
         permission = Permission.EditRole
         role.permissions = permission
 
-        role.add_permission(Permission(0))
+        role.add_permissions(Permission(0))
         self.assertEqual(permission, role.permissions)
 
-    def test_add_permission_single_permission(self):
+    def test_add_permissions_single_permission(self):
         """
             Test adding a permission to the permissions.
 
@@ -285,15 +388,14 @@ class RoleTest(TestCase):
         self.assertEqual(Permission(0), role.permissions)
 
         # Add the first permission.
-        role.add_permission(Permission.EditRole)
+        role.add_permissions(Permission.EditRole)
         self.assertEqual(Permission.EditRole, role.permissions)
 
         # Add another one.
-        role.add_permission(Permission.EditUser)
-        self.assertTrue(role.has_permission(Permission.EditRole))
-        self.assertTrue(role.has_permission(Permission.EditUser))
+        role.add_permissions(Permission.EditUser)
+        self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditUser))
 
-    def test_add_permission_multiple_permission(self):
+    def test_add_permissions_multiple_permission(self):
         """
             Test adding multiple permissions add once to the permissions.
 
@@ -304,11 +406,10 @@ class RoleTest(TestCase):
         role = Role()
         self.assertEqual(Permission(0), role.permissions)
 
-        role.add_permission(Permission.EditRole | Permission.EditUser)
-        self.assertTrue(role.has_permission(Permission.EditRole))
-        self.assertTrue(role.has_permission(Permission.EditUser))
+        role.add_permissions(Permission.EditRole, Permission.EditUser)
+        self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditUser))
 
-    def test_add_permission_existing_permission(self):
+    def test_add_permissions_existing_permission(self):
         """
             Test adding a permission if it already is set.
 
@@ -318,7 +419,7 @@ class RoleTest(TestCase):
         permissions = Permission.EditRole | Permission.EditUser
         role.permissions = permissions
 
-        role.add_permission(Permission.EditRole)
+        role.add_permissions(Permission.EditRole)
         self.assertEqual(permissions, role.permissions)
 
     def test_remove_permission_none(self):
@@ -356,8 +457,7 @@ class RoleTest(TestCase):
         # All permissions in the beginning.
         role = Role()
         role.permissions = Permission.EditRole | Permission.EditUser
-        self.assertTrue(role.has_permission(Permission.EditRole))
-        self.assertTrue(role.has_permission(Permission.EditUser))
+        self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditUser))
 
         # Remove the first permission.
         role.remove_permission(Permission.EditRole)
@@ -378,8 +478,8 @@ class RoleTest(TestCase):
         role = Role()
         full_permissions = Permission.EditRole | Permission.EditUser
         role.permissions = full_permissions
-        self.assertTrue(role.has_permission(Permission.EditRole))
-        self.assertTrue(role.has_permission(Permission.EditUser))
+        self.assertTrue(role.has_permissions_all(Permission.EditRole))
+        self.assertTrue(role.has_permissions_all(Permission.EditUser))
 
         # Remove all.
         role.remove_permission(full_permissions)
@@ -395,7 +495,7 @@ class RoleTest(TestCase):
         permission_to_remove = Permission.EditRole
         permission = Permission.EditUser
         role.permissions = permission
-        self.assertFalse(role.has_permission(permission_to_remove))
+        self.assertFalse(role.has_permissions_all(permission_to_remove))
 
         role.remove_permission(permission_to_remove)
         self.assertEqual(permission, role.permissions)

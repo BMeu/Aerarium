@@ -990,7 +990,7 @@ class UserTest(TestCase):
         user.login(email, password)
 
         permission = Permission.EditRole
-        self.assertFalse(user.role.has_permission(permission))
+        self.assertFalse(user.role.has_permissions_all(permission))
 
         self.assertFalse(User.current_user_has_permissions_all(permission))
 
@@ -1014,7 +1014,7 @@ class UserTest(TestCase):
         user.login(email, password)
 
         permission = Permission.EditRole
-        user.role.add_permission(permission)
+        user.role.add_permissions(permission)
 
         self.assertTrue(user.role.has_permission(permission))
 
@@ -1039,10 +1039,9 @@ class UserTest(TestCase):
 
         user.login(email, password)
 
-        permission = Permission.EditRole | Permission.EditUser
-        user.role.add_permission(permission)
+        user.role.add_permissions(Permission.EditRole, Permission.EditUser)
 
-        self.assertTrue(user.role.has_permission(permission))
+        self.assertTrue(user.role.has_permissions_all(Permission.EditRole, Permission.EditUser))
 
         self.assertTrue(User.current_user_has_permissions_all(Permission.EditRole, Permission.EditUser))
 
@@ -1099,7 +1098,7 @@ class UserTest(TestCase):
         user.login(email, password)
 
         permission = Permission.EditRole
-        self.assertFalse(user.role.has_permission(permission))
+        self.assertFalse(user.role.has_permissions_all(permission))
 
         self.assertFalse(User.current_user_has_permissions_one_of(permission))
 
@@ -1123,9 +1122,9 @@ class UserTest(TestCase):
         user.login(email, password)
 
         permission = Permission.EditRole
-        user.role.add_permission(permission)
+        user.role.add_permissions(permission)
 
-        self.assertTrue(user.role.has_permission(permission))
+        self.assertTrue(user.role.has_permissions_all(permission))
 
         self.assertTrue(User.current_user_has_permissions_one_of(permission))
         self.assertFalse(User.current_user_has_permissions_one_of(Permission.EditGlobalSettings))
@@ -1150,7 +1149,7 @@ class UserTest(TestCase):
         user.login(email, password)
 
         permission = Permission.EditRole
-        user.role.add_permission(permission)
+        user.role.add_permissions(permission)
 
         self.assertTrue(user.role.has_permission(permission))
 
