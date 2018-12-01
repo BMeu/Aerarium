@@ -141,6 +141,9 @@ class Role(db.Model):
 
             :param permissions: The permissions that will be added to the role.
         """
+        # The permissions attribute is a property. For some reason, PyCharm complains about its being defined outside
+        # the init() method.
+        # noinspection PyAttributeOutsideInit
         self.permissions = Permission.bitwise_or(self.permissions, *permissions)
 
     def remove_permission(self, permission: Permission) -> None:

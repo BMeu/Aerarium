@@ -50,6 +50,7 @@ class PermissionTest(TestCase):
             Expected result: The method returns the same result as performing the operation manually.
         """
         with self.assertRaises(ValueError) as exception_cm:
+            # noinspection PyTypeChecker
             Permission.bitwise_and(Permission.EditGlobalSettings, None, Permission.EditRole)
             self.assertEqual('None is not a valid permission', str(exception_cm.exception))
 
@@ -79,5 +80,6 @@ class PermissionTest(TestCase):
             Expected result: The method returns the same result as performing the operation manually.
         """
         with self.assertRaises(ValueError) as exception_cm:
+            # noinspection PyTypeChecker
             Permission.bitwise_or(Permission.EditGlobalSettings, None, Permission.EditRole)
             self.assertEqual('None is not a valid permission', str(exception_cm.exception))
