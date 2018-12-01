@@ -1,4 +1,4 @@
-"""empty message
+"""Basic User Settings
 
 Revision ID: b10a70fea24b
 Revises: b94c6548f7ba

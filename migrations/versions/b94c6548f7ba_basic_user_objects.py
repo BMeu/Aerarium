@@ -1,4 +1,4 @@
-"""Basic user objects
+"""Basic User Objects
 
 Revision ID: b94c6548f7ba
 Revises: 

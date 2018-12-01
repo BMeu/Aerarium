@@ -1,4 +1,4 @@
-"""user language
+"""User Language
 
 Revision ID: eb664d9fe242
 Revises: b10a70fea24b
