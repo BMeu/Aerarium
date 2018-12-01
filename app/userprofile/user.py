@@ -61,7 +61,13 @@ class User(UserMixin, db.Model):
 
     settings = db.relationship('UserSettings', backref='user', cascade='all, delete-orphan', uselist=False)
     """
-        The user's settings (:class:`.UserSettings`).
+        The user's settings (:class:`UserSettings`).
+    """
+
+    _role_id = db.Column('role_id', db.Integer, db.ForeignKey('role.id'))
+    """
+        The ID of the role (:class:`.Role`) to which the user is assigned. The actual role object can be accessed via
+        the attribute `role`.
     """
 
     @property

@@ -12,6 +12,22 @@ app.userprofile.decorators module
     :undoc-members:
     :show-inheritance:
 
+app.userprofile.permissions module
+----------------------------------
+
+.. automodule:: app.userprofile.permissions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+app.userprofile.role module
+---------------------------
+
+.. automodule:: app.userprofile.role
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 app.userprofile.settings module
 -------------------------------
 

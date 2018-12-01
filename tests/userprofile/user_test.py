@@ -13,6 +13,7 @@ from app import db
 from app import mail
 from app.configuration import TestConfiguration
 from app.exceptions import InvalidJWTokenPayloadError
+from app.userprofile import Role
 from app.userprofile import User
 from app.userprofile import UserSettings
 from app.userprofile.tokens import ChangeEmailAddressToken
@@ -78,6 +79,43 @@ class UserTest(TestCase):
 
         user.is_active = False
         self.assertFalse(user._is_activated)
+
+    def test_role_none(self):
+        """
+            Test getting the user's role if the user does not have a role.
+
+            Expected result: `None`
+        """
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        user = User(email, name)
+
+        self.assertIsNone(user._role_id)
+        self.assertIsNone(user.role)
+
+    def test_role_exists(self):
+        """
+            Test getting the user's role if the user has a role.
+
+            Expected result: The role is returned.
+        """
+        role = Role(name='Administrator')
+
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        user = User(email, name)
+        user.role = role
+
+        db.session.add(role)
+        db.session.add(user)
+        db.session.commit()
+
+        self.assertIsNotNone(role.id)
+        self.assertIsNotNone(user._role_id)
+        self.assertEqual(role.id, user._role_id)
+
+        user = User.load_from_email(email)
+        self.assertEqual(role, user.role)
 
     # endregion
 

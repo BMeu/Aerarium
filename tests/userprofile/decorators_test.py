@@ -4,13 +4,18 @@
 from unittest import TestCase
 
 from flask import url_for
+from flask_login import current_user
 from flask_login import login_user
+from werkzeug.exceptions import Forbidden
 from werkzeug.wrappers import Response
 
 from app import create_app
 from app import db
 from app.configuration import TestConfiguration
 from app.userprofile import logout_required
+from app.userprofile import Permission
+from app.userprofile import permission_required
+from app.userprofile import Role
 from app.userprofile import User
 
 
@@ -36,6 +41,15 @@ class DecoratorsTest(TestCase):
         self.request_context.pop()
         self.app_context.pop()
 
+    @staticmethod
+    def view_function() -> str:
+        """
+            A simple test "view" function.
+
+            :return: 'Decorated View'.
+        """
+        return 'Decorated View'
+
     def test_logout_required_logged_out(self):
         """
             Test the ``logout_required`` decorator with an anonymous user.
@@ -43,17 +57,9 @@ class DecoratorsTest(TestCase):
             Expected result: The decorated view function is returned.
         """
 
-        def test_view_function() -> str:
-            """
-                A simple test "view" function.
-
-                :return: 'Decorated View'.
-            """
-            return 'Decorated View'
-
-        view_function = logout_required(test_view_function)
+        view_function = logout_required(self.view_function)
         response = view_function()
-        self.assertEqual('Decorated View', response)
+        self.assertEqual(self.view_function(), response)
 
     def test_logout_required_logged_in(self):
         """
@@ -61,14 +67,6 @@ class DecoratorsTest(TestCase):
 
             Expected result: The redirect response to the home page is returned.
         """
-
-        def test_view_function() -> str:
-            """
-                A simple test "view" function.
-
-                :return: 'Decorated View'.
-            """
-            return 'Decorated View'
 
         email = 'test@example.com'
         name = 'John Doe'
@@ -78,8 +76,74 @@ class DecoratorsTest(TestCase):
         db.session.commit()
         login_user(user)
 
-        redirect_function = logout_required(test_view_function)
+        redirect_function = logout_required(self.view_function)
         response = redirect_function()
         self.assertIsInstance(response, Response)
         self.assertEqual(302, response.status_code)
         self.assertEqual(url_for('main.index'), response.location)
+
+    def test_permission_required_no_role(self):
+        """
+            Test the `permission_required` decorator if the user does not have a role.
+
+            Expected result: The request is aborted with an error 403.
+        """
+
+        # Ensure the user has no role.
+        self.assertFalse(hasattr(current_user, 'role'))
+
+        with self.assertRaises(Forbidden):
+            permission_required(Permission.EditRole)(self.view_function)()
+
+    def test_permission_required_no_permission(self):
+        """
+            Test the `permission_required` decorator if the user does not have the requested permission.
+
+            Expected result: The request is aborted with an error 403.
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = Role()
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        permission = Permission.EditRole
+        self.assertFalse(user.role.has_permission(permission))
+
+        with self.assertRaises(Forbidden):
+            permission_required(permission)(self.view_function)()
+
+    def test_permission_required_has_permission(self):
+        """
+            Test the `permission_required` decorator if the user has the requested permission.
+
+            Expected result: The decorated view function is returned.
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = Role()
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        permission = Permission.EditRole
+        user.role.add_permission(permission)
+
+        self.assertTrue(user.role.has_permission(permission))
+
+        view_function = permission_required(permission)(self.view_function)
+        response = view_function()
+        self.assertEqual(self.view_function(), response)

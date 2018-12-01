@@ -54,7 +54,7 @@ class BaseConfiguration:
     TOKEN_VALIDITY: int = int(environ.get('TOKEN_VALIDITY', 900))
 
     # Database settings.
-    SQLALCHEMY_DATABASE_URI: str = environ.get('DATABASE_URI', 'sqlite:///' + path.join(_instance_dir, 'app.db'))
+    SQLALCHEMY_DATABASE_URI: Optional[str] = environ.get('DATABASE_URI', None)
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
 
     # Mail settings.

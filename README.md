@@ -11,6 +11,14 @@
 ### System Requirements
 
 * Python 3.6
+* A database: in theory,
+  [any database supported by SQLAlchemy](https://docs.sqlalchemy.org/en/latest/dialects/index.html#dialects) will work.
+  However, due to restricted capabilities of upgrading existing tables, SQLite is not supported; upgrading Aerarium
+  might fail when using SQLite.
+  
+  Depending on your database, you might need to install additional SQL drivers. For additional information, see the
+  documentation of [SQLAlchemy](https://docs.sqlalchemy.org/en/latest/dialects/index.html). For MySQL, the
+  [PyMySQL](https://github.com/PyMySQL/PyMySQL) is included in the requirements.  
 
 ### Installation
 
