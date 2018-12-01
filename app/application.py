@@ -104,9 +104,11 @@ def _initialize_blueprints(application: Flask) -> None:
 
         :param application: The application instance for which the blueprints will be registered.
     """
+    from app.views.administration import bp as administration_bp
     from app.views.main import bp as main_bp
     from app.views.userprofile import bp as userprofile_bp
 
+    application.register_blueprint(administration_bp, url_prefix='/administration')
     application.register_blueprint(main_bp)
     application.register_blueprint(userprofile_bp, url_prefix='/user')
 
