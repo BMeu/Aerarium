@@ -134,3 +134,15 @@ class Role(db.Model):
         self.permissions ^= permission
 
     # endregion
+
+    # region System
+
+    def __repr__(self) -> str:
+        """
+            Get a string representation of the role.
+
+            :return: A string representation of the role.
+        """
+        return f'<Role [{self.id}] "{self.name}" [{self.permissions}]>'
+
+    # endregion

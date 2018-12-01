@@ -1,3 +1,29 @@
 {% extends '_base_standard.html' %}
+{% from 'macros/pagination.html' import pagination %}
+
 {% block content %}
+    <p>
+        {{ _('Permissions restrict specific functionalities in the application. Only if a user has the permission required for a functionality they can access that functionality. These permissions are not directly assigned to a user, but to roles that combine multiple permissions. Each user is assigned to a single role, thus defining which permissions the user has.') }}
+    </p>
+
+    <p>
+        <a class="btn btn-dark" role="button" href="#" title="{{ _('Create a new role') }}">{{ _('New Role') }}</a>
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-light">
+                {% if roles|length > 1 %}
+                    {{ _('Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of %(total_roles)d', first_role_on_page=first_role_on_page, last_role_on_page=last_role_on_page, total_roles=total_roles) }}
+                {% else %}
+                    {{ _('Displaying role %(role_on_page)d of %(total_roles)d', role_on_page=first_role_on_page, total_roles=total_roles) }}
+                {% endif %}
+            </li>
+        {% for role in roles %}
+            <li class="list-group-item list-group-item-action">
+                <a href="#" title="{{ _('Edit role “%(role)s”', role=role.name) }}">{{ role.name }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+        <small class="text-muted">{{ _('Click on the name of a role to edit or delete it.') }}</small>
+    </p>
+
+    {{ pagination('.roles_list', current_page, total_pages) }}
 {% endblock %}

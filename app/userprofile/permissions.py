@@ -28,3 +28,37 @@ class Permission(Flag):
     """
         The permission to create, read, update, or delete a user.
     """
+
+    EditGlobalSettings = auto()
+    """
+        The permission to read and update the global settings.
+    """
+
+    @staticmethod
+    def bitwise_and(*permissions: 'Permission') -> 'Permission':
+        """
+            Perform a bitwise and on all given permissions.
+
+            :param permissions: The permissions to perform the bitwise and on.
+            :return: The resulting permission.
+        """
+        # Get all combinations at once as the basis for the and.
+        result = Permission(-1)
+        for permission in permissions:
+            result &= permission
+
+        return result
+
+    @staticmethod
+    def bitwise_or(*permissions: 'Permission') -> 'Permission':
+        """
+            Perform a bitwise or on all given permissions.
+
+            :param permissions: The permissions to perform the bitwise or on.
+            :return: The result permission.
+        """
+        result = Permission(0)
+        for permission in permissions:
+            result |= permission
+
+        return result

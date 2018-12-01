@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+    app.views.administration
     app.views.main
     app.views.userprofile
 

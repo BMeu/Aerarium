@@ -43,6 +43,7 @@ class BaseConfiguration:
     SYS_ADMINS: Optional[Iterable[str]] = [mail for mail in str.split(environ.get('SYS_ADMINS'), ';')] \
         if environ.get('SYS_ADMINS') else None
     SUPPORT_ADDRESS: Optional[str] = environ.get('SUPPORT_ADDRESS', None)
+    ITEMS_PER_PAGE: int = max(1, int(environ.get('ITEMS_PER_PAGE', 25)))
 
     # Security settings.
     BCRYPT_HANDLE_LONG_PASSWORDS: int = 1

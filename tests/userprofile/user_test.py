@@ -13,6 +13,7 @@ from app import db
 from app import mail
 from app.configuration import TestConfiguration
 from app.exceptions import InvalidJWTokenPayloadError
+from app.userprofile import Permission
 from app.userprofile import Role
 from app.userprofile import User
 from app.userprofile import UserSettings
@@ -952,6 +953,209 @@ class UserTest(TestCase):
             # Test that the user's data has been deleted from other tables as well.
             settings = UserSettings.query.get(user_id)
             self.assertIsNone(settings)
+
+    # endregion
+
+    # region Permissions
+
+    def test_current_user_has_permissions_all_no_role(self):
+        """
+            Test the `current_user_has_permissions_all` method if the user does not have a role.
+
+            Expected result: `False`
+        """
+
+        # Ensure the user has no role.
+        self.assertFalse(hasattr(current_user, 'role'))
+
+        self.assertFalse(User.current_user_has_permissions_all(Permission.EditRole))
+
+    def test_current_user_has_permissions_all_no_permission(self):
+        """
+            Test the `current_user_has_permissions_all` method if the user does not have the requested permission.
+
+            Expected result: `False`
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = Role()
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        permission = Permission.EditRole
+        self.assertFalse(user.role.has_permission(permission))
+
+        self.assertFalse(User.current_user_has_permissions_all(permission))
+
+    def test_current_user_has_permissions_all_with_permission(self):
+        """
+            Test the `current_user_has_permissions_all` method if the user has the requested permission.
+
+            Expected result: `True`
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = Role()
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        permission = Permission.EditRole
+        user.role.add_permission(permission)
+
+        self.assertTrue(user.role.has_permission(permission))
+
+        self.assertTrue(User.current_user_has_permissions_all(permission))
+
+    def test_current_user_has_permissions_all_with_multiple_permissions(self):
+        """
+            Test the `current_user_has_permissions_all` method if the user has the requested permissions.
+
+            Expected result: `True`
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = Role()
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        permission = Permission.EditRole | Permission.EditUser
+        user.role.add_permission(permission)
+
+        self.assertTrue(user.role.has_permission(permission))
+
+        self.assertTrue(User.current_user_has_permissions_all(Permission.EditRole, Permission.EditUser))
+
+    def test_current_user_has_permissions_one_of_no_role_attribute(self):
+        """
+            Test the `current_user_has_permissions_one_of` method if the user does not have a role attribute.
+
+            Expected result: `False`
+        """
+
+        # Ensure the user has no role.
+        self.assertFalse(hasattr(current_user, 'role'))
+
+        self.assertFalse(User.current_user_has_permissions_one_of(Permission.EditRole))
+
+    def test_current_user_has_permissions_one_of_no_role(self):
+        """
+            Test the `current_user_has_permissions_one_of` method if the user does not have a role.
+
+            Expected result: `False`
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        permission = Permission.EditRole
+        self.assertFalse(User.current_user_has_permissions_one_of(permission))
+
+    def test_current_user_has_permissions_one_of_no_permission(self):
+        """
+            Test the `current_user_has_permissions_one_of` method if the user does not have the requested permission.
+
+            Expected result: `False`
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = Role()
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        permission = Permission.EditRole
+        self.assertFalse(user.role.has_permission(permission))
+
+        self.assertFalse(User.current_user_has_permissions_one_of(permission))
+
+    def test_current_user_has_permissions_one_of_with_permission(self):
+        """
+            Test the `current_user_has_permissions_one_of` method if the user has the requested permission.
+
+            Expected result: `True`
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = Role()
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        permission = Permission.EditRole
+        user.role.add_permission(permission)
+
+        self.assertTrue(user.role.has_permission(permission))
+
+        self.assertTrue(User.current_user_has_permissions_one_of(permission))
+        self.assertFalse(User.current_user_has_permissions_one_of(Permission.EditGlobalSettings))
+
+    def test_current_user_has_permissions_one_of_with_multiple_permissions(self):
+        """
+            Test the `current_user_has_permissions_one_of` method if the user has on of the requested permission.
+
+            Expected result: `True`
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = Role()
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        permission = Permission.EditRole
+        user.role.add_permission(permission)
+
+        self.assertTrue(user.role.has_permission(permission))
+
+        self.assertTrue(User.current_user_has_permissions_one_of(Permission.EditRole, Permission.EditUser))
+        self.assertFalse(User.current_user_has_permissions_one_of(Permission.EditGlobalSettings, Permission.EditUser))
 
     # endregion
 

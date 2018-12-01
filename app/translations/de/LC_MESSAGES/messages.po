@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-11-29 17:03+0100\n"
-"PO-Revision-Date: 2018-11-29 17:04+0100\n"
+"POT-Creation-Date: 2018-12-01 22:11+0100\n"
+"PO-Revision-Date: 2018-12-01 22:11+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Generated-By: Babel 2.6.0\n"
 "X-Generator: Poedit 2.0.6\n"
 
-#: app/application.py:130
+#: app/application.py:163
 msgid "Please log in to access this page."
 msgstr "Bitte melde Dich an, um diese Seite öffnen zu können."
 
@@ -47,27 +47,43 @@ msgstr ""
 msgid "Toggle Navigation"
 msgstr "Navigation umschalten"
 
-#: app/templates/_header.html:15 app/views/main/routes.py:30
+#: app/templates/_header.html:17 app/views/main/routes.py:30
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: app/templates/_header.html:24
+#: app/templates/_header.html:24 app/templates/_header.html:25
+msgid "Administration"
+msgstr "Verwaltung"
+
+#: app/templates/_header.html:30
+msgid "Global Settings"
+msgstr "Globale Einstellungen"
+
+#: app/templates/_header.html:38
+msgid "Users"
+msgstr "Benutzer"
+
+#: app/templates/_header.html:42 app/views/administration/roles.py:40
+msgid "Roles"
+msgstr "Rollen"
+
+#: app/templates/_header.html:55
 msgid "Your Profile"
 msgstr "Dein Profil"
 
-#: app/templates/_header.html:28 app/views/userprofile/profile.py:66
+#: app/templates/_header.html:60 app/views/userprofile/profile.py:66
 msgid "User Profile"
 msgstr "Benutzerprofil"
 
-#: app/templates/_header.html:29 app/views/userprofile/user_settings.py:48
+#: app/templates/_header.html:61 app/views/userprofile/user_settings.py:48
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: app/templates/_header.html:31
+#: app/templates/_header.html:63
 msgid "Logout"
 msgstr "Abmelden"
 
-#: app/templates/_header.html:37
+#: app/templates/_header.html:69
 msgid "Login"
 msgstr "Anmelden"
 
@@ -97,6 +113,52 @@ msgstr "Startseite"
 msgid "home page"
 msgstr "Startseite"
 
+#: app/templates/administration/roles.html:6
+msgid ""
+"Permissions restrict specific functionalities in the application. Only if a "
+"user has the permission required for a functionality they can access that "
+"functionality. These permissions are not directly assigned to a user, but to "
+"roles that combine multiple permissions. Each user is assigned to a single "
+"role, thus defining which permissions the user has."
+msgstr ""
+"Berechtigungen beschränken bestimmte Funktionen der Anwendung. Nur wenn ein "
+"Nutzer die für eine Funktion erforderliche Berechtigung besitzt, kann er auf "
+"die Funktionalität zugreifen. Diese Beschränkungen werden nicht direkt einem "
+"Benutzer zugeordnet, sondern Rollen vereinen mehrere Berechtigungen. Jeder "
+"Benutzer besitzt eine Rolle, wodurch die Berechtigungen des Benutzers "
+"festgelegt werden."
+
+#: app/templates/administration/roles.html:10
+msgid "Create a new role"
+msgstr "Eine neue Rolle anlegen"
+
+#: app/templates/administration/roles.html:10
+msgid "New Role"
+msgstr "Neue Rolle"
+
+#: app/templates/administration/roles.html:14
+#, python-format
+msgid ""
+"Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of "
+"%(total_roles)d"
+msgstr ""
+"Zeige Rollen %(first_role_on_page)d bis %(last_role_on_page)d von "
+"%(total_roles)d"
+
+#: app/templates/administration/roles.html:16
+#, python-format
+msgid "Displaying role %(role_on_page)d of %(total_roles)d"
+msgstr "Zeige Rolle %(role_on_page)d von %(total_roles)d"
+
+#: app/templates/administration/roles.html:21
+#, python-format
+msgid "Edit role “%(role)s”"
+msgstr "Rolle „%(role)s“ bearbeiten"
+
+#: app/templates/administration/roles.html:25
+msgid "Click on the name of a role to edit or delete it."
+msgstr "Klicke auf den Namen einer Rolle, um diese zu bearbeiten oder zu löschen."
+
 #: app/templates/macros/form.html:61
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -105,6 +167,39 @@ msgstr "Abbrechen"
 #, python-format
 msgid "Fields marked with an asterisk (%(asterisk)s) are required."
 msgstr "Mit einem Sternchen (%(asterisk)s) markierte Felder sind Pflichtfelder."
+
+#: app/templates/macros/pagination.html:12
+msgid "Navigate pages"
+msgstr "Seitennavigation"
+
+#: app/templates/macros/pagination.html:17
+msgid "Previous Page"
+msgstr "Vorherige Seite"
+
+#: app/templates/macros/pagination.html:17
+msgid "Go to the previous page"
+msgstr "Gehe zur vorherigen Seite"
+
+#: app/templates/macros/pagination.html:19 app/templates/macros/pagination.html:25
+msgid "Previous"
+msgstr "Zurück"
+
+#: app/templates/macros/pagination.html:35
+#, python-format
+msgid "Go to page %(page)d"
+msgstr "Gehe zu Seite %(page)d"
+
+#: app/templates/macros/pagination.html:42
+msgid "Next Page"
+msgstr "Nächste Seite"
+
+#: app/templates/macros/pagination.html:42
+msgid "Go to the next page"
+msgstr "Gehe zur nächsten Seite"
+
+#: app/templates/macros/pagination.html:44 app/templates/macros/pagination.html:50
+msgid "Next"
+msgstr "Weiter"
 
 #: app/templates/userprofile/login.html:5
 #: app/views/userprofile/password_reset.py:53
@@ -125,8 +220,8 @@ msgid ""
 "performing these actions, we will send you a mail to confirm your intention."
 msgstr ""
 "Sei vorsichtig! Die Aktionen in diesem Abschnitt können nicht rückgängig "
-"gemacht werden. Bevor wir diese Aktionen aber tatsächlich ausführen, werden "
-"wir Dir noch eine E-Mail schicken, damit Du Deine Absicht bestätigen kannst."
+"gemacht werden. Bevor wir diese Aktionen aber tatsächlich ausführen, werden wir "
+"Dir noch eine E-Mail schicken, damit Du Deine Absicht bestätigen kannst."
 
 #: app/templates/userprofile/reset_password_request.html:5
 msgid ""
@@ -160,8 +255,8 @@ msgstr ""
 #: app/templates/userprofile/emails/change_email_address_request.txt:3
 #, python-format
 msgid ""
-"To change your email address from %(email_old)s to %(email_new)s, click on "
-"the following link or copy and paste it to your browser:"
+"To change your email address from %(email_old)s to %(email_new)s, click on the "
+"following link or copy and paste it to your browser:"
 msgstr ""
 "Um Deine E-Mail-Adresse von %(email_old)s zu %(email_new)s zu ändern, klicke "
 "auf den folgenden Link oder kopiere ihn und füge ihn in Deinen Browser ein:"
@@ -198,11 +293,11 @@ msgstr "Dein Benutzerprofil und alle damit verbundenen Daten wurden gelöscht."
 #: app/templates/userprofile/emails/delete_account_confirmation.txt:6
 #, python-format
 msgid ""
-"If you have not initiated this action yourself, please contact us "
-"immediately. You can reach us under %(support_email)s."
+"If you have not initiated this action yourself, please contact us immediately. "
+"You can reach us under %(support_email)s."
 msgstr ""
-"Wenn Du diese Aktion nicht veranlasst hast, kontaktiere uns bitte "
-"unverzüglich. Du erreichst uns unter %(support_email)s."
+"Wenn Du diese Aktion nicht veranlasst hast, kontaktiere uns bitte unverzüglich. "
+"Du erreichst uns unter %(support_email)s."
 
 #: app/templates/userprofile/emails/delete_account_confirmation.html:16
 #: app/templates/userprofile/emails/delete_account_confirmation.txt:9
@@ -216,7 +311,7 @@ msgid ""
 "and paste it to your browser:"
 msgstr ""
 "Um Dein Benutzerprofil unwiederbringlich zu löschen, klicke auf den folgenden "
-"Link oder öffne ihn in Deinem Browser"
+"Link oder öffne ihn in Deinem Browser:"
 
 #: app/templates/userprofile/emails/delete_account_request.html:7
 #: app/views/userprofile/forms.py:72
@@ -248,7 +343,7 @@ msgstr ""
 "Passwort zurückzusetzen:"
 
 #: app/templates/userprofile/emails/reset_password_request.html:7
-#: app/userprofile/user.py:305 app/views/userprofile/password_reset.py:79
+#: app/userprofile/user.py:312 app/views/userprofile/password_reset.py:79
 msgid "Reset Your Password"
 msgstr "Passwort zurücksetzen"
 
@@ -259,23 +354,23 @@ msgstr ""
 "Wenn Du das Zurücksetzen Deines Passwortes nicht angefordert hast, kannst Du "
 "diese E-Mail ignorieren."
 
-#: app/userprofile/user.py:199
+#: app/userprofile/user.py:206
 msgid "Your Email Address Has Been Changed"
 msgstr "Deine E-Mail-Adresse wurde geändert"
 
-#: app/userprofile/user.py:225
+#: app/userprofile/user.py:232
 msgid "Change Your Email Address"
 msgstr "E-Mail-Adresse ändern"
 
-#: app/userprofile/user.py:269
+#: app/userprofile/user.py:276
 msgid "Your Password Has Been Changed"
 msgstr "Dein Passwort wurde geändert"
 
-#: app/userprofile/user.py:341
+#: app/userprofile/user.py:348
 msgid "Delete Your User Profile"
 msgstr "Benutzerprofil löschen"
 
-#: app/userprofile/user.py:372
+#: app/userprofile/user.py:379
 msgid "Your User Profile Has Been Deleted"
 msgstr "Dein Benutzerprofil wurde gelöscht"
 
@@ -304,8 +399,8 @@ msgstr "Zugriff verweigert"
 
 #: app/views/main/errors.py:54
 msgid ""
-"You do not have sufficient permissions to access this page. You can try "
-"logging in. If you are logged\n"
+"You do not have sufficient permissions to access this page. You can try logging "
+"in. If you are logged\n"
 "                in and you still get this message, ask your administrator to "
 "raise your permissions."
 msgstr ""
@@ -324,9 +419,8 @@ msgid ""
 "link you clicked is\n"
 "                correct contact your administrator."
 msgstr ""
-"Die von Dir angeforderte Seite wurde auf dem Server nicht gefunden. Wenn Du "
-"Dir sicher bist, dass der Link korrekt ist, kontaktiere bitte Deinen "
-"Administrator."
+"Die von Dir angeforderte Seite wurde auf dem Server nicht gefunden. Wenn Du Dir "
+"sicher bist, dass der Link korrekt ist, kontaktiere bitte Deinen Administrator."
 
 #: app/views/main/errors.py:83
 msgid "Method Not Allowed"
@@ -342,12 +436,12 @@ msgstr "Interner Fehler"
 
 #: app/views/main/errors.py:98
 msgid ""
-"The server encountered an internal error while processing your request. "
-"Please try again later.\n"
+"The server encountered an internal error while processing your request. Please "
+"try again later.\n"
 "                The administrator has been notified."
 msgstr ""
-"Beim Bearbeiten Deiner Anfrage kam es auf dem Server zu einem internen "
-"Fehler. Bitte versuche es später erneut. Der Administrator wurde hierüber "
+"Beim Bearbeiten Deiner Anfrage kam es auf dem Server zu einem internen Fehler. "
+"Bitte versuche es später erneut. Der Administrator wurde hierüber "
 "benachrichtigt."
 
 #: app/views/userprofile/authentication.py:40
@@ -370,14 +464,13 @@ msgstr "Du wurdest erfolgreich abgemeldet."
 #: app/views/userprofile/delete_profile.py:37
 #, python-format
 msgid ""
-"An email has been sent to your email address. Please open the link included "
-"in the mail within the                  next %(validity)d minutes to delete "
-"your user profile. Otherwise, your user profile will not be                  "
-"deleted."
+"An email has been sent to your email address. Please open the link included in "
+"the mail within the                  next %(validity)d minutes to delete your "
+"user profile. Otherwise, your user profile will not be                  deleted."
 msgstr ""
-"Eine E-Mail wurde an Deine Adresse geschickt. Bitte öffne den enthaltenen "
-"Link innerhalb der nächsten %(validity)d Minuten, um Dein Benutzerprofil zu "
-"löschen. Ansonsten wird dein Benutzerprofil nicht gelöscht."
+"Eine E-Mail wurde an Deine Adresse geschickt. Bitte öffne den enthaltenen Link "
+"innerhalb der nächsten %(validity)d Minuten, um Dein Benutzerprofil zu löschen. "
+"Ansonsten wird dein Benutzerprofil nicht gelöscht."
 
 #: app/views/userprofile/delete_profile.py:60
 msgid ""
@@ -431,12 +524,12 @@ msgstr "Name:"
 #: app/views/userprofile/forms.py:113
 msgid ""
 "We will send you an email to your new address with a link to confirm "
-"the                                         changes. The email address will "
-"not be changed until you confirm this action."
+"the                                         changes. The email address will not "
+"be changed until you confirm this action."
 msgstr ""
 "Wir werden Dir eine E-Mail mit einem Link zur Bestätigung Deiner Änderung an "
-"die neue Adresse schicken. Die E-Mail-Adresse wird erst aktualisiert, sobald "
-"Du diese Aktion bestätigst."
+"die neue Adresse schicken. Die E-Mail-Adresse wird erst aktualisiert, sobald Du "
+"diese Aktion bestätigst."
 
 #: app/views/userprofile/forms.py:116
 msgid "Leave this field empty if you do not want to change your password."
@@ -487,8 +580,7 @@ msgid ""
 msgstr ""
 "Eine E-Mail wurde an die neue Adresse %(email)s geschickt. Bitte öffne den "
 "enthaltenen Link innerhalb der nächsten %(validity)d Minuten, um Deine neue E-"
-"Mail-Adresse zu bestätigen. Ansonsten wird Deine E-Mail-Adresse nicht "
-"geändert."
+"Mail-Adresse zu bestätigen. Ansonsten wird Deine E-Mail-Adresse nicht geändert."
 
 #: app/views/userprofile/profile.py:62 app/views/userprofile/user_settings.py:44
 msgid "Your changes have been saved."

@@ -401,3 +401,25 @@ class RoleTest(TestCase):
         self.assertEqual(permission, role.permissions)
 
     # endregion
+
+    # region System
+
+    def test_repr(self):
+        """
+            Test the string representation of the role.
+
+            Expected result: The representation contains details on the role.
+        """
+        name = 'Administrator'
+        permissions = Permission.EditRole | Permission.EditUser
+        role = Role(name=name)
+
+        self.assertEqual(f'<Role [None] "{name}" [Permission.0]>', str(role))
+
+        role.permissions = permissions
+        db.session.add(role)
+        db.session.commit()
+
+        self.assertEqual(f'<Role [1] "{name}" [{permissions}]>', str(role))
+
+    # endregion

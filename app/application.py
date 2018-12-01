@@ -5,6 +5,8 @@
     Application initialization.
 """
 
+from typing import Any
+from typing import Dict
 from typing import Optional
 
 from logging import ERROR
@@ -57,6 +59,7 @@ def create_app(configuration_class: Type[BaseConfiguration] = BaseConfiguration)
 
     _initialize_extensions(application)
     _initialize_blueprints(application)
+    _initialize_context_processors(application)
 
     register_before_request_handlers(application)
     register_after_request_handlers(application)
@@ -111,6 +114,34 @@ def _initialize_blueprints(application: Flask) -> None:
     application.register_blueprint(administration_bp, url_prefix='/administration')
     application.register_blueprint(main_bp)
     application.register_blueprint(userprofile_bp, url_prefix='/user')
+
+
+def _initialize_context_processors(application: Flask) -> None:
+    """
+        Initialize context processors to inject variables and methods into the context of the templates.
+
+        :param application: The application instance for which the context processors will be registered.
+    """
+    def inject_processors() -> Dict[str, Any]:
+        """
+            Inject methods and variables into the template context.
+
+            :return: A list of methods and variables.
+        """
+        from app.userprofile import Permission
+        from app.userprofile import User
+
+        processors = dict(
+            bitwise_and=Permission.bitwise_and,
+            bitwise_or=Permission.bitwise_or,
+            has_permissions_all=User.current_user_has_permissions_all,
+            has_permissions_one_of=User.current_user_has_permissions_one_of,
+            Permission=Permission,
+        )
+
+        return processors
+
+    application.context_processor(inject_processors)
 
 
 def _initialize_extensions(application: Flask) -> None:

@@ -17,6 +17,7 @@ from app import db
 from app import Email
 from app import get_app
 from app import login as app_login
+from app.userprofile import Permission
 from app.userprofile import UserSettings
 from app.userprofile.tokens import ChangeEmailAddressToken
 from app.userprofile.tokens import DeleteAccountToken
@@ -381,6 +382,59 @@ class User(UserMixin, db.Model):
 
         db.session.delete(self)
         db.session.commit()
+
+    # endregion
+
+    # region Permissions
+
+    @staticmethod
+    def current_user_has_permissions_all(*permissions: Permission) -> bool:
+        """
+            Check if the current user has all of the given permissions.
+
+            This does not check if the current user is logged in.
+
+            :param permissions: The permission enumeration members to check for.
+            :return: `True` if the current user has the permissions, `False` otherwise.
+        """
+        permission = Permission.bitwise_or(*permissions)
+
+        # If the current user does not have a role, the user cannot have the permissions.
+        try:
+            role = current_user.role
+        except AttributeError:
+            return False
+
+        if role is None or not role.has_permission(permission):
+            return False
+
+        return True
+
+    @staticmethod
+    def current_user_has_permissions_one_of(*permissions: Permission) -> bool:
+        """
+            Check if the current user has (at least) one of the given permissions.
+
+            This does not check if the current user is logged in.
+
+            :param permissions: The permission enumeration members to check for.
+            :return: `True` if the current user the permissions, `False` otherwise.
+        """
+
+        # If the current user does not have a role, the user cannot have the permissions.
+        try:
+            role = current_user.role
+        except AttributeError:
+            return False
+
+        if role is None:
+            return False
+
+        has_permission = False
+        for permission in permissions:
+            has_permission = has_permission or role.has_permission(permission)
+
+        return has_permission
 
     # endregion
 
