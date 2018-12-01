@@ -387,6 +387,18 @@ class User(UserMixin, db.Model):
 
     # region Permissions
 
+    @classmethod
+    def current_user_has_permission(cls, permission: Permission) -> bool:
+        """
+            Check if the current user has the given permission.
+
+            Alias of :meth:`current_user_has_permissions_all` with a single permission.
+
+            :param permission: The permission to check for.
+            :return: `True` if the current user has the permission, `False` otherwise.
+        """
+        return cls.current_user_has_permissions_all(permission)
+
     @staticmethod
     def current_user_has_permissions_all(*permissions: Permission) -> bool:
         """
@@ -397,7 +409,6 @@ class User(UserMixin, db.Model):
             :param permissions: The permission enumeration members to check for.
             :return: `True` if the current user has the permissions, `False` otherwise.
         """
-        permission = Permission.bitwise_or(*permissions)
 
         # If the current user does not have a role, the user cannot have the permissions.
         try:
@@ -405,7 +416,7 @@ class User(UserMixin, db.Model):
         except AttributeError:
             return False
 
-        if role is None or not role.has_permissions_all(permission):
+        if role is None or not role.has_permissions_all(*permissions):
             return False
 
         return True
@@ -427,14 +438,10 @@ class User(UserMixin, db.Model):
         except AttributeError:
             return False
 
-        if role is None:
+        if role is None or not role.has_permissions_one_of(*permissions):
             return False
 
-        has_permission = False
-        for permission in permissions:
-            has_permission = has_permission or role.has_permissions_all(permission)
-
-        return has_permission
+        return True
 
     # endregion
 

@@ -26,19 +26,19 @@
                 </a>
 
                 <div class="dropdown-menu" aria-labelledby="navbarAdministrationDropdown">
-                    {% if has_permissions_all(Permission.EditGlobalSettings) %}
+                    {% if has_permission(Permission.EditGlobalSettings) %}
                     <a class="dropdown-item" href="#" title="{{ _('Global Settings') }}">{{ icon('cog') }} {{ _('Global Settings') }}</a>
                     {% endif %}
 
-                    {% if has_permissions_all(Permission.EditGlobalSettings) and has_permissions_one_of(Permission.EditUser, Permission.EditRole) %}
+                    {% if has_permission(Permission.EditGlobalSettings) and has_permissions_one_of(Permission.EditUser, Permission.EditRole) %}
                     <div class="dropdown-divider"></div>
                     {% endif %}
 
-                    {% if has_permissions_all(Permission.EditUser) %}
+                    {% if has_permission(Permission.EditUser) %}
                     <a class="dropdown-item" href="#" title="{{ _('Users') }}">{{ icon('people') }} {{ _('Users') }}</a>
                     {% endif %}
 
-                    {% if has_permissions_all(Permission.EditRole) %}
+                    {% if has_permission(Permission.EditRole) %}
                     <a class="dropdown-item" href="{{ url_for('administration.roles_list') }}" title="{{ _('Roles') }}">{{ icon('key') }} {{ _('Roles') }}</a>
                     {% endif %}
                 </div>

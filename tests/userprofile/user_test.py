@@ -958,6 +958,56 @@ class UserTest(TestCase):
 
     # region Permissions
 
+    def test_current_user_has_permission_no_permission(self):
+        """
+            Test the `current_user_has_permission` method if the user does not have the requested permission.
+
+            Expected result: `False`
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = Role()
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        permission = Permission.EditRole
+        self.assertFalse(user.role.has_permissions_all(permission))
+
+        self.assertFalse(User.current_user_has_permission(permission))
+
+    def test_current_user_has_permission_with_permission(self):
+        """
+            Test the `current_user_has_permission` method if the user has the requested permission.
+
+            Expected result: `True`
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = Role()
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        permission = Permission.EditRole
+        user.role.add_permissions(permission)
+
+        self.assertTrue(user.role.has_permission(permission))
+
+        self.assertTrue(User.current_user_has_permission(permission))
+
     def test_current_user_has_permissions_all_no_role(self):
         """
             Test the `current_user_has_permissions_all` method if the user does not have a role.
