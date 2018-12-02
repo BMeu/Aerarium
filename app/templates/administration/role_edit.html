@@ -58,7 +58,18 @@
                 {{ _('View the users who have this role assigned to them. You can change a user\'s role in their profile.') }}
             </p>
             <p>
-                <b># TODO</b>
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-light">
+                        {{ ngettext('%(num)d user', '%(num)d users', users|length) }}
+                    </li>
+                {% for user in users %}
+                    <li class="list-group-item list-group-item-action">
+                        {# TODO: Add link to edit a user. #}
+                        <a href="#" title="{{ _('Edit user “%(user)s”', user=user.name) }}">{{ user.name }} &lt;{{ user.get_email() }}&gt;</a>
+                    </li>
+                {% endfor %}
+                </ul>
+                <small class="text-muted">{{ _('Click on the name of a user to edit them.') }}</small>
             </p>
         </div>
 

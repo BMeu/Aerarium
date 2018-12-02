@@ -19,6 +19,7 @@ from app import db
 from app import get_app
 from app.userprofile import Permission
 from app.userprofile import Role
+from app.userprofile import User
 from app.userprofile.decorators import permission_required
 from app.views.administration import bp
 from app.views.administration.forms import RoleDeleteForm
@@ -73,6 +74,10 @@ def role_edit(name: str) -> str:
         flash(_('The role has been updated.'))
         return redirect(url_for('.role_edit', name=role.name))
 
+    # List all users to whom this role is assigned.
+    # TODO: Add pagination to the user list.
+    users = role.users.order_by(User.name).all()
+
     # TODO: Disable deleting if this is the last role.
     # TODO: Disable deleting if this is the last role with permissions to edit roles.
     # Create (and possibly process) the delete form.
@@ -92,4 +97,5 @@ def role_edit(name: str) -> str:
 
     title = _('Edit Role “%(role)s”', role=name)
     return render_template('administration/role_edit.html', title=title, has_tabs=True, role=name,
-                           delete_form=delete_form, header_form=header_form)
+                           delete_form=delete_form, header_form=header_form, users=users
+                           )
