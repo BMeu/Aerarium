@@ -125,7 +125,7 @@ class UniqueEmailTest(TestCase):
         """
             Test the validator on a field with a different user's email address.
 
-            Expected result: No error is raised.
+            Expected result: An error is raised.
         """
 
         class UniqueEmailForm(FlaskForm):

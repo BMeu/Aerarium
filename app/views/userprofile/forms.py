@@ -20,6 +20,10 @@ from app.configuration import BaseConfiguration
 from app.localization import get_language_names
 from app.userprofile import User
 
+"""
+    Forms and form related functionality for the user profile.
+"""
+
 # region Validators
 
 
