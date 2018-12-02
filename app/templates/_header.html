@@ -14,7 +14,7 @@
         <ul class="navbar-nav mr-auto">
             {# Dashboard #}
             <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('main.index') }}" title="{{ _('Dashboard') }}">{{ icon('dashboard') }} {{ _('Dashboard') }}</a>
+                <a class="nav-link" href="{{ url_for('main.index') }}" title="{{ _('Dashboard') }}">{{ icon('tachometer-alt') }} {{ _('Dashboard') }}</a>
             </li>
 
             {# Administration #}
@@ -22,12 +22,12 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarAdministrationDropdown" role="button"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="{{ _('Administration') }}">
-                    {{ icon('cog') }}{{ _('Administration') }}
+                    {{ icon('cogs') }}{{ _('Administration') }}
                 </a>
 
                 <div class="dropdown-menu" aria-labelledby="navbarAdministrationDropdown">
                     {% if has_permission(Permission.EditGlobalSettings) %}
-                    <a class="dropdown-item" href="#" title="{{ _('Global Settings') }}">{{ icon('cog') }} {{ _('Global Settings') }}</a>
+                    <a class="dropdown-item" href="#" title="{{ _('Global Settings') }}">{{ icon('globe') }} {{ _('Global Settings') }}</a>
                     {% endif %}
 
                     {% if has_permission(Permission.EditGlobalSettings) and has_permissions_one_of(Permission.EditUser, Permission.EditRole) %}
@@ -35,7 +35,7 @@
                     {% endif %}
 
                     {% if has_permission(Permission.EditUser) %}
-                    <a class="dropdown-item" href="#" title="{{ _('Users') }}">{{ icon('people') }} {{ _('Users') }}</a>
+                    <a class="dropdown-item" href="#" title="{{ _('Users') }}">{{ icon('users') }} {{ _('Users') }}</a>
                     {% endif %}
 
                     {% if has_permission(Permission.EditRole) %}
@@ -57,16 +57,16 @@
                 </a>
 
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarUserDropdown">
-                    <a class="dropdown-item" href="{{ url_for('userprofile.user_profile') }}" title="{{ _('User Profile') }}">{{ icon('person') }} {{ _('User Profile') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('userprofile.user_profile') }}" title="{{ _('User Profile') }}">{{ icon('user') }} {{ _('User Profile') }}</a>
                     <a class="dropdown-item" href="{{ url_for('userprofile.user_settings') }}" title="{{ _('Settings') }}">{{ icon('cog') }} {{ _('Settings') }}</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{{ url_for('userprofile.logout') }}" title="{{ _('Logout') }}">{{ icon('account-logout') }} {{ _('Logout') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('userprofile.logout') }}" title="{{ _('Logout') }}">{{ icon('sign-out-alt') }} {{ _('Logout') }}</a>
                 </div>
             </li>
             {% else %}
             {# Anonymous user: login link. #}
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('userprofile.login') }}" title="{{ _('Login') }}">{{ icon('account-login') }} {{ _('Login') }}</a>
+                <a class="nav-link" href="{{ url_for('userprofile.login') }}" title="{{ _('Login') }}">{{ icon('sign-in-alt') }} {{ _('Login') }}</a>
             </li>
             {% endif %}
         </ul>

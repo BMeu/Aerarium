@@ -5,6 +5,15 @@
         name    - Name of the icon.
         class_  - CSS classes, separated by spaces.
 #}
-{% macro icon(name, class_='') -%}
-    <span class="oi oi-{{ name }} icon {{ class_ }}" aria-hidden="true"></span>
+{% macro icon(name, style='solid', class_='') -%}
+    {% if style == 'regular' %}
+        {% set style_class = 'far' %}
+    {% elif style == 'light' %}
+        {% set style_class = 'fal' %}
+    {% elif style == 'brand' %}
+        {% set style_class = 'fab' %}
+    {% else %}
+        {% set style_class = 'fas' %}
+    {%  endif %}
+    <span class="{{ style_class }} fa-{{ name }} icon {{ class_ }}" aria-hidden="true"></span>
 {%- endmacro %}
