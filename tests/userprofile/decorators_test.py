@@ -142,7 +142,7 @@ class DecoratorsTest(TestCase):
         user.login(email, password)
 
         permission = Permission.EditRole
-        user.role.add_permissions(permission)
+        user.role.add_permission(permission)
 
         self.assertTrue(user.role.has_permission(permission))
 
@@ -239,7 +239,7 @@ class DecoratorsTest(TestCase):
         user = User(email, name)
         user.set_password(password)
         user.role = Role()
-        user.role.add_permissions(Permission.EditRole)
+        user.role.add_permission(Permission.EditRole)
 
         db.session.add(user)
         db.session.commit()

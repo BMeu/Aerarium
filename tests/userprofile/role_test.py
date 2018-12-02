@@ -353,7 +353,7 @@ class RoleTest(TestCase):
 
     def test_add_permission(self):
         """
-            Test addign a single permission.
+            Test adding a single permission.
 
             Expected result: The permission is added, existing ones are kept.
         """
@@ -372,7 +372,7 @@ class RoleTest(TestCase):
         role = Role()
         with self.assertRaises(ValueError) as exception_cm:
             # noinspection PyTypeChecker
-            role.add_permissions(None)
+            role.add_permission(None)
             self.assertEqual('None is not a valid permission', str(exception_cm.exception))
 
     def test_add_permissions_empty(self):
@@ -385,7 +385,7 @@ class RoleTest(TestCase):
         permission = Permission.EditRole
         role.permissions = permission
 
-        role.add_permissions(Permission(0))
+        role.add_permission(Permission(0))
         self.assertEqual(permission, role.permissions)
 
     def test_add_permissions_single_permission(self):
@@ -400,11 +400,11 @@ class RoleTest(TestCase):
         self.assertEqual(Permission(0), role.permissions)
 
         # Add the first permission.
-        role.add_permissions(Permission.EditRole)
+        role.add_permission(Permission.EditRole)
         self.assertEqual(Permission.EditRole, role.permissions)
 
         # Add another one.
-        role.add_permissions(Permission.EditUser)
+        role.add_permission(Permission.EditUser)
         self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditUser))
 
     def test_add_permissions_multiple_permission(self):
@@ -431,7 +431,7 @@ class RoleTest(TestCase):
         permissions = Permission.EditRole | Permission.EditUser
         role.permissions = permissions
 
-        role.add_permissions(Permission.EditRole)
+        role.add_permission(Permission.EditRole)
         self.assertEqual(permissions, role.permissions)
 
     def test_remove_permission(self):
