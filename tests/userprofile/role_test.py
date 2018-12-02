@@ -522,7 +522,7 @@ class RoleTest(TestCase):
         role.permissions = permission
         self.assertFalse(role.has_permissions_all(permission_to_remove))
 
-        role.remove_permission(permission_to_remove)
+        role.remove_permissions(permission_to_remove)
         self.assertEqual(permission, role.permissions)
 
     # endregion
