@@ -245,3 +245,104 @@ class RolesTest(TestCase):
         self.assertIn(f'Edit Role “{new_name}”', data)
         self.assertIn('The role has been updated.', data)
         self.assertEqual(new_name, role.name)
+
+    def test_role_edit_post_delete_no_users(self):
+        """
+            Test deleting a role that has no users.
+
+            Expected result: The role is deleted.
+        """
+
+        other_role_name = 'Administrator'
+        other_role = Role(name=other_role_name)
+        other_role.add_permission(Permission.EditRole)
+        db.session.add(other_role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = other_role
+        db.session.add(user)
+
+        # Add a role that will be deleted.
+        role_name = 'Guest'
+        role = Role(name=role_name)
+        db.session.add(role)
+        db.session.commit()
+
+        role_id = role.id
+
+        self.assertListEqual([], role.users.all())
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.post(f'/administration/role/{role_name}', follow_redirects=True, data=dict(
+            delete_new_role=0,
+            delete_submit=True,
+        ))
+        data = response.get_data(as_text=True)
+        role = Role.load_from_id(role_id)
+
+        self.assertIsNone(role)
+        self.assertIsNotNone(other_role.id)
+        self.assertNotIn('<h1>Edit Role “', data)
+        self.assertIn('The role has been deleted.', data)
+
+    def test_role_edit_post_delete_has_users(self):
+        """
+            Test deleting a role that has users.
+
+            Expected result: The role is deleted.
+        """
+
+        other_role_name = 'Administrator'
+        other_role = Role(name=other_role_name)
+        other_role.add_permission(Permission.EditRole)
+        db.session.add(other_role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = other_role
+        db.session.add(user)
+
+        # Add a role that will be deleted.
+        role_name = 'Guest'
+        role = Role(name=role_name)
+        db.session.add(role)
+
+        # Add a user for the role to delete.
+        other_user = User('mail@example.com', 'John Doe')
+        other_user.role = role
+        db.session.commit()
+
+        role_id = role.id
+
+        self.assertListEqual([other_user], role.users.all())
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.post(f'/administration/role/{role_name}', follow_redirects=True, data=dict(
+            delete_new_role=other_role.id,
+            delete_submit=True,
+        ))
+        data = response.get_data(as_text=True)
+        role = Role.load_from_id(role_id)
+
+        self.assertIsNone(role)
+        self.assertIsNotNone(other_role.id)
+        self.assertNotIn('<h1>Edit Role “', data)
+        self.assertIn('The role has been deleted.', data)
+        self.assertEqual(other_role, other_user.role)

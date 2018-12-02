@@ -5,6 +5,7 @@ from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
 from wtforms import Field
 from wtforms import Form
+from wtforms import SelectField
 from wtforms import StringField
 from wtforms import SubmitField
 from wtforms import ValidationError
@@ -63,6 +64,42 @@ class UniqueRoleName(object):
 # endregion
 
 # region Forms
+
+
+class RoleDeleteForm(FlaskForm):
+    """
+        A form to delete a role (and choose a new one for users assigned to the deleted role).
+    """
+
+    new_role = SelectField(_l('New Role:'), validators=[DataRequired()], coerce=int,
+                           description=_l('Choose a new role for users to whom this role is assigned.'))
+    submit = SubmitField(_l('Delete'))
+
+    def __init__(self, role: Role, *args, **kwargs):
+        """
+            Initialize the form.
+
+            :param role: The role that will be deleted. Required for correctly initializing the :attr:`new_role` field.
+            :param args: The arguments for initializing the form.
+            :param kwargs: The keyworded arguments for initializing the form.
+        """
+
+        super().__init__(*args, **kwargs)
+
+        # If there are no users to whom this role is assigned it won't be necessary to provide a new role. Just delete
+        # the field. Otherwise, fill the list with all roles but the current one.
+        role_has_users = role.users.count() >= 1
+        if not role_has_users:
+            delattr(self, 'new_role')
+        else:
+            # Add an empty default value.
+            choices = [(0, '')]
+
+            # Add all but the current role.
+            all_roles = Role.query.filter(Role.id != role.id).order_by(Role.name).all()
+            choices.extend([(r.id, r.name) for r in all_roles])
+
+            self.new_role.choices = choices
 
 
 class RoleHeaderDataForm(FlaskForm):

@@ -132,9 +132,10 @@ class UserSettingsForm(FlaskForm):
 
     def __init__(self, *args, **kwargs) -> None:
         """
+            Initialize the form.
 
-            :param args:
-            :param kwargs:
+            :param args: The arguments for initializing the form.
+            :param kwargs: The keyworded argument for initializing the form.
         """
         super().__init__(*args, **kwargs)
 

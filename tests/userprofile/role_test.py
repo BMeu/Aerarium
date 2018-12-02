@@ -8,6 +8,7 @@ from app import db
 from app.configuration import TestConfiguration
 from app.userprofile import Permission
 from app.userprofile import Role
+from app.userprofile import User
 
 
 class RoleTest(TestCase):
@@ -553,6 +554,105 @@ class RoleTest(TestCase):
 
         role.remove_permissions(permission_to_remove)
         self.assertEqual(permission, role.permissions)
+
+    # endregion
+
+    # region Delete
+
+    def test_delete_same_role(self):
+        """
+            Test deleting a role if the same role is given.
+
+            Expected result: An error is raised.
+        """
+        name = 'Administrator'
+        role = Role(name=name)
+        user = User('test@example.com', 'Jane Doe')
+        user.role = role
+        db.session.add(role)
+        db.session.add(user)
+        db.session.commit()
+
+        with self.assertRaises(ValueError) as exception_cm:
+            role.delete(role)
+
+            loaded_role = Role.load_from_name(name)
+
+            self.assertEqual('The new role must not be the role that will be deleted.', str(exception_cm.exception))
+            self.assertIsNotNone(loaded_role)
+            self.assertEqual(loaded_role, user.role)
+
+    def test_delete_has_users_no_role(self):
+        """
+            Test deleting a role if there are still users and no role is given.
+
+            Expected result: An error is raised.
+        """
+        name = 'Administrator'
+        role = Role(name=name)
+        user = User('test@example.com', 'Jane Doe')
+        user.role = role
+        db.session.add(role)
+        db.session.add(user)
+        db.session.commit()
+
+        with self.assertRaises(ValueError) as exception_cm:
+            role.delete()
+
+            loaded_role = Role.load_from_name(name)
+
+            self.assertIn('A new role must be given', str(exception_cm.exception))
+            self.assertIsNotNone(loaded_role)
+            self.assertEqual(loaded_role, user.role)
+
+    def test_delete_no_users_no_role(self):
+        """
+            Test deleting a role if there are no users and no role is given.
+
+            Expected result: The role is deleted.
+        """
+        name = 'Administrator'
+        role = Role(name=name)
+        db.session.add(role)
+        db.session.commit()
+
+        role.delete()
+        loaded_role = Role.load_from_name(name)
+        self.assertIsNone(loaded_role)
+
+    def test_delete_has_users_new_role(self):
+        """
+            Test deleting a role if there are still users and a valid new role is given.
+
+            Expected result: The role is deleted. The role is assigned to all users who had the old role (but not to
+                             others).
+        """
+        # The role that will be deleted.
+        name = 'Administrator'
+        role = Role(name=name)
+        user = User('test@example.com', 'Jane Doe')
+        user.role = role
+        db.session.add(role)
+        db.session.add(user)
+
+        # The new role for the user.
+        new_role = Role(name='Guest')
+        db.session.add(new_role)
+
+        # Another role and user who will stay untouched.
+        other_role = Role(name='User')
+        other_user = User('mail@example.com', 'John Doe')
+        other_user.role = other_role
+        db.session.add(other_role)
+        db.session.add(other_user)
+
+        db.session.commit()
+
+        role.delete(new_role)
+        loaded_role = Role.load_from_name(name)
+        self.assertIsNone(loaded_role)
+        self.assertEqual(new_role, user.role)
+        self.assertEqual(other_role, other_user.role)
 
     # endregion
 

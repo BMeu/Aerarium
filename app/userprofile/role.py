@@ -202,6 +202,32 @@ class Role(db.Model):
 
     # endregion
 
+    # region Delete
+
+    def delete(self, new_role: Optional['Role'] = None):
+        """
+            Delete this role. If there are users to whom this role is assigned, their role will be set to `new_role`.
+
+            :param new_role: Required if there are users to whom this role is assigned. Must not be this role.
+            :raise ValueError: If there are users to whom this role is assigned and `new_role` is not valid.
+        """
+        if self == new_role:
+            raise ValueError('The new role must not be the role that will be deleted.')
+
+        has_users = self.users.count() >= 1
+        if has_users:
+            if new_role is None:
+                raise ValueError('A new role must be given that is different to this role if there are users')
+
+            # Assign the new role to all users.
+            for user in self.users:
+                user.role = new_role
+
+        db.session.delete(self)
+        db.session.commit()
+
+    # endregion
+
     # region System
 
     def __repr__(self) -> str:

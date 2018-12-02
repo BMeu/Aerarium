@@ -11,6 +11,8 @@ from app import create_app
 from app import db
 from app.configuration import TestConfiguration
 from app.userprofile import Role
+from app.userprofile import User
+from app.views.administration.forms import RoleDeleteForm
 from app.views.administration.forms import UniqueRoleName
 
 
@@ -140,3 +142,75 @@ class UniqueRoleNameTest(TestCase):
             validation = validator(form, form.name)
             self.assertIsNone(validation)
             self.assertEqual(message, thrown_message)
+
+
+class RoleDeleteFormTest(TestCase):
+
+    def setUp(self):
+        """
+            Initialize the test cases.
+        """
+        self.app = create_app(TestConfiguration)
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.request_context = self.app.test_request_context()
+        self.request_context.push()
+        db.create_all()
+
+    def tearDown(self):
+        """
+            Reset the test cases.
+        """
+        db.session.remove()
+        db.drop_all()
+        self.request_context.pop()
+        self.app_context.pop()
+
+    def test_init_no_users(self):
+        """
+            Test that the form is correctly initialized if the role does not have any users.
+
+            Expected result: The new_role field is deleted.
+        """
+        role = Role(name='Administrator')
+        db.session.add(role)
+        db.session.commit()
+
+        self.assertListEqual([], role.users.all())
+
+        form = RoleDeleteForm(role)
+        self.assertIsNone(form.new_role)
+
+    def test_init_has_users(self):
+        """
+            Test that the form is correctly initialized if the role has users.
+
+            Expected result: The new_role field exists and is initialized with all other roles.
+        """
+        role = Role(name='Administrator')
+        user = User('test@example.com', 'Jane Doe')
+        user.role = role
+
+        other_role_1 = Role(name='Visitor')
+        other_role_2 = Role(name='Guest')
+
+        db.session.add(role)
+        db.session.add(user)
+        db.session.add(other_role_1)
+        db.session.add(other_role_2)
+
+        db.session.commit()
+
+        # The role choices are ordered by name and skip the role to delete.
+        choices = [
+            (0, ''),
+            (other_role_2.id, other_role_2.name),
+            (other_role_1.id, other_role_1.name),
+        ]
+
+        self.assertLess(other_role_1.id, other_role_2.id)
+        self.assertListEqual([user], role.users.all())
+
+        form = RoleDeleteForm(role)
+        self.assertIsNotNone(form.new_role)
+        self.assertListEqual(choices, form.new_role.choices)

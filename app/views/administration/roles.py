@@ -21,6 +21,7 @@ from app.userprofile import Permission
 from app.userprofile import Role
 from app.userprofile.decorators import permission_required
 from app.views.administration import bp
+from app.views.administration.forms import RoleDeleteForm
 from app.views.administration.forms import RoleHeaderDataForm
 
 
@@ -72,6 +73,23 @@ def role_edit(name: str) -> str:
         flash(_('The role has been updated.'))
         return redirect(url_for('.role_edit', name=role.name))
 
+    # TODO: Disable deleting if this is the last role.
+    # TODO: Disable deleting if this is the last role with permissions to edit roles.
+    # Create (and possibly process) the delete form.
+    delete_form = RoleDeleteForm(role, prefix='delete_')
+    if delete_form.submit.data and delete_form.validate_on_submit():
+        try:
+            new_role_id = delete_form.new_role.data
+            new_role = Role.load_from_id(new_role_id)
+        except AttributeError:
+            # The new_role field might not exist because there are no users.
+            new_role = None
+
+        role.delete(new_role)
+
+        flash(_('The role has been deleted.'))
+        return redirect(url_for('.roles_list'))
+
     title = _('Edit Role “%(role)s”', role=name)
     return render_template('administration/role_edit.html', title=title, has_tabs=True, role=name,
-                           header_form=header_form)
+                           delete_form=delete_form, header_form=header_form)
