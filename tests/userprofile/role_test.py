@@ -351,6 +351,18 @@ class RoleTest(TestCase):
         self.assertTrue(role.has_permissions_one_of(Permission.EditUser))
         self.assertTrue(role.has_permissions_one_of(Permission.EditRole, Permission.EditUser, Permission(0)))
 
+    def test_add_permission(self):
+        """
+            Test addign a single permission.
+
+            Expected result: The permission is added, existing ones are kept.
+        """
+        role = Role()
+        role.permissions = Permission.EditRole
+
+        role.add_permission(Permission.EditGlobalSettings)
+        self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditGlobalSettings))
+
     def test_add_permissions_none(self):
         """
             Test adding the value `None` as a permission.

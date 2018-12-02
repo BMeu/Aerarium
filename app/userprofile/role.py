@@ -133,9 +133,21 @@ class Role(db.Model):
 
         return has_permission
 
+    def add_permission(self, permission: Permission) -> None:
+        """
+            Add the given permission to the role.
+
+            Existing permissions will be kept.
+
+            Alias of :meth:`add_permissions` wil only a single permission.
+
+            :param permission: The permission that will be added to the role
+        """
+        self.add_permissions(permission)
+
     def add_permissions(self, *permissions: Permission) -> None:
         """
-            Add the given permission to this role.
+            Add the given permissions to this role.
 
             Existing permissions will be kept.
 
