@@ -41,7 +41,7 @@
                     {% endif %}
 
                     {% if has_permission(Permission.EditRole) %}
-                    <a class="dropdown-item" href="{{ url_for('administration.roles_list') }}" title="{{ _('Roles') }}">{{ icon('key') }} {{ _('Roles') }}</a>
+                    <a class="dropdown-item" href="{{ url_for('administration.roles_list') }}" title="{{ _('Roles') }}">{{ icon('id-card') }} {{ _('Roles') }}</a>
                     {% endif %}
                 </div>
             </li>
