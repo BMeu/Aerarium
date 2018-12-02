@@ -434,7 +434,20 @@ class RoleTest(TestCase):
         role.add_permissions(Permission.EditRole)
         self.assertEqual(permissions, role.permissions)
 
-    def test_remove_permission_none(self):
+    def test_remove_permission(self):
+        """
+            Test removing a permission from the permissions.
+
+            Expected result: The permission is removed, others are kept.
+        """
+        role = Role()
+        role.add_permissions(Permission.EditGlobalSettings, Permission.EditRole, Permission.EditUser)
+
+        role.remove_permission(Permission.EditRole)
+        self.assertTrue(role.has_permissions_all(Permission.EditGlobalSettings, Permission.EditUser))
+        self.assertFalse(role.has_permission(Permission.EditRole))
+
+    def test_remove_permissions_none(self):
         """
             Test removing the value `None` from the permissions.
 
@@ -443,10 +456,10 @@ class RoleTest(TestCase):
         role = Role()
         with self.assertRaises(ValueError) as exception_cm:
             # noinspection PyTypeChecker
-            role.remove_permission(None)
+            role.remove_permissions(None)
             self.assertEqual('None is not a valid permission', str(exception_cm.exception))
 
-    def test_remove_permission_empty(self):
+    def test_remove_permissions_empty(self):
         """
             Test removing the empty permission.
 
@@ -456,10 +469,10 @@ class RoleTest(TestCase):
         permission = Permission.EditRole
         role.permissions = permission
 
-        role.remove_permission(Permission(0))
+        role.remove_permissions(Permission(0))
         self.assertEqual(permission, role.permissions)
 
-    def test_remove_permission_single_permission(self):
+    def test_remove_permissions_single_permission(self):
         """
             Test removing a permission from the permissions.
 
@@ -472,14 +485,14 @@ class RoleTest(TestCase):
         self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditUser))
 
         # Remove the first permission.
-        role.remove_permission(Permission.EditRole)
+        role.remove_permissions(Permission.EditRole)
         self.assertEqual(Permission.EditUser, role.permissions)
 
         # Remove another one.
-        role.remove_permission(Permission.EditUser)
+        role.remove_permissions(Permission.EditUser)
         self.assertEqual(Permission(0), role.permissions)
 
-    def test_remove_permission_multiple_permission(self):
+    def test_remove_permissions_multiple_permission(self):
         """
             Test removing multiple permissions add once from the permissions.
 
@@ -494,10 +507,10 @@ class RoleTest(TestCase):
         self.assertTrue(role.has_permissions_all(Permission.EditUser))
 
         # Remove all.
-        role.remove_permission(full_permissions)
+        role.remove_permissions(Permission.EditRole, Permission.EditUser)
         self.assertEqual(Permission(0), role.permissions)
 
-    def test_remove_permission_non_existing_permission(self):
+    def test_remove_permissions_non_existing_permission(self):
         """
             Test removing a permission if it is not set.
 

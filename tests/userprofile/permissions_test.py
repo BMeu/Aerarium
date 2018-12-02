@@ -47,7 +47,7 @@ class PermissionTest(TestCase):
         """
             Test the bitwise and method with an invalid permission..
 
-            Expected result: The method returns the same result as performing the operation manually.
+            Expected result: The method raises an error.
         """
         with self.assertRaises(ValueError) as exception_cm:
             # noinspection PyTypeChecker
@@ -77,9 +77,51 @@ class PermissionTest(TestCase):
         """
             Test the bitwise or method with an invalid permission.
 
-            Expected result: The method returns the same result as performing the operation manually.
+            Expected result: The method raises an error.
         """
         with self.assertRaises(ValueError) as exception_cm:
             # noinspection PyTypeChecker
             Permission.bitwise_or(Permission.EditGlobalSettings, None, Permission.EditRole)
+            self.assertEqual('None is not a valid permission', str(exception_cm.exception))
+
+    def test_bitwise_xor_success(self):
+        """
+            Test the bitwise xor method.
+
+            Expected result: The method returns the same result as performing the operation manually.
+        """
+
+        expectation = Permission.EditRole
+        result = Permission.bitwise_xor(Permission.EditRole)
+        self.assertEqual(expectation, result)
+
+        expectation = Permission.EditRole | Permission.EditUser
+        result = Permission.bitwise_xor(Permission.EditRole, Permission.EditUser)
+        self.assertEqual(expectation, result)
+
+        expectation = Permission.EditRole | Permission.EditUser | Permission.EditGlobalSettings
+        result = Permission.bitwise_xor(Permission.EditRole, Permission.EditUser, Permission.EditGlobalSettings)
+        self.assertEqual(expectation, result)
+
+        combination_1 = Permission.EditRole | Permission.EditGlobalSettings
+        combination_2 = Permission.EditGlobalSettings | Permission.EditRole
+        expectation = combination_1 ^ combination_2
+        result = Permission.bitwise_xor(combination_1, combination_2)
+        self.assertEqual(expectation, result)
+
+        combination_1 = Permission.EditRole | Permission.EditGlobalSettings
+        combination_2 = Permission.EditGlobalSettings | Permission.EditRole
+        expectation = combination_1 ^ combination_2 ^ Permission.EditUser
+        result = Permission.bitwise_xor(combination_1, combination_2, Permission.EditUser)
+        self.assertEqual(expectation, result)
+
+    def test_bitwise_xor_failure(self):
+        """
+            Test the bitwise or method with an invalid permission.
+
+            Expected result: The method raises an error.
+        """
+        with self.assertRaises(ValueError) as exception_cm:
+            # noinspection PyTypeChecker
+            Permission.bitwise_xor(Permission.EditGlobalSettings, None, Permission.EditRole)
             self.assertEqual('None is not a valid permission', str(exception_cm.exception))

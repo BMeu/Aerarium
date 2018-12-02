@@ -164,17 +164,31 @@ class Role(db.Model):
 
             Other permissions will be kept.
 
+            Alias of :meth:`remove_permissions` with only a single permission.
+
             :param permission: The :class:`Permission` that will be removed from the role.
         """
-        if permission is None:
-            raise ValueError('None is not a valid permission')
+        self.remove_permissions(permission)
 
-        # If the permission is not set, do nothing
-        # (otherwise, the bitwise difference ^ would add the permission).
-        if not self.has_permission(permission):
-            return
+    def remove_permissions(self, *permissions: Permission) -> None:
+        """
+            Remove the permissions from this role.
 
-        self.permissions ^= permission
+            Other permissions will be kept.
+
+            :param permissions: The permissions that will be removed from the role.
+        """
+
+        # For each of the given permissions, we have to check if it actually is set on the role. If a permission is not
+        # set, the bitwise XOR ^ would add it. Thus, Permission.bitwise_xor() cannot be used here.
+        for permission in permissions:
+            if permission is None:
+                raise ValueError('None is not a valid permission')
+
+            if not self.has_permission(permission):
+                continue
+
+            self.permissions ^= permission
 
     # endregion
 

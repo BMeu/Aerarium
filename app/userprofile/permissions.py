@@ -70,3 +70,21 @@ class Permission(Flag):
             result |= permission
 
         return result
+
+    @staticmethod
+    def bitwise_xor(*permissions: 'Permission') -> 'Permission':
+        """
+            Perform a bitwise xor on all given permissions.
+
+            :param permissions: The permissions to perform the bitwise xor on.
+            :return: The result permission.
+            :raise ValueError: if one of the permissions is `None`.
+        """
+        result = Permission(0)
+        for permission in permissions:
+            if permission is None:
+                raise ValueError('None is not a valid permission')
+
+            result ^= permission
+
+        return result
