@@ -96,3 +96,152 @@ class RolesTest(TestCase):
         pos_of_admin = data.find(title_role_admin)
         pos_of_guest = data.find(title_role_guest)
         self.assertLess(pos_of_admin, pos_of_guest)
+
+    def test_role_edit_get_no_role(self):
+        """
+            Test editing a role that does not exist.
+
+            Expected result: An error 404 is returned.
+        """
+
+        role = Role(name='Administrator')
+        role.add_permission(Permission.EditRole)
+        db.session.add(role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = role
+        db.session.add(user)
+        db.session.commit()
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        non_existing_role = 'Guest'
+        self.assertIsNone(Role.load_from_name(non_existing_role))
+
+        response = self.client.get(f'/administration/role/{non_existing_role}', follow_redirects=True)
+        self.assertEqual(404, response.status_code)
+
+    def test_role_edit_get_existing_role(self):
+        """
+            Test showing the edit form for an existing role.
+
+            Expected result: The edit page is shown.
+        """
+
+        role_name = 'Administrator'
+        role = Role(name=role_name)
+        role.add_permission(Permission.EditRole)
+        db.session.add(role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = role
+        db.session.add(user)
+        db.session.commit()
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.get(f'/administration/role/{role_name}', follow_redirects=True)
+        data = response.get_data(as_text=True)
+
+        self.assertIn(f'Edit Role “{role_name}”', data)
+
+    def test_role_edit_post_header_data_existing_name(self):
+        """
+            Test editing a role by setting an existing name.
+
+            Expected result: The edit page is shown, the role is not updated.
+        """
+
+        role_existing_name = 'Guest'
+        role_existing = Role(name=role_existing_name)
+        db.session.add(role_existing)
+
+        role_name = 'Administrator'
+        role = Role(name=role_name)
+        role.add_permission(Permission.EditRole)
+        db.session.add(role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = role
+        db.session.add(user)
+        db.session.commit()
+
+        role_id = role.id
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.post(f'/administration/role/{role_name}', follow_redirects=True, data=dict(
+            header_name=role_existing_name,
+            header_submit=True,
+        ))
+        data = response.get_data(as_text=True)
+        role = Role.load_from_id(role_id)
+
+        self.assertIn(f'Edit Role “{role_name}”', data)
+        self.assertNotIn('The role has been updated.', data)
+        self.assertEqual(role_name, role.name)
+
+    def test_role_edit_post_header_data_new_name(self):
+        """
+            Test editing a role by setting a new name.
+
+            Expected result: The edit page is shown, the role is updated.
+        """
+
+        role_name = 'Administrator'
+        role = Role(name=role_name)
+        role.add_permission(Permission.EditRole)
+        db.session.add(role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = role
+        db.session.add(user)
+        db.session.commit()
+
+        role_id = role.id
+        new_name = 'Guest'
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.post(f'/administration/role/{role_name}', follow_redirects=True, data=dict(
+            header_name=new_name,
+            header_submit=True,
+        ))
+        data = response.get_data(as_text=True)
+        role = Role.load_from_id(role_id)
+
+        self.assertIn(f'Edit Role “{new_name}”', data)
+        self.assertIn('The role has been updated.', data)
+        self.assertEqual(new_name, role.name)

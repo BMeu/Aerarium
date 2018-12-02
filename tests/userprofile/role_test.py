@@ -60,6 +60,35 @@ class RoleTest(TestCase):
         loaded_role = Role.load_from_id(1)
         self.assertIsNone(loaded_role)
 
+    def test_load_from_name_success(self):
+        """
+            Test loading an existing role via its name.
+
+            Expected result: The role is returned.
+        """
+        name = 'Administrator'
+        role = Role(name=name)
+        role_id = 1
+
+        db.session.add(role)
+        db.session.commit()
+
+        self.assertEqual(role_id, role.id)
+
+        loaded_role = Role.load_from_name(name)
+        self.assertIsNotNone(loaded_role)
+        self.assertEqual(role_id, loaded_role.id)
+        self.assertEqual(name, loaded_role.name)
+
+    def test_load_from_name_failure(self):
+        """
+            Test loading a non-existing role via its name.
+
+            Expected result: Nothing is returned.
+        """
+        loaded_role = Role.load_from_name('Administrator')
+        self.assertIsNone(loaded_role)
+
     # endregion
 
     # region Permissions

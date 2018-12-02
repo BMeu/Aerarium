@@ -4,6 +4,14 @@ app.views.administration package
 Submodules
 ----------
 
+app.views.administration.forms module
+-------------------------------------
+
+.. automodule:: app.views.administration.forms
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 app.views.administration.roles module
 -------------------------------------
 

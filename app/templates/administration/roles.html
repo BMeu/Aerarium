@@ -18,11 +18,11 @@
             </li>
         {% for role in roles %}
             <li class="list-group-item list-group-item-action">
-                <a href="#" title="{{ _('Edit role “%(role)s”', role=role.name) }}">{{ role.name }}</a>
+                <a href="{{ url_for('.role_edit', name=role.name) }}" title="{{ _('Edit role “%(role)s”', role=role.name) }}">{{ role.name }}</a>
             </li>
         {% endfor %}
         </ul>
-        <small class="text-muted">{{ _('Click on the name of a role to edit or delete it.') }}</small>
+        <small class="text-muted">{{ _('Click on the name of a role to edit it.') }}</small>
     </p>
 
     {{ pagination('.roles_list', current_page, total_pages) }}

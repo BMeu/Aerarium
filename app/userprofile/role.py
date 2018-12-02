@@ -55,6 +55,16 @@ class Role(db.Model):
         """
         return Role.query.get(role_id)
 
+    @staticmethod
+    def load_from_name(name: str) -> Optional['Role']:
+        """
+            Load the role with the given name from the database.
+
+            :param name: The name of the role load.
+            :return: The loaded role if it exists, `None` otherwise.
+        """
+        return Role.query.filter_by(name=name).first()
+
     # endregion
 
     # region Permissions
