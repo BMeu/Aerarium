@@ -228,6 +228,28 @@ class Role(db.Model):
 
     # endregion
 
+    # region DB Queries
+
+    @staticmethod
+    def get_search_query(search_term: Optional[str]):
+        """
+            Get a query that searches the roles for the given search term on their names.
+
+            The search term may contain wildcards (`*`).
+
+            :param search_term: The name for which the roles will be searched. If `None`, a non-filtering query be
+                                returned.
+            :return: The query object.
+        """
+        if search_term is None or search_term == '':
+            return Role.query
+
+        # Replace the wildcard character with the SQL wildcard.
+        search_term = search_term.replace('*', '%')
+        return Role.query.filter(Role.name.like(search_term))
+
+    # endregion
+
     # region System
 
     def __repr__(self) -> str:

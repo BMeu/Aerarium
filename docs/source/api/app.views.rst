@@ -10,6 +10,18 @@ Subpackages
     app.views.main
     app.views.userprofile
 
+Submodules
+----------
+
+app.views.forms module
+----------------------
+
+.. automodule:: app.views.forms
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 Module contents
 ---------------
 

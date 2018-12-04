@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-12-02 20:43+0100\n"
-"PO-Revision-Date: 2018-12-02 20:45+0100\n"
+"POT-Creation-Date: 2018-12-04 16:41+0100\n"
+"PO-Revision-Date: 2018-12-04 16:42+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -63,7 +63,7 @@ msgstr "Globale Einstellungen"
 msgid "Users"
 msgstr "Benutzer"
 
-#: app/templates/_header.html:44 app/views/administration/roles.py:48
+#: app/templates/_header.html:44 app/views/administration/roles.py:62
 msgid "Roles"
 msgstr "Rollen"
 
@@ -184,7 +184,7 @@ msgstr ""
 "Rolle zugewiesen ist, musst Du eine andere Rolle angeben, die diesen Nutzern "
 "zugewiesen wird."
 
-#: app/templates/administration/roles.html:6
+#: app/templates/administration/roles.html:7
 msgid ""
 "Permissions restrict specific functionalities in the application. Only if a "
 "user has the permission required for a functionality they can access that "
@@ -199,34 +199,24 @@ msgstr ""
 "Benutzer besitzt eine Rolle, wodurch die Berechtigungen des Benutzers "
 "festgelegt werden."
 
-#: app/templates/administration/roles.html:10
+#: app/templates/administration/roles.html:11
 msgid "Create a new role"
 msgstr "Eine neue Rolle anlegen"
 
-#: app/templates/administration/roles.html:10
+#: app/templates/administration/roles.html:11
 msgid "New Role"
 msgstr "Neue Rolle"
 
-#: app/templates/administration/roles.html:14
-#, python-format
-msgid ""
-"Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of "
-"%(total_roles)d"
-msgstr ""
-"Zeige Rollen %(first_role_on_page)d bis %(last_role_on_page)d von "
-"%(total_roles)d"
+#: app/templates/administration/roles.html:22
+msgid "Search roles..."
+msgstr "Rollen durchsuchen..."
 
-#: app/templates/administration/roles.html:16
-#, python-format
-msgid "Displaying role %(role_on_page)d of %(total_roles)d"
-msgstr "Zeige Rolle %(role_on_page)d von %(total_roles)d"
-
-#: app/templates/administration/roles.html:21
+#: app/templates/administration/roles.html:26
 #, python-format
 msgid "Edit role “%(role)s”"
 msgstr "Rolle „%(role)s“ bearbeiten"
 
-#: app/templates/administration/roles.html:25
+#: app/templates/administration/roles.html:30
 msgid "Click on the name of a role to edit it."
 msgstr "Klicke auf den Namen einer Rolle, um sie zu bearbeiten."
 
@@ -271,6 +261,19 @@ msgstr "Gehe zur nächsten Seite"
 #: app/templates/macros/pagination.html:44 app/templates/macros/pagination.html:50
 msgid "Next"
 msgstr "Weiter"
+
+#: app/templates/macros/search_form.html:14
+msgid "Search..."
+msgstr "Suchen..."
+
+#: app/templates/macros/search_form.html:22
+#: app/templates/macros/search_form.html:24 app/views/userprofile/forms.py:151
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: app/templates/macros/search_form.html:27 app/views/forms.py:21
+msgid "Search"
+msgstr "Suchen"
 
 #: app/templates/userprofile/login.html:5
 #: app/views/userprofile/password_reset.py:53
@@ -445,6 +448,10 @@ msgstr "Benutzerprofil löschen"
 msgid "Your User Profile Has Been Deleted"
 msgstr "Dein Benutzerprofil wurde gelöscht"
 
+#: app/views/forms.py:20
+msgid "Search:"
+msgstr "Suchen:"
+
 #: app/views/administration/forms.py:39
 msgid "The role name already is in use."
 msgstr "Der Rollenname wird bereits verwendet."
@@ -466,18 +473,55 @@ msgstr "Name:"
 msgid "Save"
 msgstr "Speichern"
 
-#: app/views/administration/roles.py:74
+#: app/views/administration/roles.py:88
 msgid "The role has been updated."
 msgstr "Die Rolle wurde aktualisiert."
 
-#: app/views/administration/roles.py:94
+#: app/views/administration/roles.py:109
 msgid "The role has been deleted."
 msgstr "Die Rolle wurde gelöscht."
 
-#: app/views/administration/roles.py:97
+#: app/views/administration/roles.py:112
 #, python-format
 msgid "Edit Role “%(role)s”"
 msgstr "Rolle „%(role)s“ bearbeiten"
+
+#: app/views/administration/roles.py:136
+#, python-format
+msgid ""
+"Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of "
+"%(total_roles)d matching “%(search)s”"
+msgstr ""
+"Zeige Rollen %(first_role_on_page)d bis %(last_role_on_page)d von "
+"%(total_roles)d für „%(search)s“"
+
+#: app/views/administration/roles.py:143
+#, python-format
+msgid "Displaying role %(role_on_page)d of %(total_roles)d matching “%(search)s”"
+msgstr "Zeige Rolle %(role_on_page)d von %(total_roles)d für „%(search)s“"
+
+#: app/views/administration/roles.py:148
+#, python-format
+msgid "No roles found matching “%(search)s”"
+msgstr "Keine Rollen für „%(search)s“ gefunden"
+
+#: app/views/administration/roles.py:154
+#, python-format
+msgid ""
+"Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of "
+"%(total_roles)d"
+msgstr ""
+"Zeige Rollen %(first_role_on_page)d bis %(last_role_on_page)d von "
+"%(total_roles)d"
+
+#: app/views/administration/roles.py:159
+#, python-format
+msgid "Displaying role %(role_on_page)d of %(total_roles)d"
+msgstr "Zeige Rolle %(role_on_page)d von %(total_roles)d"
+
+#: app/views/administration/roles.py:163
+msgid "No roles"
+msgstr "Keine Rollen"
 
 #: app/views/main/errors.py:25
 msgid "Bad Request"
@@ -643,10 +687,6 @@ msgstr "Sprache:"
 #: app/views/userprofile/forms.py:130
 msgid "The language in which you want to use the application."
 msgstr "Die Sprache, in der Du die Anwendung benutzen möchtest."
-
-#: app/views/userprofile/forms.py:151
-msgid "Reset"
-msgstr "Zurücksetzen"
 
 #: app/views/userprofile/forms.py:152
 msgid "Reset these settings to their default values."

@@ -1,0 +1,34 @@
+{% from 'macros/icon.html' import icon %}
+
+{#
+    Render a search form.
+
+    Params:
+        form            - WTForm object.
+        action_url      - URL to which the form will be submitted.
+        reset_url       - If given, a button will be included linking to that URL to reset the search data.
+        class_          - CSS classes, separated by spaces.
+#}
+{% macro render_search_form(form, action_url='', reset_url='', placeholder='', class_='') -%}
+    {% if not placeholder %}
+        {% set placeholder=_('Search...') %}
+    {% endif %}
+    <form method="GET" action="{{ action_url }}" role="form" class="{{ class_ }}">
+        <div class="input-group mb-3">
+            <label for="{{ form.search.id }}" class="sr-only">{{ form.search.label.text }}</label>
+            {{ form.search(class_='form-control border-secondary', placeholder=placeholder, **kwargs) }}
+            <div class="input-group-append">
+                {% if reset_url %}
+                <a href="{{ reset_url }}" class="btn btn-outline-secondary" role="button" title="{{ _('Reset') }}">
+                    {{ icon('undo', class_='m-0') }}
+                    <span class="sr-only">{{ _('Reset') }}</span>
+                </a>
+                {% endif %}
+                <button class="btn btn-secondary" type="button" id="{{ form.submit.id }}" title="{{ _('Search') }}">
+                    {{ icon('search', class_='m-0') }}
+                    <span class="sr-only"> {{ form.submit.label.text }}</span>
+                </button>
+            </div>
+        </div>
+    </form>
+{% endmacro %}

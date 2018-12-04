@@ -1,5 +1,6 @@
 {% extends '_base_standard.html' %}
 {% from 'macros/pagination.html' import pagination %}
+{% from 'macros/search_form.html' import render_search_form %}
 
 {% block content %}
     <p>
@@ -8,20 +9,26 @@
 
     <p>
         <a class="btn btn-dark" role="button" href="#" title="{{ _('Create a new role') }}">{{ _('New Role') }}</a>
-        <ul class="list-group">
-            <li class="list-group-item list-group-item-light">
-                {% if roles|length > 1 %}
-                    {{ _('Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of %(total_roles)d', first_role_on_page=first_role_on_page, last_role_on_page=last_role_on_page, total_roles=total_roles) }}
-                {% else %}
-                    {{ _('Displaying role %(role_on_page)d of %(total_roles)d', role_on_page=first_role_on_page, total_roles=total_roles) }}
-                {% endif %}
-            </li>
-        {% for role in roles %}
-            <li class="list-group-item list-group-item-action">
-                <a href="{{ url_for('.role_edit', name=role.name) }}" title="{{ _('Edit role “%(role)s”', role=role.name) }}">{{ role.name }}</a>
-            </li>
-        {% endfor %}
-        </ul>
+    </p>
+    <ul class="list-group">
+        <li class="list-group-item list-group-item-light">
+            <p>
+                {{ display_text }}
+            </p>
+
+            {% if search_term %}
+                {# Only show the reset button if the user has searched for something. #}
+                {% set reset_url=url_for('administration.roles_list') %}
+            {% endif %}
+            {{ render_search_form(search_form, reset_url=reset_url, placeholder=_('Search roles...')) }}
+        </li>
+    {% for role in roles %}
+        <li class="list-group-item list-group-item-action">
+            <a href="{{ url_for('.role_edit', name=role.name) }}" title="{{ _('Edit role “%(role)s”', role=role.name) }}">{{ role.name }}</a>
+        </li>
+    {% endfor %}
+    </ul>
+    <p>
         <small class="text-muted">{{ _('Click on the name of a role to edit it.') }}</small>
     </p>
 

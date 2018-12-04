@@ -15,7 +15,7 @@ from wtforms.validators import Length
 from app.userprofile import Role
 
 """
-    Forms and form related functionality for the user profile.
+    Forms and form related functionality for the administration.
 """
 
 # region Validators

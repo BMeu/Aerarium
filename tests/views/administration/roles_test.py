@@ -9,6 +9,8 @@ from app.configuration import TestConfiguration
 from app.userprofile import Permission
 from app.userprofile import Role
 from app.userprofile import User
+# noinspection PyProtectedMember
+from app.views.administration.roles import _get_role_list_display_text
 
 
 class RolesTest(TestCase):
@@ -346,3 +348,98 @@ class RolesTest(TestCase):
         self.assertNotIn('<h1>Edit Role “', data)
         self.assertIn('The role has been deleted.', data)
         self.assertEqual(other_role, other_user.role)
+
+    def test_get_role_list_display_text_search_term_multiple(self):
+        """
+            Test getting the display text with a search term for multiple roles on a page.
+
+            Expected result: The search term is included, the first and last role on the page are given.
+        """
+
+        roles_on_page = 5
+        first_role = 11
+        total_roles = 18
+        search_term = 'Aerarium'
+
+        last_role = 15
+        text = _get_role_list_display_text(roles_on_page, first_role, total_roles, search_term)
+        self.assertIn(f'roles {first_role} to {last_role} of {total_roles}', text)
+        self.assertIn(f'matching “{search_term}”', text)
+
+    def test_get_role_list_display_text_search_term_single(self):
+        """
+            Test getting the display text with a search term for a single role on a page.
+
+            Expected result: The search term is included, the first role on the page is given.
+        """
+
+        roles_on_page = 1
+        first_role = 18
+        total_roles = 18
+        search_term = 'Aerarium'
+
+        text = _get_role_list_display_text(roles_on_page, first_role, total_roles, search_term)
+        self.assertIn(f'role {first_role} of {total_roles}', text)
+        self.assertIn(f'matching “{search_term}”', text)
+
+    def test_get_role_list_display_text_search_term_no_roles(self):
+        """
+            Test getting the display text with a search term for no roles on the page.
+
+            Expected result: The search term is included, the info that no roles were found is given.
+        """
+
+        roles_on_page = 0
+        first_role = 0
+        total_roles = 0
+        search_term = 'Aerarium'
+
+        text = _get_role_list_display_text(roles_on_page, first_role, total_roles, search_term)
+        self.assertIn('No roles', text)
+        self.assertIn(f'matching “{search_term}”', text)
+
+    def test_get_role_list_display_text_no_search_term_multiple(self):
+        """
+            Test getting the display text without a search term for multiple roles on a page.
+
+            Expected result: The search term is not included, the first and last role on the page are given.
+        """
+
+        roles_on_page = 5
+        first_role = 11
+        total_roles = 18
+
+        last_role = 15
+        text = _get_role_list_display_text(roles_on_page, first_role, total_roles)
+        self.assertIn(f'roles {first_role} to {last_role} of {total_roles}', text)
+        self.assertNotIn(f'matching “', text)
+
+    def test_get_role_list_display_text_no_search_term_single(self):
+        """
+            Test getting the display text without a search term for a single role on a page.
+
+            Expected result: The search term is not included, the first role on the page is given.
+        """
+
+        roles_on_page = 1
+        first_role = 18
+        total_roles = 18
+
+        text = _get_role_list_display_text(roles_on_page, first_role, total_roles)
+        self.assertIn(f'role {first_role} of {total_roles}', text)
+        self.assertNotIn(f'matching “', text)
+
+    def test_get_role_list_display_text_no_search_term_no_roles(self):
+        """
+            Test getting the display text without a search term for no roles on the page.
+
+            Expected result: The search term is not included, the info that no roles were found is given.
+        """
+
+        roles_on_page = 0
+        first_role = 0
+        total_roles = 0
+
+        text = _get_role_list_display_text(roles_on_page, first_role, total_roles)
+        self.assertIn('No roles', text)
+        self.assertNotIn(f'matching “', text)
