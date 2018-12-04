@@ -4,17 +4,19 @@
     Render a search form.
 
     Params:
-        form            - WTForm object.
-        action_url      - URL to which the form will be submitted.
-        reset_url       - If given, a button will be included linking to that URL to reset the search data.
-        class_          - CSS classes, separated by spaces.
+        form                - WTForm object.
+        action_url          - URL to which the form will be submitted.
+        reset_url           - If given, a button will be included linking to that URL to reset the search data.
+        placeholder         - A placeholder text for the input field. Defaults to "Search..." (localized).
+        class_              - CSS classes, separated by spaces.
+        wildcards_allowed   - If True, an info text will be displayed explaining the use of wildcards.
 #}
-{% macro render_search_form(form, action_url='', reset_url='', placeholder='', class_='') -%}
+{% macro render_search_form(form, action_url='', reset_url='', placeholder='', class_='', wildcards_allowed=True) -%}
     {% if not placeholder %}
         {% set placeholder=_('Search...') %}
     {% endif %}
     <form method="GET" action="{{ action_url }}" role="form" class="{{ class_ }}">
-        <div class="input-group mb-3">
+        <div class="input-group mb-1">
             <label for="{{ form.search.id }}" class="sr-only">{{ form.search.label.text }}</label>
             {{ form.search(class_='form-control border-secondary', placeholder=placeholder, **kwargs) }}
             <div class="input-group-append">
@@ -31,4 +33,7 @@
             </div>
         </div>
     </form>
+    <p class="text-muted mb-3">
+        <small>{{ _('You can use an asterisk (%(asterisk)s) at any position within the search term to allow arbitrary characters at that position.', asterisk='*') }}</small>
+    </p>
 {% endmacro %}

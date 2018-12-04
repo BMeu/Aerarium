@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-12-04 16:41+0100\n"
-"PO-Revision-Date: 2018-12-04 16:42+0100\n"
+"POT-Creation-Date: 2018-12-04 17:05+0100\n"
+"PO-Revision-Date: 2018-12-04 17:06+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -63,7 +63,7 @@ msgstr "Globale Einstellungen"
 msgid "Users"
 msgstr "Benutzer"
 
-#: app/templates/_header.html:44 app/views/administration/roles.py:62
+#: app/templates/_header.html:44 app/views/administration/roles.py:61
 msgid "Roles"
 msgstr "Rollen"
 
@@ -207,16 +207,16 @@ msgstr "Eine neue Rolle anlegen"
 msgid "New Role"
 msgstr "Neue Rolle"
 
-#: app/templates/administration/roles.html:22
+#: app/templates/administration/roles.html:23
 msgid "Search roles..."
 msgstr "Rollen durchsuchen..."
 
-#: app/templates/administration/roles.html:26
+#: app/templates/administration/roles.html:27
 #, python-format
 msgid "Edit role “%(role)s”"
 msgstr "Rolle „%(role)s“ bearbeiten"
 
-#: app/templates/administration/roles.html:30
+#: app/templates/administration/roles.html:32
 msgid "Click on the name of a role to edit it."
 msgstr "Klicke auf den Namen einer Rolle, um sie zu bearbeiten."
 
@@ -262,18 +262,27 @@ msgstr "Gehe zur nächsten Seite"
 msgid "Next"
 msgstr "Weiter"
 
-#: app/templates/macros/search_form.html:14
+#: app/templates/macros/search_form.html:16
 msgid "Search..."
 msgstr "Suchen..."
 
-#: app/templates/macros/search_form.html:22
-#: app/templates/macros/search_form.html:24 app/views/userprofile/forms.py:151
+#: app/templates/macros/search_form.html:24
+#: app/templates/macros/search_form.html:26 app/views/userprofile/forms.py:151
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: app/templates/macros/search_form.html:27 app/views/forms.py:21
+#: app/templates/macros/search_form.html:29 app/views/forms.py:21
 msgid "Search"
 msgstr "Suchen"
+
+#: app/templates/macros/search_form.html:37
+#, python-format
+msgid ""
+"You can use an asterisk (%(asterisk)s) at any position within the search term "
+"to allow arbitrary characters at that position."
+msgstr ""
+"Du kannst an jeder Stelle im Suchtext ein Sternchen (%(asterisk)s) einfügen, um "
+"beliebige Zeichen an dieser Position zuzulassen."
 
 #: app/templates/userprofile/login.html:5
 #: app/views/userprofile/password_reset.py:53
@@ -473,20 +482,20 @@ msgstr "Name:"
 msgid "Save"
 msgstr "Speichern"
 
-#: app/views/administration/roles.py:88
+#: app/views/administration/roles.py:87
 msgid "The role has been updated."
 msgstr "Die Rolle wurde aktualisiert."
 
-#: app/views/administration/roles.py:109
+#: app/views/administration/roles.py:108
 msgid "The role has been deleted."
 msgstr "Die Rolle wurde gelöscht."
 
-#: app/views/administration/roles.py:112
+#: app/views/administration/roles.py:111
 #, python-format
 msgid "Edit Role “%(role)s”"
 msgstr "Rolle „%(role)s“ bearbeiten"
 
-#: app/views/administration/roles.py:136
+#: app/views/administration/roles.py:137
 #, python-format
 msgid ""
 "Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of "
@@ -495,17 +504,17 @@ msgstr ""
 "Zeige Rollen %(first_role_on_page)d bis %(last_role_on_page)d von "
 "%(total_roles)d für „%(search)s“"
 
-#: app/views/administration/roles.py:143
+#: app/views/administration/roles.py:144
 #, python-format
 msgid "Displaying role %(role_on_page)d of %(total_roles)d matching “%(search)s”"
 msgstr "Zeige Rolle %(role_on_page)d von %(total_roles)d für „%(search)s“"
 
-#: app/views/administration/roles.py:148
+#: app/views/administration/roles.py:149
 #, python-format
 msgid "No roles found matching “%(search)s”"
 msgstr "Keine Rollen für „%(search)s“ gefunden"
 
-#: app/views/administration/roles.py:154
+#: app/views/administration/roles.py:155
 #, python-format
 msgid ""
 "Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of "
@@ -514,12 +523,12 @@ msgstr ""
 "Zeige Rollen %(first_role_on_page)d bis %(last_role_on_page)d von "
 "%(total_roles)d"
 
-#: app/views/administration/roles.py:159
+#: app/views/administration/roles.py:160
 #, python-format
 msgid "Displaying role %(role_on_page)d of %(total_roles)d"
 msgstr "Zeige Rolle %(role_on_page)d von %(total_roles)d"
 
-#: app/views/administration/roles.py:163
+#: app/views/administration/roles.py:164
 msgid "No roles"
 msgstr "Keine Rollen"
 
