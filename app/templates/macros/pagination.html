@@ -5,6 +5,7 @@
         endpoint      - The Flask endpoint route.
         current_page  - The number of the currently displayed page.
         total_pages   - The total number of pages.
+        kwargs        - All other keyword arguments will be passed to the url_for() calls.
 #}
 {% macro pagination(endpoint, current_page, total_pages) -%}
 
@@ -14,7 +15,7 @@
             {# Previous page. #}
             {% if current_page > 1 %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for(endpoint, page=current_page - 1) }}" aria-label="{{ _('Previous Page') }}" title="{{ _('Go to the previous page') }}">
+                <a class="page-link" href="{{ url_for(endpoint, page=current_page - 1, **kwargs) }}" aria-label="{{ _('Previous Page') }}" title="{{ _('Go to the previous page') }}">
                     <span aria-hidden="True">&laquo;</span>
                     <span class="sr-only">{{ _('Previous') }}</span>
                 </a>
@@ -32,14 +33,14 @@
                     {% set active_class = ' active' %}
                 {% endif %}
             <li class="page-item{{ active_class }}">
-                <a class="page-link" href="{{ url_for(endpoint, page=page) }}" title="{{ _('Go to page %(page)d', page=page) }}">{{ page }}</a>
+                <a class="page-link" href="{{ url_for(endpoint, page=page, **kwargs) }}" title="{{ _('Go to page %(page)d', page=page) }}">{{ page }}</a>
             </li>
             {% endfor %}
 
             {# Next page. #}
             {% if current_page < total_pages %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for(endpoint, page=current_page + 1) }}" aria-label="{{ _('Next Page') }}" title="{{ _('Go to the next page') }}">
+                <a class="page-link" href="{{ url_for(endpoint, page=current_page + 1, **kwargs) }}" aria-label="{{ _('Next Page') }}" title="{{ _('Go to the next page') }}">
                     <span aria-hidden="True">&raquo;</span>
                     <span class="sr-only">{{ _('Next') }}</span>
                 </a>
