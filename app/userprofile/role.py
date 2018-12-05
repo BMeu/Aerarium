@@ -230,6 +230,8 @@ class Role(db.Model):
 
     # region DB Queries
 
+    # TODO: Specify return type.
+
     @staticmethod
     def get_search_query(search_term: Optional[str]):
         """
