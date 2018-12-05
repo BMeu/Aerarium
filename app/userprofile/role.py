@@ -3,6 +3,8 @@
 
 from typing import Optional
 
+from flask_sqlalchemy import BaseQuery
+
 from app import db
 from app.userprofile import Permission
 
@@ -230,10 +232,8 @@ class Role(db.Model):
 
     # region DB Queries
 
-    # TODO: Specify return type.
-
     @staticmethod
-    def get_search_query(search_term: Optional[str]):
+    def get_search_query(search_term: Optional[str]) -> BaseQuery:
         """
             Get a query that searches the roles for the given search term on their names.
 
