@@ -27,6 +27,18 @@ class SearchFormTest(TestCase):
         self.request_context.pop()
         self.app_context.pop()
 
+    def test_init(self):
+        """
+            Test initializing the form if a search term is set in the request.
+
+            Expected result: The search term is set on the search field.
+        """
+        search_term = 'Test Search'
+        self.request_context.request.args = {'search': search_term}
+
+        form = SearchForm()
+        self.assertEqual(search_term, form.search.data)
+
     def test_search_param(self):
         """
             Test getting the search parameter.
@@ -37,32 +49,39 @@ class SearchFormTest(TestCase):
         form = SearchForm(prefix=prefix)
         self.assertEqual(f'{prefix}search', form.search_param)
 
-    def test_get_search_term_none(self):
+    def test_search_term(self):
+        """
+            Test getting the search term from the form.
+
+            Expected result: The data of the search field is returned.
+        """
+        search_term = 'Test SearchÄ'
+        form = SearchForm()
+        form.search.data = search_term
+
+        self.assertEqual(search_term, form.search_term)
+
+    def test_get_search_term_from_request_none(self):
         """
             Test getting the search term if there is none.
 
-            Expected result: `None` is returned and set on the search field.
+            Expected result: `None` is returned.
         """
         form = SearchForm()
 
-        # Set some data on the search field to test that it is reset.
-        form.search.data = 'Test Data'
-
-        search_term = form.get_search_term()
+        search_term = form._get_search_term_from_request()
         self.assertIsNone(search_term)
-        self.assertIsNone(form.search.data)
 
-    def test_get_search_term(self):
+    def test_get_search_term_from_request(self):
         """
             Test getting the search term if there is a search term.
 
-            Expected result: The search term is returned and set on the search field.
+            Expected result: The search term is returned.
         """
         search_term = 'Test Search'
         form = SearchForm()
 
         self.request_context.request.args = {form.search_param: search_term}
 
-        search_term_from_request = form.get_search_term()
+        search_term_from_request = form._get_search_term_from_request()
         self.assertEqual(search_term, search_term_from_request)
-        self.assertEqual(search_term, form.search.data)

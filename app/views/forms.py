@@ -25,6 +25,20 @@ class SearchForm(FlaskForm):
     search = StringField(_l('Search:'))
     submit = SubmitField(_l('Search'))
 
+    def __init__(self, *args, **kwargs):
+        """
+            Initialize the form.
+
+            The search field will automatically be filled from the request.
+
+            :param args: The arguments for initializing the form.
+            :param kwargs: The keyworded arguments for initializing the form.
+        """
+        super().__init__(*args, **kwargs)
+
+        search_term = self._get_search_term_from_request()
+        self.search.data = search_term
+
     @property
     def search_param(self) -> str:
         """
@@ -34,16 +48,22 @@ class SearchForm(FlaskForm):
         """
         return self.search.name
 
-    def get_search_term(self) -> Optional[str]:
+    @property
+    def search_term(self) -> Optional[str]:
+        """
+            Get the term for which the user searched.
+
+            :return: The string for which the user searched. `None` if the user did not search for anything.
+        """
+        return self.search.data
+
+    def _get_search_term_from_request(self) -> Optional[str]:
         """
             Get the search term from the URL.
-
-            This will also set the term on the search field.
 
             :return: The string for which the user searched. `None` if the user did not search for anything.
         """
         term = request.args.get(self.search_param, None)
-        self.search.data = term
         return term
 
 # endregion

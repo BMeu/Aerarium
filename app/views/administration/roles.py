@@ -40,8 +40,7 @@ def roles_list() -> str:
     """
     # Get a search term and the resulting query. If no search term is given, all roles will by returned.
     search_form = SearchForm()
-    search_term = search_form.get_search_term()
-    role_query = Role.get_search_query(search_term)
+    role_query = Role.get_search_query(search_form.search_term)
 
     # Get the pagination object.
     page = request.args.get('page', 1, type=int)
@@ -53,11 +52,11 @@ def roles_list() -> str:
     first_role_on_page = roles_on_previous_pages + 1
     roles_on_page = len(roles.items)
 
-    display_text = _get_role_list_display_text(roles_on_page, first_role_on_page, roles.total, search_term)
+    display_text = _get_role_list_display_text(roles_on_page, first_role_on_page, roles.total, search_form.search_term)
 
     return render_template('administration/roles.html', title=_('Roles'), roles=roles.items, display_text=display_text,
                            total_pages=roles.pages, current_page=roles.page,
-                           search_form=search_form, search_term=search_term
+                           search_form=search_form, search_term=search_form.search_term
                            )
 
 
