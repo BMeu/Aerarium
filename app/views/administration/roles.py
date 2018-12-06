@@ -11,8 +11,7 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
-# noinspection PyProtectedMember
-from flask_babel import _
+from flask_babel import gettext as _
 from flask_login import login_required
 
 from app import db

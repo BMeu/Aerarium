@@ -9,8 +9,7 @@ from flask import abort
 from flask import flash
 from flask import redirect
 from flask import url_for
-# noinspection PyProtectedMember
-from flask_babel import _
+from flask_babel import gettext as _
 from flask_login import current_user
 from flask_login import fresh_login_required
 from jwt import PyJWTError

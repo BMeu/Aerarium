@@ -6,8 +6,7 @@
 """
 
 from flask import render_template
-# noinspection PyProtectedMember
-from flask_babel import _
+from flask_babel import gettext as _
 from werkzeug.exceptions import HTTPException
 
 from app.views.main import bp

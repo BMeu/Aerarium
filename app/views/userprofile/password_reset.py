@@ -10,8 +10,7 @@ from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import url_for
-# noinspection PyProtectedMember
-from flask_babel import _
+from flask_babel import gettext as _
 from jwt import PyJWTError
 
 from app import db

@@ -5,8 +5,7 @@ from typing import Optional
 from typing import Tuple
 
 from flask import url_for
-# noinspection PyProtectedMember
-from flask_babel import _
+from flask_babel import gettext as _
 from flask_login import current_user
 from flask_login import login_user
 from flask_login import logout_user
