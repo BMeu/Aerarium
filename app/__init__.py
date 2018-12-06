@@ -17,6 +17,7 @@ from app.application import login
 from app.application import mail
 from app.application import migrate
 from app.email import Email
+from app.pagination import Pagination
 
 __all__ = [
             'babel',
@@ -29,6 +30,7 @@ __all__ = [
             'login',
             'mail',
             'migrate',
+            'Pagination',
             'register_after_request_handlers',
             'register_before_request_handlers',
            ]

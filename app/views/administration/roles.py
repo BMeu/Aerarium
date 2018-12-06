@@ -5,8 +5,6 @@
     Routes for managing roles.
 """
 
-from typing import Optional
-
 from flask import abort
 from flask import flash
 from flask import redirect
@@ -18,9 +16,9 @@ from flask_babel import _
 from flask_login import login_required
 
 from app import db
-from app import get_app
 from app.userprofile import Permission
 from app.userprofile import Role
+from app.userprofile import RolePagination
 from app.userprofile import User
 from app.userprofile.decorators import permission_required
 from app.views.administration import bp
@@ -42,22 +40,12 @@ def roles_list() -> str:
     search_form = SearchForm()
     role_query = Role.get_search_query(search_form.search_term)
 
-    # Get the pagination object.
+    # Get the pagination object and the corresponding display text.
     page = request.args.get('page', 1, type=int)
-    application = get_app()
-    roles_per_page = application.config['ITEMS_PER_PAGE']
-    roles = role_query.order_by(Role.name).paginate(page, roles_per_page, error_out=True)
+    pagination = RolePagination(role_query.order_by(Role.name), page)
 
-    roles_on_previous_pages = (page - 1) * roles_per_page
-    first_role_on_page = roles_on_previous_pages + 1
-    roles_on_page = len(roles.items)
-
-    display_text = _get_role_list_display_text(roles_on_page, first_role_on_page, roles.total, search_form.search_term)
-
-    return render_template('administration/roles.html', title=_('Roles'), roles=roles.items, display_text=display_text,
-                           total_pages=roles.pages, current_page=roles.page,
-                           search_form=search_form, search_term=search_form.search_term
-                           )
+    title = _('Roles')
+    return render_template('administration/roles.html', title=title, pagination=pagination, search_form=search_form)
 
 
 @bp.route('/role/<string:name>', methods=['GET', 'POST'])
@@ -108,53 +96,3 @@ def role_edit(name: str) -> str:
     return render_template('administration/role_edit.html', title=title, has_tabs=True, role=name,
                            delete_form=delete_form, header_form=header_form, users=users
                            )
-
-
-def _get_role_list_display_text(roles_on_page: int, first_role_no: int, total_roles: int,
-                                search_term: Optional[str] = None) -> str:
-    """
-        Get a text explaining how many roles are being displayed.
-
-        :param roles_on_page: The number of roles on the current page.
-        :param first_role_no: The index of the first role on the page.
-        :param total_roles: The total number of roles across all pages (if a search term is given, this is the total
-                            number of roles across all pages matching the search term).
-        :param search_term: Optionally, the term for which the user searched.
-        :return: A localized text displaying the number of roles on the current page.
-    """
-
-    last_role_no = first_role_no + roles_on_page - 1
-
-    # Text with a search.
-    if search_term:
-
-        # More than one role on the page.
-        if roles_on_page >= 2:
-            return _('Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of %(total_roles)d matching '
-                     '“%(search)s”',
-                     first_role_on_page=first_role_no, last_role_on_page=last_role_no, total_roles=total_roles,
-                     search=search_term)
-
-        # One role on the page.
-        if roles_on_page == 1:
-            return _('Displaying role %(role_on_page)d of %(total_roles)d matching “%(search)s”',
-                     role_on_page=first_role_no, last_role_on_page=last_role_no, total_roles=total_roles,
-                     search=search_term)
-
-        # No roles.
-        return _('No roles found matching “%(search)s”', search=search_term)
-
-    # Text without a search.
-
-    # More than one role on the page.
-    if roles_on_page >= 2:
-        return _('Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of %(total_roles)d',
-                 first_role_on_page=first_role_no, last_role_on_page=last_role_no, total_roles=total_roles)
-
-    # One role on the page.
-    if roles_on_page == 1:
-        return _('Displaying role %(role_on_page)d of %(total_roles)d',
-                 role_on_page=first_role_no, total_roles=total_roles)
-
-    # No roles.
-    return _('No roles')

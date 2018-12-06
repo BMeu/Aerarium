@@ -1,5 +1,5 @@
 {% extends '_base_standard.html' %}
-{% from 'macros/pagination.html' import pagination %}
+{% from 'macros/pagination.html' import paginate %}
 {% from 'macros/search_form.html' import render_search_form %}
 
 {% block content %}
@@ -13,16 +13,16 @@
     <ul class="list-group">
         <li class="list-group-item list-group-item-light">
             <p>
-                {{ display_text }}
+                {{ pagination.get_info_text(search_form.search_term) }}
             </p>
 
-            {% if search_term %}
+            {% if search_form.search_term %}
                 {# Only show the reset button if the user has searched for something. #}
                 {% set reset_url=url_for('administration.roles_list') %}
             {% endif %}
             {{ render_search_form(search_form, reset_url=reset_url, placeholder=_('Search roles...')) }}
         </li>
-    {% for role in roles %}
+    {% for role in pagination.rows %}
         <li class="list-group-item list-group-item-action">
             <a href="{{ url_for('.role_edit', name=role.name) }}" title="{{ _('Edit role “%(role)s”', role=role.name) }}">{{ role.name }}</a>
         </li>
@@ -32,5 +32,5 @@
         <small class="text-muted">{{ _('Click on the name of a role to edit it.') }}</small>
     </p>
 
-    {{ pagination('.roles_list', current_page, total_pages, search=search_term) }}
+    {{ paginate('.roles_list', pagination, search=search_form.search_term) }}
 {% endblock %}

@@ -8,6 +8,7 @@ from app import db
 from app.configuration import TestConfiguration
 from app.userprofile import Permission
 from app.userprofile import Role
+from app.userprofile import RolePagination
 from app.userprofile import User
 
 
@@ -804,3 +805,127 @@ class RoleTest(TestCase):
         self.assertEqual(f'<Role [1] "{name}" [{permissions}]>', str(role))
 
     # endregion
+
+
+class RolePaginationTest(TestCase):
+
+    def setUp(self):
+        """
+            Initialize the test cases.
+        """
+        self.app = create_app(TestConfiguration)
+        self.client = self.app.test_client()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.request_context = self.app.test_request_context()
+        self.request_context.push()
+        db.create_all()
+
+        # Add a few test models.
+        role_1 = Role(name='A')
+        role_2 = Role(name='B')
+        role_3 = Role(name='C')
+        role_4 = Role(name='D')
+        role_5 = Role(name='E')
+        role_6 = Role(name='F')
+        role_7 = Role(name='G')
+        db.session.add(role_1)
+        db.session.add(role_2)
+        db.session.add(role_3)
+        db.session.add(role_4)
+        db.session.add(role_5)
+        db.session.add(role_6)
+        db.session.add(role_7)
+        db.session.commit()
+
+    def tearDown(self):
+        """
+            Reset the test cases.
+        """
+        db.session.remove()
+        db.drop_all()
+        self.request_context.pop()
+        self.app_context.pop()
+
+    def test_get_info_text_search_term_multiple(self):
+        """
+            Test getting the info text with a search term for multiple rows on a page.
+
+            Expected result: The search term is included, the first and last row on the page are given.
+        """
+
+        search_term = 'Aerarium'
+        pagination = RolePagination(Role.query, 1)
+
+        text = pagination.get_info_text(search_term)
+        self.assertIn(f'roles {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
+        self.assertIn(f'matching “{search_term}”', text)
+
+    def test_get_info_text_search_term_single(self):
+        """
+            Test getting the info text with a search term for a single row on a page.
+
+            Expected result: The search term is included, the first row on the page is given.
+        """
+
+        search_term = 'Aerarium'
+        pagination = RolePagination(Role.query, 3)
+
+        text = pagination.get_info_text(search_term)
+        self.assertIn(f'role {pagination.first_row} of {pagination.total_rows}', text)
+        self.assertIn(f'matching “{search_term}”', text)
+
+    def test_get_info_text_search_term_no_rows(self):
+        """
+            Test getting the info text with a search term for no rows on the page.
+
+            Expected result: The search term is included, the info that no rows were found is given.
+        """
+
+        # Filter by some dummy value not related to the search term.
+        search_term = 'Aerarium'
+        pagination = RolePagination(Role.query.filter(Role.id > 42), 1)
+
+        text = pagination.get_info_text(search_term)
+        self.assertIn('No roles', text)
+        self.assertIn(f'matching “{search_term}”', text)
+
+    def test_get_info_text_no_search_term_multiple(self):
+        """
+            Test getting the info text without a search term for multiple rows on a page.
+
+            Expected result: The search term is not included, the first and last row on the page are given.
+        """
+
+        pagination = RolePagination(Role.query, 1)
+
+        text = pagination.get_info_text()
+        self.assertIn(f'roles {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
+        self.assertNotIn(f'matching “', text)
+
+    def test_get_info_text_no_search_term_single(self):
+        """
+            Test getting the info text without a search term for a single row on a page.
+
+            Expected result: The search term is not included, the first row on the page is given.
+        """
+
+        pagination = RolePagination(Role.query, 3)
+
+        text = pagination.get_info_text()
+        self.assertIn(f'role {pagination.first_row} of {pagination.total_rows}', text)
+        self.assertNotIn(f'matching “', text)
+
+    def test_get_info_text_no_search_term_no_rows(self):
+        """
+            Test getting the info text without a search term for no rows on the page.
+
+            Expected result: The search term is not included, the info that no rows were found is given.
+        """
+
+        # Filter the results to achieve zero rows.
+        pagination = RolePagination(Role.query.filter(Role.id > 42), 1)
+
+        text = pagination.get_info_text()
+        self.assertIn('No roles', text)
+        self.assertNotIn(f'matching “', text)

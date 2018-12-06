@@ -3,19 +3,18 @@
 
     Params:
         endpoint      - The Flask endpoint route.
-        current_page  - The number of the currently displayed page.
-        total_pages   - The total number of pages.
+        pagination    - A `app.Pagination` object.
         kwargs        - All other keyword arguments will be passed to the url_for() calls.
 #}
-{% macro pagination(endpoint, current_page, total_pages) -%}
+{% macro paginate(endpoint, pagination) -%}
 
-    {% if total_pages > 1 %}
+    {% if pagination.total_pages > 1 %}
     <nav aria-label="{{ _('Navigate pages') }}">
         <ul class="pagination justify-content-center" >
             {# Previous page. #}
-            {% if current_page > 1 %}
+            {% if pagination.current_page > 1 %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for(endpoint, page=current_page - 1, **kwargs) }}" aria-label="{{ _('Previous Page') }}" title="{{ _('Go to the previous page') }}">
+                <a class="page-link" href="{{ url_for(endpoint, page=pagination.current_page - 1, **kwargs) }}" aria-label="{{ _('Previous Page') }}" title="{{ _('Go to the previous page') }}">
                     <span aria-hidden="True">&laquo;</span>
                     <span class="sr-only">{{ _('Previous') }}</span>
                 </a>
@@ -28,8 +27,8 @@
             {% endif %}
 
             {# List of all pages. #}
-            {% for page in range(1, total_pages + 1) %}
-                {% if page == current_page %}
+            {% for page in range(1, pagination.total_pages + 1) %}
+                {% if page == pagination.current_page %}
                     {% set active_class = ' active' %}
                 {% endif %}
             <li class="page-item{{ active_class }}">
@@ -38,9 +37,9 @@
             {% endfor %}
 
             {# Next page. #}
-            {% if current_page < total_pages %}
+            {% if pagination.current_page < pagination.total_pages %}
             <li class="page-item">
-                <a class="page-link" href="{{ url_for(endpoint, page=current_page + 1, **kwargs) }}" aria-label="{{ _('Next Page') }}" title="{{ _('Go to the next page') }}">
+                <a class="page-link" href="{{ url_for(endpoint, page=pagination.current_page + 1, **kwargs) }}" aria-label="{{ _('Next Page') }}" title="{{ _('Go to the next page') }}">
                     <span aria-hidden="True">&raquo;</span>
                     <span class="sr-only">{{ _('Next') }}</span>
                 </a>

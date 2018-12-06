@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-12-04 17:05+0100\n"
-"PO-Revision-Date: 2018-12-04 17:06+0100\n"
+"POT-Creation-Date: 2018-12-06 18:07+0100\n"
+"PO-Revision-Date: 2018-12-06 18:09+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -22,6 +22,41 @@ msgstr ""
 #: app/application.py:165
 msgid "Please log in to access this page."
 msgstr "Bitte melde Dich an, um diese Seite öffnen zu können."
+
+#: app/pagination.py:107
+#, python-format
+msgid ""
+"Displaying results %(first_result)d to %(last_result)d of %(total_results)d "
+"matching “%(search)s”"
+msgstr ""
+"Zeige Ergebnisse %(first_result)d bis %(last_result)d von %(total_results)d für "
+"„%(search)s“"
+
+#: app/pagination.py:114
+#, python-format
+msgid "Displaying result %(result)d of %(total_results)d matching “%(search)s”"
+msgstr "Zeige Ergebnis %(result)d von %(total_results)d für „%(search)s“"
+
+#: app/pagination.py:118
+#, python-format
+msgid "No results found matching “%(search)s”"
+msgstr "Keine Ergebnisse für „%(search)s“"
+
+#: app/pagination.py:124
+#, python-format
+msgid ""
+"Displaying results %(first_result)d to %(last_result)d of %(total_results)d"
+msgstr ""
+"Zeige Ergebnisse %(first_result)d bis %(last_result)d von %(total_results)d"
+
+#: app/pagination.py:129
+#, python-format
+msgid "Displaying result %(result)d of %(total_results)d"
+msgstr "Zeige Ergebnis %(result)d von %(total_results)d"
+
+#: app/pagination.py:133
+msgid "No results"
+msgstr "Keine Ergebnisse"
 
 #: app/templates/_base_email.html:14 app/templates/_base_email.txt:1
 #, python-format
@@ -63,7 +98,7 @@ msgstr "Globale Einstellungen"
 msgid "Users"
 msgstr "Benutzer"
 
-#: app/templates/_header.html:44 app/views/administration/roles.py:61
+#: app/templates/_header.html:44 app/views/administration/roles.py:49
 msgid "Roles"
 msgstr "Rollen"
 
@@ -271,7 +306,7 @@ msgstr "Suchen..."
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: app/templates/macros/search_form.html:29 app/views/forms.py:21
+#: app/templates/macros/search_form.html:29 app/views/forms.py:26
 msgid "Search"
 msgstr "Suchen"
 
@@ -437,6 +472,39 @@ msgstr ""
 "Wenn Du das Zurücksetzen Deines Passwortes nicht angefordert hast, kannst Du "
 "diese E-Mail ignorieren."
 
+#: app/userprofile/role.py:289
+#, python-format
+msgid ""
+"Displaying roles %(first_result)d to %(last_result)d of %(total_results)d "
+"matching “%(search)s”"
+msgstr ""
+"Zeige Rollen %(first_result)d bis %(last_result)d von %(total_results)d für "
+"„%(search)s“"
+
+#: app/userprofile/role.py:296
+#, python-format
+msgid "Displaying role %(result)d of %(total_results)d matching “%(search)s”"
+msgstr "Zeige Rolle %(result)d von %(total_results)d für „%(search)s“"
+
+#: app/userprofile/role.py:300
+#, python-format
+msgid "No roles found matching “%(search)s”"
+msgstr "Keine Rollen für „%(search)s“"
+
+#: app/userprofile/role.py:306
+#, python-format
+msgid "Displaying roles %(first_result)d to %(last_result)d of %(total_results)d"
+msgstr "Zeige Rollen %(first_result)d bis %(last_result)d von %(total_results)d"
+
+#: app/userprofile/role.py:311
+#, python-format
+msgid "Displaying role %(result)d of %(total_results)d"
+msgstr "Zeige Rolle %(result)d von %(total_results)d"
+
+#: app/userprofile/role.py:315
+msgid "No roles"
+msgstr "Keine Rollen"
+
 #: app/userprofile/user.py:206
 msgid "Your Email Address Has Been Changed"
 msgstr "Deine E-Mail-Adresse wurde geändert"
@@ -457,7 +525,7 @@ msgstr "Benutzerprofil löschen"
 msgid "Your User Profile Has Been Deleted"
 msgstr "Dein Benutzerprofil wurde gelöscht"
 
-#: app/views/forms.py:20
+#: app/views/forms.py:25
 msgid "Search:"
 msgstr "Suchen:"
 
@@ -482,55 +550,18 @@ msgstr "Name:"
 msgid "Save"
 msgstr "Speichern"
 
-#: app/views/administration/roles.py:87
+#: app/views/administration/roles.py:73
 msgid "The role has been updated."
 msgstr "Die Rolle wurde aktualisiert."
 
-#: app/views/administration/roles.py:108
+#: app/views/administration/roles.py:94
 msgid "The role has been deleted."
 msgstr "Die Rolle wurde gelöscht."
 
-#: app/views/administration/roles.py:111
+#: app/views/administration/roles.py:97
 #, python-format
 msgid "Edit Role “%(role)s”"
 msgstr "Rolle „%(role)s“ bearbeiten"
-
-#: app/views/administration/roles.py:137
-#, python-format
-msgid ""
-"Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of "
-"%(total_roles)d matching “%(search)s”"
-msgstr ""
-"Zeige Rollen %(first_role_on_page)d bis %(last_role_on_page)d von "
-"%(total_roles)d für „%(search)s“"
-
-#: app/views/administration/roles.py:144
-#, python-format
-msgid "Displaying role %(role_on_page)d of %(total_roles)d matching “%(search)s”"
-msgstr "Zeige Rolle %(role_on_page)d von %(total_roles)d für „%(search)s“"
-
-#: app/views/administration/roles.py:149
-#, python-format
-msgid "No roles found matching “%(search)s”"
-msgstr "Keine Rollen für „%(search)s“ gefunden"
-
-#: app/views/administration/roles.py:155
-#, python-format
-msgid ""
-"Displaying roles %(first_role_on_page)d to %(last_role_on_page)d of "
-"%(total_roles)d"
-msgstr ""
-"Zeige Rollen %(first_role_on_page)d bis %(last_role_on_page)d von "
-"%(total_roles)d"
-
-#: app/views/administration/roles.py:160
-#, python-format
-msgid "Displaying role %(role_on_page)d of %(total_roles)d"
-msgstr "Zeige Rolle %(role_on_page)d von %(total_roles)d"
-
-#: app/views/administration/roles.py:164
-msgid "No roles"
-msgstr "Keine Rollen"
 
 #: app/views/main/errors.py:25
 msgid "Bad Request"

@@ -7,6 +7,7 @@
 
 from app.userprofile.permissions import Permission
 from app.userprofile.role import Role
+from app.userprofile.role import RolePagination
 from app.userprofile.settings import UserSettings
 from app.userprofile.user import User
 from app.userprofile.decorators import logout_required
@@ -21,6 +22,7 @@ __all__ = [
             'permission_required_all',
             'permission_required_one_of',
             'Role',
+            'RolePagination',
             'User',
             'UserSettings',
           ]

@@ -46,6 +46,14 @@ app.exceptions module
     :undoc-members:
     :show-inheritance:
 
+app.pagination module
+---------------------
+
+.. automodule:: app.pagination
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 app.request module
 ------------------
 
