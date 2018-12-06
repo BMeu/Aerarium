@@ -16,6 +16,7 @@ from app.exceptions import InvalidJWTokenPayloadError
 from app.userprofile import Permission
 from app.userprofile import Role
 from app.userprofile import User
+from app.userprofile import UserPagination
 from app.userprofile import UserSettings
 from app.userprofile.tokens import ChangeEmailAddressToken
 from app.userprofile.tokens import DeleteAccountToken
@@ -1228,3 +1229,127 @@ class UserTest(TestCase):
         self.assertEqual(f'<User [1] {email}>', str(user))
 
     # endregion
+
+
+class UserPaginationTest(TestCase):
+
+    def setUp(self):
+        """
+            Initialize the test cases.
+        """
+        self.app = create_app(TestConfiguration)
+        self.client = self.app.test_client()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.request_context = self.app.test_request_context()
+        self.request_context.push()
+        db.create_all()
+
+        # Add a few test models.
+        user_1 = User('a@example.com', 'A')
+        user_2 = User('b@example.com', 'B')
+        user_3 = User('c@example.com', 'C')
+        user_4 = User('d@example.com', 'D')
+        user_5 = User('e@example.com', 'E')
+        user_6 = User('f@example.com', 'F')
+        user_7 = User('g@example.com', 'G')
+        db.session.add(user_1)
+        db.session.add(user_2)
+        db.session.add(user_3)
+        db.session.add(user_4)
+        db.session.add(user_5)
+        db.session.add(user_6)
+        db.session.add(user_7)
+        db.session.commit()
+
+    def tearDown(self):
+        """
+            Reset the test cases.
+        """
+        db.session.remove()
+        db.drop_all()
+        self.request_context.pop()
+        self.app_context.pop()
+
+    def test_get_info_text_search_term_multiple(self):
+        """
+            Test getting the info text with a search term for multiple rows on a page.
+
+            Expected result: The search term is included, the first and last row on the page are given.
+        """
+
+        search_term = 'Aerarium'
+        pagination = UserPagination(User.query, 1)
+
+        text = pagination.get_info_text(search_term)
+        self.assertIn(f'users {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
+        self.assertIn(f'matching “{search_term}”', text)
+
+    def test_get_info_text_search_term_single(self):
+        """
+            Test getting the info text with a search term for a single row on a page.
+
+            Expected result: The search term is included, the first row on the page is given.
+        """
+
+        search_term = 'Aerarium'
+        pagination = UserPagination(User.query, 3)
+
+        text = pagination.get_info_text(search_term)
+        self.assertIn(f'user {pagination.first_row} of {pagination.total_rows}', text)
+        self.assertIn(f'matching “{search_term}”', text)
+
+    def test_get_info_text_search_term_no_rows(self):
+        """
+            Test getting the info text with a search term for no rows on the page.
+
+            Expected result: The search term is included, the info that no rows were found is given.
+        """
+
+        # Filter by some dummy value not related to the search term.
+        search_term = 'Aerarium'
+        pagination = UserPagination(User.query.filter(Role.id > 42), 1)
+
+        text = pagination.get_info_text(search_term)
+        self.assertIn('No users', text)
+        self.assertIn(f'matching “{search_term}”', text)
+
+    def test_get_info_text_no_search_term_multiple(self):
+        """
+            Test getting the info text without a search term for multiple rows on a page.
+
+            Expected result: The search term is not included, the first and last row on the page are given.
+        """
+
+        pagination = UserPagination(User.query, 1)
+
+        text = pagination.get_info_text()
+        self.assertIn(f'users {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
+        self.assertNotIn(f'matching “', text)
+
+    def test_get_info_text_no_search_term_single(self):
+        """
+            Test getting the info text without a search term for a single row on a page.
+
+            Expected result: The search term is not included, the first row on the page is given.
+        """
+
+        pagination = UserPagination(User.query, 3)
+
+        text = pagination.get_info_text()
+        self.assertIn(f'user {pagination.first_row} of {pagination.total_rows}', text)
+        self.assertNotIn(f'matching “', text)
+
+    def test_get_info_text_no_search_term_no_rows(self):
+        """
+            Test getting the info text without a search term for no rows on the page.
+
+            Expected result: The search term is not included, the info that no rows were found is given.
+        """
+
+        # Filter the results to achieve zero rows.
+        pagination = UserPagination(User.query.filter(Role.id > 42), 1)
+
+        text = pagination.get_info_text()
+        self.assertIn('No users', text)
+        self.assertNotIn(f'matching “', text)

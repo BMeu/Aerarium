@@ -16,6 +16,7 @@ from app import db
 from app import Email
 from app import get_app
 from app import login as app_login
+from app import Pagination
 from app.userprofile import Permission
 from app.userprofile import UserSettings
 from app.userprofile.tokens import ChangeEmailAddressToken
@@ -455,3 +456,51 @@ class User(UserMixin, db.Model):
         return f'<User [{self.id}] {self.get_email()}>'
 
     # endregion
+
+
+class UserPagination(Pagination):
+    """
+        A pagination object for users specializing the info texts.
+    """
+
+    def get_info_text(self, search_term: Optional[str] = None) -> str:
+        """
+            Get an informational text explaining how many results are being displayed on the current page.
+
+            :param search_term: If given, this term will be included in the info text to explain that the results are
+                                being filtered by this value.
+            :return: The info text.
+        """
+
+        # Text with a search.
+        if search_term:
+
+            # More than one result on the page.
+            if self.rows_on_page >= 2:
+                return _('Displaying users %(first_result)d to %(last_result)d of %(total_results)d matching '
+                         '“%(search)s”',
+                         first_result=self.first_row, last_result=self.last_row, total_results=self.total_rows,
+                         search=search_term)
+
+            # One result on the page.
+            if self.rows_on_page == 1:
+                return _('Displaying user %(result)d of %(total_results)d matching “%(search)s”',
+                         result=self.first_row, total_results=self.total_rows, search=search_term)
+
+            # No results.
+            return _('No users found matching “%(search)s”', search=search_term)
+
+        # Text without a search.
+
+        # More than one result on the page.
+        if self.rows_on_page >= 2:
+            return _('Displaying users %(first_result)d to %(last_result)d of %(total_results)d',
+                     first_result=self.first_row, last_result=self.last_row, total_results=self.total_rows)
+
+        # One result on the page.
+        if self.rows_on_page == 1:
+            return _('Displaying user %(result)d of %(total_results)d',
+                     result=self.first_row, total_results=self.total_rows)
+
+        # No results.
+        return _('No users')

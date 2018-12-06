@@ -10,6 +10,7 @@ from app.userprofile.role import Role
 from app.userprofile.role import RolePagination
 from app.userprofile.settings import UserSettings
 from app.userprofile.user import User
+from app.userprofile.user import UserPagination
 from app.userprofile.decorators import logout_required
 from app.userprofile.decorators import permission_required
 from app.userprofile.decorators import permission_required_all
@@ -24,5 +25,6 @@ __all__ = [
             'Role',
             'RolePagination',
             'User',
+            'UserPagination',
             'UserSettings',
           ]
