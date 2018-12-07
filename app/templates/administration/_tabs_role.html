@@ -1,0 +1,21 @@
+{% extends '_tabs.html' %}
+
+{% set title = _('Edit Role “%(role)s”', role=role) %}
+
+{# Tab menu in the form (url, index, title, text). #}
+{% set tabs = [
+    (url_for('administration.role_edit', name=role), 'role-header', _('Role'), _('Role')),
+    (url_for('administration.role_permissions', name=role), 'role-permissions', _('Permissions'), _('Permissions')),
+    (url_for('administration.role_users', name=role), 'role-users', _('Users'), _('Users')),
+    (url_for('administration.role_delete', name=role), 'role-delete', _('Delete'), _('Delete')),
+] %}
+
+{% block tabheader %}
+    <p>
+        <a href="{{ url_for('administration.roles_list') }}" title="{{ _('Go back to the list of all roles') }}">&laquo; {{ _('Back to Roles') }}</a>
+    </p>
+
+    <p>
+        {{ _('Edit the role “%(role)s” and manage its permissions and the users assigned to it.', role=role) }}
+    </p>
+{% endblock %}

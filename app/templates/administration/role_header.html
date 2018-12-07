@@ -1,0 +1,12 @@
+{% extends 'administration/_tabs_role.html' %}
+{% from 'macros/form.html' import render_form %}
+
+{% set active_id = 'role-header' %}
+
+{% block tabcontent %}
+<p>
+    {{ _('Edit the role\'s header data.') }}
+</p>
+
+{{ render_form(header_form, cancel_button=True) }}
+{% endblock %}

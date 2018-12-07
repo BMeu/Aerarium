@@ -1,0 +1,22 @@
+{% extends '_base_standard.html' %}
+
+{% block content %}
+    {% block tabheader %}{% endblock %}
+
+    <ul class="nav nav-tabs mb-2">
+        {% for url, id, title, text in tabs %}
+        <li class="nav-item">
+            {% if id == active_id %}
+                {% set class_ = ' active' %}
+            {% endif %}
+            <a class="nav-link{{ class_ }}" href="{{ url }}" id="{{ id }}" title="{{ title }}">{{ text }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane active">
+            {% block tabcontent %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

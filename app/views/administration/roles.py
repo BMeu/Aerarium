@@ -62,23 +62,74 @@ def role_edit(name: str) -> str:
         abort(404)
 
     # Create (and possibly process) the header data form.
-    header_form = RoleHeaderDataForm(obj=role, prefix='header_')
-    if header_form.submit.data and header_form.validate_on_submit():
+    header_form = RoleHeaderDataForm(obj=role)
+    if header_form.validate_on_submit():
         header_form.populate_obj(role)
         db.session.commit()
 
         flash(_('The role has been updated.'))
         return redirect(url_for('.role_edit', name=role.name))
 
+    return render_template('administration/role_header.html', role=name, header_form=header_form)
+
+
+@bp.route('/role/<string:name>/permissions', methods=['GET', 'POST'])
+@login_required
+@permission_required(Permission.EditRole)
+def role_permissions(name: str) -> str:
+    """
+        Show a form to a role's permissions.
+
+        :param name: The name of the role.
+        :return: The HTML response.
+    """
+    role = Role.load_from_name(name)
+    if role is None:
+        abort(404)
+
+    return render_template('administration/role_permissions.html', role=name)
+
+
+@bp.route('/role/<string:name>/users')
+@login_required
+@permission_required(Permission.EditRole)
+def role_users(name: str) -> str:
+    """
+        List all users to whom the given role is assigned.
+
+        :param name: The name of the role.
+        :return: The HTML response.
+    """
+    role = Role.load_from_name(name)
+    if role is None:
+        abort(404)
+
     # List all users to whom this role is assigned.
     # TODO: Add pagination to the user list.
     users = role.users.order_by(User.name).all()
 
+    return render_template('administration/role_users.html', role=name, users=users)
+
+
+@bp.route('/role/<string:name>/delete', methods=['GET', 'POST'])
+@login_required
+@permission_required(Permission.EditRole)
+def role_delete(name: str) -> str:
+    """
+        Show a form to delete the given role and process that form.
+
+        :param name: The name of the role.
+        :return: The HTML response.
+    """
+    role = Role.load_from_name(name)
+    if role is None:
+        abort(404)
+
     # TODO: Disable deleting if this is the last role.
     # TODO: Disable deleting if this is the last role with permissions to edit roles.
     # Create (and possibly process) the delete form.
-    delete_form = RoleDeleteForm(role, prefix='delete_')
-    if delete_form.submit.data and delete_form.validate_on_submit():
+    delete_form = RoleDeleteForm(role)
+    if delete_form.validate_on_submit():
         try:
             new_role_id = delete_form.new_role.data
             new_role = Role.load_from_id(new_role_id)
@@ -91,7 +142,4 @@ def role_edit(name: str) -> str:
         flash(_('The role has been deleted.'))
         return redirect(url_for('.roles_list'))
 
-    title = _('Edit Role “%(role)s”', role=name)
-    return render_template('administration/role_edit.html', title=title, has_tabs=True, role=name,
-                           delete_form=delete_form, header_form=header_form, users=users
-                           )
+    return render_template('administration/role_delete.html', role=name, delete_form=delete_form)
