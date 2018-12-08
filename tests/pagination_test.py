@@ -11,6 +11,13 @@ from app import Pagination
 from app.configuration import TestConfiguration
 
 
+class TestModel(db.Model):
+    """
+        A simple DB model used just for testing the pagination.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+
+
 class PaginationTest(TestCase):
 
     def setUp(self):
@@ -285,10 +292,3 @@ class PaginationTest(TestCase):
         text = pagination.get_info_text()
         self.assertIn('No results', text)
         self.assertNotIn(f'matching “', text)
-
-
-class TestModel(db.Model):
-    """
-        A simple DB model used just for testing the pagination.
-    """
-    id = db.Column(db.Integer, primary_key=True)
