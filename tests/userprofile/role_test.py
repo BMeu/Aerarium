@@ -91,6 +91,60 @@ class RoleTest(TestCase):
         loaded_role = Role.load_from_name('Administrator')
         self.assertIsNone(loaded_role)
 
+    def test_load_roles_with_permission(self):
+        """
+            Test loading roles that have a given permission.
+
+            Expected result: All roles that have the requested permission are returned.
+        """
+        requested_permission = Permission.EditRole
+        other_permission = Permission.EditUser
+
+        role_without_permission = Role(name='No Permission')
+        role_without_permission.add_permission(other_permission)
+        db.session.add(role_without_permission)
+
+        role_with_permission = Role(name='With Permission')
+        role_with_permission.add_permission(requested_permission)
+        db.session.add(role_with_permission)
+
+        role_with_permissions = Role(name='With Permissions')
+        role_with_permissions.add_permissions(requested_permission, other_permission)
+        db.session.add(role_with_permissions)
+
+        db.session.commit()
+
+        roles = Role.load_roles_with_permission(requested_permission)
+        self.assertListEqual([role_with_permission, role_with_permissions], roles)
+
+    def test_load_roles_with_permissions(self):
+        """
+            Test loading roles that have multiple given permissions.
+
+            Expected result: All roles that have the requested permissions are returned.
+        """
+        first_requested_permission = Permission.EditRole
+        second_requested_permission = Permission.EditGlobalSettings
+        other_permission = Permission.EditUser
+
+        role_without_permission = Role(name='No Permission')
+        role_without_permission.add_permission(other_permission)
+        db.session.add(role_without_permission)
+
+        role_with_one_permission = Role(name='With One Permission')
+        role_with_one_permission.add_permission(first_requested_permission)
+        db.session.add(role_with_one_permission)
+
+        role_with_all_permissions = Role(name='With All Permissions')
+        role_with_all_permissions.add_permissions(first_requested_permission, second_requested_permission,
+                                                  other_permission)
+        db.session.add(role_with_all_permissions)
+
+        db.session.commit()
+
+        roles = Role.load_roles_with_permissions_all(first_requested_permission, second_requested_permission)
+        self.assertListEqual([role_with_all_permissions], roles)
+
     # endregion
 
     # region Permissions

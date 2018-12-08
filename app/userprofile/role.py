@@ -1,6 +1,7 @@
 #!venv/bin/python
 # -*- coding: utf-8 -*-
 
+from typing import List
 from typing import Optional
 
 from flask_babel import gettext as _
@@ -68,6 +69,31 @@ class Role(db.Model):
             :return: The loaded role if it exists, `None` otherwise.
         """
         return Role.query.filter_by(name=name).first()
+
+    @staticmethod
+    def load_roles_with_permission(permission: Permission) -> List['Role']:
+        """
+            Get all roles that have the given permission.
+
+            Alias of :meth:`get_roles_with_permissions_all` with only a single permission.
+
+            :param permission: The permission that the roles must have.
+            :return: A list of roles that have the given permission.
+        """
+        return Role.load_roles_with_permissions_all(permission)
+
+    @staticmethod
+    def load_roles_with_permissions_all(*permissions: Permission) -> List['Role']:
+        """
+            Get all roles that have all the given permissions.
+
+            :param permissions: The permissions that the roles must have.
+            :return: A list of roles that have all of the given permissions.
+        """
+        permission = Permission.bitwise_or(*permissions)
+        raw_value = permission.value
+
+        return Role.query.filter(Role._permissions.op('&')(raw_value) == raw_value).all()
 
     # endregion
 
