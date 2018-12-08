@@ -8,6 +8,7 @@
 from typing import List
 from typing import Optional
 
+from flask import request
 from flask_babel import gettext as _
 from flask_sqlalchemy import BaseQuery
 
@@ -20,18 +21,27 @@ class Pagination(object):
         A helper object providing basic functionality for all paginations.
     """
 
-    def __init__(self, query: BaseQuery, current_page: int) -> None:
+    def __init__(self, query: BaseQuery, page_param: str = 'page') -> None:
         """
             Initialize the pagination object.
 
-            If the current page does not exists the request will be aborted with an status code 404.
+            The current page will be determined from the page parameter in the request arguments. If the page parameter
+            is not included in the request arguments, the current page defaults to `1`.
 
             :param query: The base query that will be paginated.
-            :param current_page: The page that is currently displayed.
+            :param page_param: The name of the page parameter specifying the current page. Defaults to `page`.
         """
+
+        # Get the current page from the request arguments.
+        try:
+            self.current_page = request.args.get(page_param, 1, type=int)
+        except TypeError:
+            # In tests, the above call fails because get does not take keyword arguments - it does however work outside
+            # of requests. Thus, fall back to this manual conversion.
+            self.current_page = int(request.args.get(page_param, 1))
+
         application = get_app()
         self.rows_per_page = application.config['ITEMS_PER_PAGE']
-        self.current_page = current_page
 
         self._rows = query.paginate(self.current_page, self.rows_per_page)
 

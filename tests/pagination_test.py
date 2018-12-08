@@ -18,7 +18,6 @@ class PaginationTest(TestCase):
             Initialize the test cases.
         """
         self.app = create_app(TestConfiguration)
-        self.client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.request_context = self.app.test_request_context()
@@ -51,14 +50,29 @@ class PaginationTest(TestCase):
         self.request_context.pop()
         self.app_context.pop()
 
-    def test_init_success(self):
+    def test_init_success_default_page_param(self):
         """
-            Test initializing the pagination object.
+            Test initializing the pagination object with the default page parameter.
 
             Expected result: All members are initialized.
         """
-        current_page = 2
-        pagination = Pagination(TestModel.query, current_page)
+        current_page = 1
+        self.request_context.request.args = {'page': current_page, 'p': current_page + 1}
+        pagination = Pagination(TestModel.query)
+
+        self.assertEqual(self.app.config['ITEMS_PER_PAGE'], pagination.rows_per_page)
+        self.assertEqual(current_page, pagination.current_page)
+        self.assertIsNotNone(pagination._rows)
+
+    def test_init_success_custom_page_param(self):
+        """
+            Test initializing the pagination object with a custom page parameter.
+
+            Expected result: All members are initialized.
+        """
+        current_page = 1
+        self.request_context.request.args = {'page': current_page + 1, 'p': current_page}
+        pagination = Pagination(TestModel.query, page_param='p')
 
         self.assertEqual(self.app.config['ITEMS_PER_PAGE'], pagination.rows_per_page)
         self.assertEqual(current_page, pagination.current_page)
@@ -71,8 +85,9 @@ class PaginationTest(TestCase):
             Expected result: An error is raised.
         """
         current_page = 4
+        self.request_context.request.args = {'page': current_page}
         with self.assertRaises(NotFound):
-            Pagination(TestModel.query, current_page)
+            Pagination(TestModel.query)
 
     def test_first_row(self):
         """
@@ -80,13 +95,16 @@ class PaginationTest(TestCase):
 
             Expected result: The corresponding first row is returned.
         """
-        pagination = Pagination(TestModel.query, 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(1, pagination.first_row)
 
-        pagination = Pagination(TestModel.query, 2)
+        self.request_context.request.args = {'page': 2}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(4, pagination.first_row)
 
-        pagination = Pagination(TestModel.query, 3)
+        self.request_context.request.args = {'page': 3}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(7, pagination.first_row)
 
     def test_last_row(self):
@@ -95,13 +113,16 @@ class PaginationTest(TestCase):
 
             Expected result: The corresponding last row is returned.
         """
-        pagination = Pagination(TestModel.query, 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = Pagination(TestModel.query,)
         self.assertEqual(3, pagination.last_row)
 
-        pagination = Pagination(TestModel.query, 2)
+        self.request_context.request.args = {'page': 2}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(6, pagination.last_row)
 
-        pagination = Pagination(TestModel.query, 3)
+        self.request_context.request.args = {'page': 3}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(7, pagination.last_row)
 
     def test_rows(self):
@@ -110,13 +131,16 @@ class PaginationTest(TestCase):
 
             Expected results: The actual model objects for the requested page are returned.
         """
-        pagination = Pagination(TestModel.query, 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = Pagination(TestModel.query)
         self.assertListEqual([self.model_1, self.model_2, self.model_3], pagination.rows)
 
-        pagination = Pagination(TestModel.query, 2)
+        self.request_context.request.args = {'page': 2}
+        pagination = Pagination(TestModel.query)
         self.assertListEqual([self.model_4, self.model_5, self.model_6], pagination.rows)
 
-        pagination = Pagination(TestModel.query, 3)
+        self.request_context.request.args = {'page': 3}
+        pagination = Pagination(TestModel.query)
         self.assertListEqual([self.model_7], pagination.rows)
 
     def test_rows_on_page(self):
@@ -125,13 +149,16 @@ class PaginationTest(TestCase):
 
             Expected result: The correct number is returned.
         """
-        pagination = Pagination(TestModel.query, 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(3, pagination.rows_on_page)
 
-        pagination = Pagination(TestModel.query, 2)
+        self.request_context.request.args = {'page': 2}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(3, pagination.rows_on_page)
 
-        pagination = Pagination(TestModel.query, 3)
+        self.request_context.request.args = {'page': 3}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(1, pagination.rows_on_page)
 
     def test_total_pages(self):
@@ -140,13 +167,16 @@ class PaginationTest(TestCase):
 
             Expected result: The return value is always the same.
         """
-        pagination = Pagination(TestModel.query, 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(3, pagination.total_pages)
 
-        pagination = Pagination(TestModel.query, 2)
+        self.request_context.request.args = {'page': 2}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(3, pagination.total_pages)
 
-        pagination = Pagination(TestModel.query, 3)
+        self.request_context.request.args = {'page': 3}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(3, pagination.total_pages)
 
     def test_total_rows(self):
@@ -155,13 +185,16 @@ class PaginationTest(TestCase):
 
             Expected result: The return value is always the same.
         """
-        pagination = Pagination(TestModel.query, 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(7, pagination.total_rows)
 
-        pagination = Pagination(TestModel.query, 2)
+        self.request_context.request.args = {'page': 2}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(7, pagination.total_rows)
 
-        pagination = Pagination(TestModel.query, 3)
+        self.request_context.request.args = {'page': 3}
+        pagination = Pagination(TestModel.query)
         self.assertEqual(7, pagination.total_rows)
 
     def test_get_info_text_search_term_multiple(self):
@@ -171,8 +204,9 @@ class PaginationTest(TestCase):
             Expected result: The search term is included, the first and last row on the page are given.
         """
 
+        self.request_context.request.args = {'page': 1}
         search_term = 'Aerarium'
-        pagination = Pagination(TestModel.query, 1)
+        pagination = Pagination(TestModel.query)
 
         text = pagination.get_info_text(search_term)
         self.assertIn(f'results {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
@@ -185,8 +219,9 @@ class PaginationTest(TestCase):
             Expected result: The search term is included, the first row on the page is given.
         """
 
+        self.request_context.request.args = {'page': 3}
         search_term = 'Aerarium'
-        pagination = Pagination(TestModel.query, 3)
+        pagination = Pagination(TestModel.query)
 
         text = pagination.get_info_text(search_term)
         self.assertIn(f'result {pagination.first_row} of {pagination.total_rows}', text)
@@ -200,8 +235,9 @@ class PaginationTest(TestCase):
         """
 
         # Filter by some dummy value not related to the search term.
+        self.request_context.request.args = {'page': 1}
         search_term = 'Aerarium'
-        pagination = Pagination(TestModel.query.filter(TestModel.id > 42), 1)
+        pagination = Pagination(TestModel.query.filter(TestModel.id > 42))
 
         text = pagination.get_info_text(search_term)
         self.assertIn('No results', text)
@@ -214,7 +250,8 @@ class PaginationTest(TestCase):
             Expected result: The search term is not included, the first and last row on the page are given.
         """
 
-        pagination = Pagination(TestModel.query, 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = Pagination(TestModel.query)
 
         text = pagination.get_info_text()
         self.assertIn(f'results {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
@@ -227,7 +264,8 @@ class PaginationTest(TestCase):
             Expected result: The search term is not included, the first row on the page is given.
         """
 
-        pagination = Pagination(TestModel.query, 3)
+        self.request_context.request.args = {'page': 3}
+        pagination = Pagination(TestModel.query)
 
         text = pagination.get_info_text()
         self.assertIn(f'result {pagination.first_row} of {pagination.total_rows}', text)
@@ -241,7 +279,8 @@ class PaginationTest(TestCase):
         """
 
         # Filter the results to achieve zero rows.
-        pagination = Pagination(TestModel.query.filter(TestModel.id > 42), 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = Pagination(TestModel.query.filter(TestModel.id > 42))
 
         text = pagination.get_info_text()
         self.assertIn('No results', text)

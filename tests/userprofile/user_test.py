@@ -1445,8 +1445,9 @@ class UserPaginationTest(TestCase):
             Expected result: The search term is included, the first and last row on the page are given.
         """
 
+        self.request_context.request.args = {'page': 1}
         search_term = 'Aerarium'
-        pagination = UserPagination(User.query, 1)
+        pagination = UserPagination(User.query)
 
         text = pagination.get_info_text(search_term)
         self.assertIn(f'users {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
@@ -1459,8 +1460,9 @@ class UserPaginationTest(TestCase):
             Expected result: The search term is included, the first row on the page is given.
         """
 
+        self.request_context.request.args = {'page': 3}
         search_term = 'Aerarium'
-        pagination = UserPagination(User.query, 3)
+        pagination = UserPagination(User.query)
 
         text = pagination.get_info_text(search_term)
         self.assertIn(f'user {pagination.first_row} of {pagination.total_rows}', text)
@@ -1474,8 +1476,9 @@ class UserPaginationTest(TestCase):
         """
 
         # Filter by some dummy value not related to the search term.
+        self.request_context.request.args = {'page': 1}
         search_term = 'Aerarium'
-        pagination = UserPagination(User.query.filter(Role.id > 42), 1)
+        pagination = UserPagination(User.query.filter(User.id > 42))
 
         text = pagination.get_info_text(search_term)
         self.assertIn('No users', text)
@@ -1488,7 +1491,8 @@ class UserPaginationTest(TestCase):
             Expected result: The search term is not included, the first and last row on the page are given.
         """
 
-        pagination = UserPagination(User.query, 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = UserPagination(User.query)
 
         text = pagination.get_info_text()
         self.assertIn(f'users {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
@@ -1501,7 +1505,8 @@ class UserPaginationTest(TestCase):
             Expected result: The search term is not included, the first row on the page is given.
         """
 
-        pagination = UserPagination(User.query, 3)
+        self.request_context.request.args = {'page': 3}
+        pagination = UserPagination(User.query)
 
         text = pagination.get_info_text()
         self.assertIn(f'user {pagination.first_row} of {pagination.total_rows}', text)
@@ -1515,7 +1520,8 @@ class UserPaginationTest(TestCase):
         """
 
         # Filter the results to achieve zero rows.
-        pagination = UserPagination(User.query.filter(Role.id > 42), 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = UserPagination(User.query.filter(User.id > 42))
 
         text = pagination.get_info_text()
         self.assertIn('No users', text)

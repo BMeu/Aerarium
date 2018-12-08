@@ -884,8 +884,9 @@ class RolePaginationTest(TestCase):
             Expected result: The search term is included, the first and last row on the page are given.
         """
 
+        self.request_context.request.args = {'page': 1}
         search_term = 'Aerarium'
-        pagination = RolePagination(Role.query, 1)
+        pagination = RolePagination(Role.query)
 
         text = pagination.get_info_text(search_term)
         self.assertIn(f'roles {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
@@ -898,8 +899,9 @@ class RolePaginationTest(TestCase):
             Expected result: The search term is included, the first row on the page is given.
         """
 
+        self.request_context.request.args = {'page': 3}
         search_term = 'Aerarium'
-        pagination = RolePagination(Role.query, 3)
+        pagination = RolePagination(Role.query)
 
         text = pagination.get_info_text(search_term)
         self.assertIn(f'role {pagination.first_row} of {pagination.total_rows}', text)
@@ -913,8 +915,9 @@ class RolePaginationTest(TestCase):
         """
 
         # Filter by some dummy value not related to the search term.
+        self.request_context.request.args = {'page': 1}
         search_term = 'Aerarium'
-        pagination = RolePagination(Role.query.filter(Role.id > 42), 1)
+        pagination = RolePagination(Role.query.filter(Role.id > 42))
 
         text = pagination.get_info_text(search_term)
         self.assertIn('No roles', text)
@@ -927,7 +930,8 @@ class RolePaginationTest(TestCase):
             Expected result: The search term is not included, the first and last row on the page are given.
         """
 
-        pagination = RolePagination(Role.query, 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = RolePagination(Role.query)
 
         text = pagination.get_info_text()
         self.assertIn(f'roles {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
@@ -940,7 +944,8 @@ class RolePaginationTest(TestCase):
             Expected result: The search term is not included, the first row on the page is given.
         """
 
-        pagination = RolePagination(Role.query, 3)
+        self.request_context.request.args = {'page': 3}
+        pagination = RolePagination(Role.query)
 
         text = pagination.get_info_text()
         self.assertIn(f'role {pagination.first_row} of {pagination.total_rows}', text)
@@ -954,7 +959,8 @@ class RolePaginationTest(TestCase):
         """
 
         # Filter the results to achieve zero rows.
-        pagination = RolePagination(Role.query.filter(Role.id > 42), 1)
+        self.request_context.request.args = {'page': 1}
+        pagination = RolePagination(Role.query.filter(Role.id > 42))
 
         text = pagination.get_info_text()
         self.assertIn('No roles', text)
