@@ -20,7 +20,7 @@ class PaginationTest(TestCase):
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
-        self.request_context = self.app.test_request_context()
+        self.request_context = self.app.test_request_context('/')
         self.request_context.push()
         db.create_all()
 

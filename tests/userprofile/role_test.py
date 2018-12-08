@@ -847,7 +847,7 @@ class RolePaginationTest(TestCase):
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app_context.push()
-        self.request_context = self.app.test_request_context()
+        self.request_context = self.app.test_request_context('/')
         self.request_context.push()
         db.create_all()
 
