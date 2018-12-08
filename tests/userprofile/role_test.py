@@ -6,6 +6,7 @@ from unittest import TestCase
 from app import create_app
 from app import db
 from app.configuration import TestConfiguration
+from app.exceptions import DeletionPreconditionViolationError
 from app.userprofile import Permission
 from app.userprofile import Role
 from app.userprofile import RolePagination
@@ -610,9 +611,64 @@ class RoleTest(TestCase):
         role.remove_permissions(permission_to_remove)
         self.assertEqual(permission, role.permissions)
 
+    def test_is_only_role_allowed_to_edit_roles(self):
+        """
+            Test if a role is the only one allowed to edit roles.
+
+            Expected result: `True` if it is, `False` otherwise.
+        """
+        # First check if the role is not allowed to edit roles.
+        name = 'Administrator'
+        permission = Permission.EditRole
+        role = Role(name=name)
+        db.session.add(role)
+        db.session.commit()
+        self.assertFalse(role.is_only_role_allowed_to_edit_roles())
+
+        # Add the permission. Now it should be the only one.
+        role.add_permission(permission)
+        db.session.commit()
+        self.assertTrue(role.is_only_role_allowed_to_edit_roles())
+
+        # Add another role with the required permission.
+        other_role = Role(name='Guest')
+        other_role.add_permission(permission)
+        db.session.add(other_role)
+        db.session.commit()
+
+        self.assertFalse(role.is_only_role_allowed_to_edit_roles())
+
     # endregion
 
     # region Delete
+
+    def test_delete_only_role_to_edit_roles(self):
+        """
+            Test deleting a role that is the only one allowed to edit roles.
+
+            Expected result: An error is raised.
+        """
+        name = 'Administrator'
+        permission = Permission.EditRole
+        role = Role(name=name)
+        role.add_permission(permission)
+        db.session.add(role)
+        db.session.commit()
+
+        with self.assertRaises(DeletionPreconditionViolationError) as exception_cm:
+            role.delete()
+
+            self.assertIn('Cannot delete the only role with the permission to edit roles.',
+                          str(exception_cm.exception))
+
+        # Add another role with the required permission. Now, it is possible to delete the first role.
+        other_role = Role(name='Guest')
+        other_role.add_permission(permission)
+        db.session.add(other_role)
+        db.session.commit()
+
+        role.delete()
+        self.assertIsNone(Role.load_from_name(name))
 
     def test_delete_same_role(self):
         """

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-12-08 19:18+0100\n"
-"PO-Revision-Date: 2018-12-08 19:21+0100\n"
+"POT-Creation-Date: 2018-12-08 20:13+0100\n"
+"PO-Revision-Date: 2018-12-08 20:14+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -98,7 +98,7 @@ msgstr "Globale Einstellungen"
 msgid "Users"
 msgstr "Benutzer"
 
-#: app/templates/_header.html:44 app/views/administration/roles.py:43
+#: app/templates/_header.html:44 app/views/administration/roles.py:44
 msgid "Roles"
 msgstr "Rollen"
 
@@ -183,7 +183,7 @@ msgstr ""
 "Bearbeite die Rolle „%(role)s“ und verwalte die ihr zugewiesenen Berechtigungen "
 "und Benutzer."
 
-#: app/templates/administration/role_delete.html:8
+#: app/templates/administration/role_delete.html:9
 msgid ""
 "Permanently delete this role. If there are users who currently have this role "
 "assigned to them you must specify a new role for these users."
@@ -474,7 +474,7 @@ msgstr ""
 "Wenn Du das Zurücksetzen Deines Passwortes nicht angefordert hast, kannst Du "
 "diese E-Mail ignorieren."
 
-#: app/userprofile/role.py:319
+#: app/userprofile/role.py:343
 #, python-format
 msgid ""
 "Displaying roles %(first_result)d to %(last_result)d of %(total_results)d "
@@ -483,27 +483,27 @@ msgstr ""
 "Zeige Rollen %(first_result)d bis %(last_result)d von %(total_results)d für "
 "„%(search)s“"
 
-#: app/userprofile/role.py:326
+#: app/userprofile/role.py:350
 #, python-format
 msgid "Displaying role %(result)d of %(total_results)d matching “%(search)s”"
 msgstr "Zeige Rolle %(result)d von %(total_results)d für „%(search)s“"
 
-#: app/userprofile/role.py:330
+#: app/userprofile/role.py:354
 #, python-format
 msgid "No roles found matching “%(search)s”"
 msgstr "Keine Rollen für „%(search)s“"
 
-#: app/userprofile/role.py:336
+#: app/userprofile/role.py:360
 #, python-format
 msgid "Displaying roles %(first_result)d to %(last_result)d of %(total_results)d"
 msgstr "Zeige Rollen %(first_result)d bis %(last_result)d von %(total_results)d"
 
-#: app/userprofile/role.py:341
+#: app/userprofile/role.py:365
 #, python-format
 msgid "Displaying role %(result)d of %(total_results)d"
 msgstr "Zeige Rolle %(result)d von %(total_results)d"
 
-#: app/userprofile/role.py:345
+#: app/userprofile/role.py:369
 msgid "No roles"
 msgstr "Keine Rollen"
 
@@ -585,11 +585,18 @@ msgstr "Name:"
 msgid "Save"
 msgstr "Speichern"
 
-#: app/views/administration/roles.py:67
+#: app/views/administration/roles.py:68
 msgid "The role has been updated."
 msgstr "Die Rolle wurde aktualisiert."
 
-#: app/views/administration/roles.py:142
+#: app/views/administration/roles.py:131
+msgid ""
+"This role cannot be deleted because it is the only one that can edit roles."
+msgstr ""
+"Diese Rolle kann nicht gelöscht werden, da sie die einzige ist, die die "
+"Berechtigung hat, Rollen zu bearbeiten."
+
+#: app/views/administration/roles.py:147
 msgid "The role has been deleted."
 msgstr "Die Rolle wurde gelöscht."
 

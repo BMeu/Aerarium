@@ -125,8 +125,12 @@ def role_delete(name: str) -> str:
     if role is None:
         abort(404)
 
-    # TODO: Disable deleting if this is the last role.
-    # TODO: Disable deleting if this is the last role with permissions to edit roles.
+    # If this is the last role allowed to edit roles show an info text.
+    if role.is_only_role_allowed_to_edit_roles():
+        deletion_not_possible_text = _('This role cannot be deleted because it is the only one that can edit roles.')
+        return render_template('administration/role_delete.html', role=name,
+                               deletion_not_possible_text=deletion_not_possible_text)
+
     # Create (and possibly process) the delete form.
     delete_form = RoleDeleteForm(role)
     if delete_form.validate_on_submit():

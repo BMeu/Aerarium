@@ -425,6 +425,49 @@ class RolesTest(TestCase):
         response = self.client.get(f'/administration/role/{non_existing_role}/delete', follow_redirects=True)
         self.assertEqual(404, response.status_code)
 
+    def test_role_delete_get_only_allowed_to_edit_roles(self):
+        """
+            Test accessing the delete page if the role is the only one allowed to edit roles.
+
+            Expected result: The role delete form is not shown.
+        """
+
+        role_name = 'Administrator'
+        role = Role(name=role_name)
+        role.add_permission(Permission.EditRole)
+        db.session.add(role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = role
+        db.session.add(user)
+        db.session.commit()
+
+        role_id = role.id
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.get(f'/administration/role/{role_name}/delete', follow_redirects=True)
+        data = response.get_data(as_text=True)
+        role = Role.load_from_id(role_id)
+
+        self.assertIsNotNone(role)
+        self.assertIsNotNone(role.id)
+        self.assertIn('<h1>Edit Role “', data)
+        self.assertIn('This role cannot be deleted because it is the only one that can edit roles.', data)
+        self.assertNotIn(f'View the users who have this role assigned to them', data)
+        self.assertNotIn(f'Edit the role\'s header data', data)
+        self.assertNotIn(f'Manage the role\'s permissions.', data)
+        self.assertNotIn(f'Permanently delete this role', data)
+        self.assertNotIn('The role has been deleted.', data)
+
     def test_role_delete_get(self):
         """
             Test accessing the delete page.
@@ -520,6 +563,51 @@ class RolesTest(TestCase):
         self.assertIsNotNone(other_role.id)
         self.assertNotIn('<h1>Edit Role “', data)
         self.assertIn('The role has been deleted.', data)
+
+    def test_role_delete_post_only_allowed_to_edit_roles(self):
+        """
+            Test accessing the delete page if the role is the only one allowed to edit roles.
+
+            Expected result: The role delete form is not shown.
+        """
+
+        role_name = 'Administrator'
+        role = Role(name=role_name)
+        role.add_permission(Permission.EditRole)
+        db.session.add(role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = role
+        db.session.add(user)
+        db.session.commit()
+
+        role_id = role.id
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.post(f'/administration/role/{role_name}/delete', follow_redirects=True, data=dict(
+            new_role=0,
+        ))
+        data = response.get_data(as_text=True)
+        role = Role.load_from_id(role_id)
+
+        self.assertIsNotNone(role)
+        self.assertIsNotNone(role.id)
+        self.assertIn('<h1>Edit Role “', data)
+        self.assertIn('This role cannot be deleted because it is the only one that can edit roles.', data)
+        self.assertNotIn(f'View the users who have this role assigned to them', data)
+        self.assertNotIn(f'Edit the role\'s header data', data)
+        self.assertNotIn(f'Manage the role\'s permissions.', data)
+        self.assertNotIn(f'Permanently delete this role', data)
+        self.assertNotIn('The role has been deleted.', data)
 
     def test_role_delete_post_has_users(self):
         """

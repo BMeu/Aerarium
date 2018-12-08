@@ -9,6 +9,7 @@ from flask_sqlalchemy import BaseQuery
 
 from app import db
 from app import Pagination
+from app.exceptions import DeletionPreconditionViolationError
 from app.userprofile import Permission
 
 """
@@ -230,6 +231,23 @@ class Role(db.Model):
 
             self.permissions ^= permission
 
+    def is_only_role_allowed_to_edit_roles(self) -> bool:
+        """
+            Determine if this role is the only one allowed to edit roles.
+
+            :return: `True` if it is the only role, `False` otherwise or if this role does not have the permission to
+                     edit roles.
+        """
+        permission = Permission.EditRole
+        if not self.has_permission(permission):
+            return False
+
+        roles_with_permissions = Role.load_roles_with_permission(permission)
+        if len(roles_with_permissions) == 1 and roles_with_permissions[0] == self:
+            return True
+
+        return False
+
     # endregion
 
     # region Delete
@@ -238,9 +256,15 @@ class Role(db.Model):
         """
             Delete this role. If there are users to whom this role is assigned, their role will be set to `new_role`.
 
+            The role cannot be deleted if this is the last role that has the permission to edit roles. In this case,
+
             :param new_role: Required if there are users to whom this role is assigned. Must not be this role.
+            :raise DeletionPreconditionViolationError: If this role is the only one with the permission to edit roles.
             :raise ValueError: If there are users to whom this role is assigned and `new_role` is not valid.
         """
+        if self.is_only_role_allowed_to_edit_roles():
+            raise DeletionPreconditionViolationError('Cannot delete the only role with the permission to edit roles.')
+
         if self == new_role:
             raise ValueError('The new role must not be the role that will be deleted.')
 

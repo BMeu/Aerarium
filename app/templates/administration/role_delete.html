@@ -4,9 +4,15 @@
 {% set active_id = 'role-delete' %}
 
 {% block tabcontent %}
-<p>
-    {{ _('Permanently delete this role. If there are users who currently have this role assigned to them you must specify a new role for these users.') }}
-</p>
+    {% if delete_form %}
+        <p>
+            {{ _('Permanently delete this role. If there are users who currently have this role assigned to them you must specify a new role for these users.') }}
+        </p>
 
-{{ render_form(delete_form, cancel_button=True, danger=True) }}
+        {{ render_form(delete_form, cancel_button=True, danger=True) }}
+    {% else %}
+        <p>
+            {{ deletion_not_possible_text }}
+        </p>
+    {% endif %}
 {% endblock %}

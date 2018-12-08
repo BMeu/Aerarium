@@ -13,6 +13,13 @@ class AerariumError(Exception):
     pass
 
 
+class DeletionPreconditionViolationError(AerariumError):
+    """
+        Raised if a :class:`app.userprofile.Role` cannot be deleted because some precondition failed.
+    """
+    pass
+
+
 class InvalidJWTokenPayloadError(AerariumError):
     """
         Raised when an :class:`app.token.JWToken` cannot be verified due to invalid payload.
