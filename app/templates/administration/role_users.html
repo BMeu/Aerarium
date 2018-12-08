@@ -1,23 +1,36 @@
 {% extends 'administration/_tabs_role.html' %}
+{% from 'macros/pagination.html' import paginate %}
+{% from 'macros/search_form.html' import render_search_form %}
 
 {% set active_id = 'role-users' %}
 
 {% block tabcontent %}
-<p>
-    {{ _('View the users who have this role assigned to them. You can change a user\'s role in their profile.') }}
-</p>
-<p>
+    <p>
+        {{ _('View the users who have this role assigned to them. You can change a user\'s role in their profile.') }}
+    </p>
+
     <ul class="list-group">
         <li class="list-group-item list-group-item-light">
-            {{ ngettext('%(num)d user', '%(num)d users', users|length) }}
+            <p>
+                {{ pagination.get_info_text(search_form.search_term) }}
+            </p>
+
+            {% if search_form.search_term %}
+                {# Only show the reset button if the user has searched for something. #}
+                {% set reset_url=url_for('administration.role_users', name=role) %}
+            {% endif %}
+            {{ render_search_form(search_form, reset_url=reset_url, placeholder=_('Search users...')) }}
         </li>
-    {% for user in users %}
+    {% for user in pagination.rows %}
         <li class="list-group-item list-group-item-action">
             {# TODO: Add link to edit a user. #}
             <a href="#" title="{{ _('Edit user “%(user)s”', user=user.name) }}">{{ user.name }} &lt;{{ user.get_email() }}&gt;</a>
         </li>
     {% endfor %}
     </ul>
-    <small class="text-muted">{{ _('Click on the name of a user to edit them.') }}</small>
-</p>
+    <p>
+        <small class="text-muted">{{ _('Click on the name of a user to edit them.') }}</small>
+    </p>
+
+    {{ paginate('administration.role_users', pagination, search=search_form.search_term, name=role) }}
 {% endblock %}

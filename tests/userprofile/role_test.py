@@ -682,7 +682,7 @@ class RoleTest(TestCase):
             role_4,
         ]
 
-        query = Role.get_search_query(None)
+        query = Role.get_search_query()
         self.assertIsNotNone(query)
 
         roles = query.all()
@@ -705,19 +705,19 @@ class RoleTest(TestCase):
         db.session.commit()
 
         # Matching term.
-        query = Role.get_search_query('Administrator')
+        query = Role.get_search_query(search_term='Administrator')
         self.assertIsNotNone(query)
         roles = query.all()
         self.assertListEqual([role_1], roles)
 
         # Not-matching term.
-        query = Role.get_search_query('Editor')
+        query = Role.get_search_query(search_term='Editor')
         self.assertIsNotNone(query)
         roles = query.all()
         self.assertListEqual([], roles)
 
         # Partially matching term, but no wildcards, thus no result.
-        query = Role.get_search_query('A')
+        query = Role.get_search_query(search_term='A')
         self.assertIsNotNone(query)
         roles = query.all()
         self.assertListEqual([], roles)
@@ -726,7 +726,7 @@ class RoleTest(TestCase):
         """
             Test getting a search query providing a search term without wildcards.
 
-            :return: A query is returned that filters exactly by the search term.
+            :return: A query is returned that filters by the search term allowing for partial matches.
         """
         role_1 = Role(name='Administrator')
         role_2 = Role(name='Guest')
@@ -741,46 +741,76 @@ class RoleTest(TestCase):
         db.session.commit()
 
         # Matching term.
-        query = Role.get_search_query('*Administrator*')
+        query = Role.get_search_query(search_term='*Administrator*')
         self.assertIsNotNone(query)
         roles = query.all()
         self.assertListEqual([role_1], roles)
 
         # Partially matching term with wildcard at the end.
-        query = Role.get_search_query('A*')
+        query = Role.get_search_query(search_term='A*')
         self.assertIsNotNone(query)
         roles = query.all()
         self.assertListEqual([role_1, role_4, role_5], roles)
 
         # Partially matching term with wildcard at the front.
-        query = Role.get_search_query('*r')
+        query = Role.get_search_query(search_term='*r')
         self.assertIsNotNone(query)
         roles = query.all()
         self.assertListEqual([role_1, role_3, role_4], roles)
 
         # Partially matching term with wildcard in the middle.
-        query = Role.get_search_query('A*r')
+        query = Role.get_search_query(search_term='A*r')
         self.assertIsNotNone(query)
         roles = query.all()
         self.assertListEqual([role_1, role_4], roles)
 
         # Partially matching term with wildcard at the front and end, case-insensitive.
-        query = Role.get_search_query('*u*')
+        query = Role.get_search_query(search_term='*u*')
         self.assertIsNotNone(query)
         roles = query.all()
         self.assertListEqual([role_2, role_3, role_4], roles)
 
         # Wildcard term matching everything.
-        query = Role.get_search_query('*')
+        query = Role.get_search_query(search_term='*')
         self.assertIsNotNone(query)
         roles = query.all()
         self.assertListEqual([role_1, role_2, role_3, role_4, role_5], roles)
 
         # Wildcard term matching nothing.
-        query = Role.get_search_query('E*')
+        query = Role.get_search_query(search_term='E*')
         self.assertIsNotNone(query)
         roles = query.all()
         self.assertListEqual([], roles)
+
+    def test_get_search_query_with_base_query_and_term(self):
+        """
+            Test getting a search query providing a base query and a search term.
+
+            :return: A query is returned that filters exactly by the search term.
+        """
+        role_1 = Role(name='Administrator')
+        role_2 = Role(name='Guest')
+        role_3 = Role(name='User')
+        role_4 = Role(name='Author')
+        db.session.add(role_1)
+        db.session.add(role_2)
+        db.session.add(role_3)
+        db.session.add(role_4)
+        db.session.commit()
+
+        base_query = Role.query.order_by(Role.name.desc())
+
+        # Matching term.
+        query = Role.get_search_query(query=base_query, search_term='A*')
+        self.assertIsNotNone(query)
+        roles = query.all()
+        self.assertListEqual([role_4, role_1], roles)
+
+        # Test that a different result is returned without the given base query.
+        query = Role.get_search_query(search_term='A*')
+        self.assertIsNotNone(query)
+        roles = query.all()
+        self.assertListEqual([role_1, role_4], roles)
 
     # endregion
 

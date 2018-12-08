@@ -32,5 +32,5 @@
         <small class="text-muted">{{ _('Click on the name of a role to edit it.') }}</small>
     </p>
 
-    {{ paginate('.roles_list', pagination, search=search_form.search_term) }}
+    {{ paginate('administration.roles_list', pagination, search=search_form.search_term) }}
 {% endblock %}

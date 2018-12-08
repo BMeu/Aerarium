@@ -10,6 +10,7 @@ from flask_login import current_user
 from flask_login import login_user
 from flask_login import logout_user
 from flask_login import UserMixin
+from flask_sqlalchemy import BaseQuery
 
 from app import bcrypt
 from app import db
@@ -442,6 +443,32 @@ class User(UserMixin, db.Model):
             return False
 
         return True
+
+    # endregion
+
+    # region DB Queries
+
+    @staticmethod
+    def get_search_query(query: Optional[BaseQuery] = None, search_term: Optional[str] = None) -> BaseQuery:
+        """
+            Get a query that searches the users for the given search term on their names or emails
+
+            The search term may contain wildcards (`*`).
+
+            :param query: A base query object. If not given, the `User.query` will be used.
+            :param search_term: The term for which the users will be searched. If `None`, a non-filtering query will be
+                                returned.
+            :return: The query object.
+        """
+        if query is None:
+            query = User.query
+
+        if search_term is None or search_term == '':
+            return query
+
+        # Replace the wildcard character with the SQL wildcard.
+        search_term = search_term.replace('*', '%')
+        return query.filter(db.or_(User.name.like(search_term), User._email.like(search_term)))
 
     # endregion
 

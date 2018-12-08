@@ -1209,6 +1209,173 @@ class UserTest(TestCase):
 
     # endregion
 
+    # region DB Queries
+
+    def test_get_search_query_no_term(self):
+        """
+            Test getting a search query without providing a search term.
+
+            :return: A query is returned that does not filter.
+        """
+        user_1 = User('jane@example.com', 'Jane Doe')
+        user_2 = User('john@example.com', 'John Doe')
+        user_3 = User('max@beispiel.de', 'Max Mustermann')
+        user_4 = User('erika@beispiel.de', 'Erika Musterfrau')
+        db.session.add(user_1)
+        db.session.add(user_2)
+        db.session.add(user_3)
+        db.session.add(user_4)
+        db.session.commit()
+
+        result = [
+            user_1,
+            user_2,
+            user_3,
+            user_4,
+        ]
+
+        query = User.get_search_query()
+        self.assertIsNotNone(query)
+
+        users = query.all()
+        self.assertListEqual(result, users)
+
+    def test_get_search_query_with_term_no_wildcards(self):
+        """
+            Test getting a search query providing a search term without wildcards.
+
+            :return: A query is returned that filters exactly by the search term.
+        """
+        user_1 = User('jane@example.com', 'Jane Doe')
+        user_2 = User('john@example.com', 'John Doe')
+        user_3 = User('max@beispiel.de', 'Max Mustermann')
+        user_4 = User('erika@beispiel.de', 'Erika Musterfrau')
+        db.session.add(user_1)
+        db.session.add(user_2)
+        db.session.add(user_3)
+        db.session.add(user_4)
+        db.session.commit()
+
+        # Matching term - name.
+        query = User.get_search_query(search_term='Jane Doe')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([user_1], users)
+
+        # Matching term - email.
+        query = User.get_search_query(search_term='erika@beispiel.de')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([user_4], users)
+
+        # Not-matching term.
+        query = User.get_search_query(search_term='Jennifer D\'oh')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([], users)
+
+        # Partially matching term, but no wildcards, thus no result.
+        query = User.get_search_query(search_term='J')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([], users)
+
+    def test_get_search_query_with_term_wildcards(self):
+        """
+            Test getting a search query providing a search term without wildcards.
+
+            :return: A query is returned that filters by the search term allowing for partial matches.
+        """
+        user_1 = User('jane@example.com', 'Jane Doe')
+        user_2 = User('john@example.com', 'John Doe')
+        user_3 = User('max@beispiel.de', 'Max Mustermann')
+        user_4 = User('erika@beispiel.de', 'Erika Musterfrau')
+        db.session.add(user_1)
+        db.session.add(user_2)
+        db.session.add(user_3)
+        db.session.add(user_4)
+        db.session.commit()
+
+        # Matching term - name.
+        query = User.get_search_query(search_term='*Muster*')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([user_3, user_4], users)
+
+        # Matching term - email.
+        query = User.get_search_query(search_term='*example*')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([user_1, user_2], users)
+
+        # Partially matching term with wildcard at the end.
+        query = User.get_search_query(search_term='jane*')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([user_1], users)
+
+        # Partially matching term with wildcard at the front.
+        query = User.get_search_query(search_term='*Doe')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([user_1, user_2], users)
+
+        # Partially matching term with wildcard in the middle.
+        query = User.get_search_query(search_term='J*e')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([user_1, user_2], users)
+
+        # Partially matching term with wildcard at the front and end, case-insensitive.
+        query = User.get_search_query(search_term='*U*')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([user_3, user_4], users)
+
+        # Wildcard term matching everything.
+        query = User.get_search_query(search_term='*')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([user_1, user_2, user_3, user_4], users)
+
+        # Wildcard term matching nothing.
+        query = User.get_search_query(search_term='A*')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([], users)
+
+    def test_get_search_query_with_base_query_and_term(self):
+        """
+            Test getting a search query providing a base query and a search term.
+
+            :return: A query is returned that filters exactly by the search term.
+        """
+        user_1 = User('jane@example.com', 'Jane Doe')
+        user_2 = User('john@example.com', 'John Doe')
+        user_3 = User('max@beispiel.de', 'Max Mustermann')
+        user_4 = User('erika@beispiel.de', 'Erika Musterfrau')
+        db.session.add(user_1)
+        db.session.add(user_2)
+        db.session.add(user_3)
+        db.session.add(user_4)
+        db.session.commit()
+
+        base_query = User.query.order_by(User.name.desc())
+
+        # Matching term.
+        query = User.get_search_query(query=base_query, search_term='J*')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([user_2, user_1], users)
+
+        # Test that a different result is returned without the given base query.
+        query = User.get_search_query(search_term='J*')
+        self.assertIsNotNone(query)
+        users = query.all()
+        self.assertListEqual([user_1, user_2], users)
+
+    # endregion
+
     # region System
 
     def test_repr(self):

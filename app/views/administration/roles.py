@@ -19,6 +19,7 @@ from app.userprofile import Permission
 from app.userprofile import Role
 from app.userprofile import RolePagination
 from app.userprofile import User
+from app.userprofile import UserPagination
 from app.userprofile.decorators import permission_required
 from app.views.administration import bp
 from app.views.administration.forms import RoleDeleteForm
@@ -37,9 +38,9 @@ def roles_list() -> str:
     """
     # Get a search term and the resulting query. If no search term is given, all roles will by returned.
     search_form = SearchForm()
-    role_query = Role.get_search_query(search_form.search_term)
+    role_query = Role.get_search_query(search_term=search_form.search_term)
 
-    # Get the pagination object and the corresponding display text.
+    # Get the pagination object.
     page = request.args.get('page', 1, type=int)
     pagination = RolePagination(role_query.order_by(Role.name), page)
 
@@ -104,11 +105,16 @@ def role_users(name: str) -> str:
     if role is None:
         abort(404)
 
-    # List all users to whom this role is assigned.
-    # TODO: Add pagination to the user list.
-    users = role.users.order_by(User.name).all()
+    # Get a search term and the resulting query. If no search term is given, all users will be returned.
+    search_form = SearchForm()
+    user_query = User.get_search_query(query=role.users, search_term=search_form.search_term)
 
-    return render_template('administration/role_users.html', role=name, users=users)
+    # Get the pagination object.
+    page = request.args.get('page', 1, type=int)
+    # noinspection PyProtectedMember
+    pagination = UserPagination(user_query.order_by(User.name, User._email), page)
+
+    return render_template('administration/role_users.html', role=name, pagination=pagination, search_form=search_form)
 
 
 @bp.route('/role/<string:name>/delete', methods=['GET', 'POST'])
