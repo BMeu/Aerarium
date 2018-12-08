@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-12-06 18:07+0100\n"
-"PO-Revision-Date: 2018-12-06 18:09+0100\n"
+"POT-Creation-Date: 2018-12-08 19:18+0100\n"
+"PO-Revision-Date: 2018-12-08 19:21+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Please log in to access this page."
 msgstr "Bitte melde Dich an, um diese Seite öffnen zu können."
 
-#: app/pagination.py:107
+#: app/pagination.py:117
 #, python-format
 msgid ""
 "Displaying results %(first_result)d to %(last_result)d of %(total_results)d "
@@ -32,29 +32,29 @@ msgstr ""
 "Zeige Ergebnisse %(first_result)d bis %(last_result)d von %(total_results)d für "
 "„%(search)s“"
 
-#: app/pagination.py:114
+#: app/pagination.py:124
 #, python-format
 msgid "Displaying result %(result)d of %(total_results)d matching “%(search)s”"
 msgstr "Zeige Ergebnis %(result)d von %(total_results)d für „%(search)s“"
 
-#: app/pagination.py:118
+#: app/pagination.py:128
 #, python-format
 msgid "No results found matching “%(search)s”"
 msgstr "Keine Ergebnisse für „%(search)s“"
 
-#: app/pagination.py:124
+#: app/pagination.py:134
 #, python-format
 msgid ""
 "Displaying results %(first_result)d to %(last_result)d of %(total_results)d"
 msgstr ""
 "Zeige Ergebnisse %(first_result)d bis %(last_result)d von %(total_results)d"
 
-#: app/pagination.py:129
+#: app/pagination.py:139
 #, python-format
 msgid "Displaying result %(result)d of %(total_results)d"
 msgstr "Zeige Ergebnis %(result)d von %(total_results)d"
 
-#: app/pagination.py:133
+#: app/pagination.py:143
 msgid "No results"
 msgstr "Keine Ergebnisse"
 
@@ -82,7 +82,7 @@ msgstr ""
 msgid "Toggle Navigation"
 msgstr "Navigation umschalten"
 
-#: app/templates/_header.html:18 app/views/main/routes.py:30
+#: app/templates/_header.html:18 app/views/main/routes.py:29
 msgid "Dashboard"
 msgstr "Dashboard"
 
@@ -94,11 +94,11 @@ msgstr "Verwaltung"
 msgid "Global Settings"
 msgstr "Globale Einstellungen"
 
-#: app/templates/_header.html:40 app/templates/administration/role_edit.html:25
+#: app/templates/_header.html:40 app/templates/administration/_tabs_role.html:9
 msgid "Users"
 msgstr "Benutzer"
 
-#: app/templates/_header.html:44 app/views/administration/roles.py:49
+#: app/templates/_header.html:44 app/views/administration/roles.py:43
 msgid "Roles"
 msgstr "Rollen"
 
@@ -106,11 +106,11 @@ msgstr "Rollen"
 msgid "Your Profile"
 msgstr "Dein Profil"
 
-#: app/templates/_header.html:62 app/views/userprofile/profile.py:66
+#: app/templates/_header.html:62 app/views/userprofile/profile.py:65
 msgid "User Profile"
 msgstr "Benutzerprofil"
 
-#: app/templates/_header.html:63 app/views/userprofile/user_settings.py:48
+#: app/templates/_header.html:63 app/views/userprofile/user_settings.py:47
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -148,15 +148,33 @@ msgstr "Startseite"
 msgid "home page"
 msgstr "Startseite"
 
-#: app/templates/administration/role_edit.html:7
+#: app/templates/administration/_tabs_role.html:3
+#, python-format
+msgid "Edit Role “%(role)s”"
+msgstr "Rolle „%(role)s“ bearbeiten"
+
+#: app/templates/administration/_tabs_role.html:7
+msgid "Role"
+msgstr "Rolle"
+
+#: app/templates/administration/_tabs_role.html:8
+msgid "Permissions"
+msgstr "Berechtigungen"
+
+#: app/templates/administration/_tabs_role.html:10
+#: app/views/administration/forms.py:76
+msgid "Delete"
+msgstr "Löschen"
+
+#: app/templates/administration/_tabs_role.html:15
 msgid "Go back to the list of all roles"
 msgstr "Gehe zurück zu der Liste aller Rollen"
 
-#: app/templates/administration/role_edit.html:7
+#: app/templates/administration/_tabs_role.html:15
 msgid "Back to Roles"
 msgstr "Zurück zu den Rollen"
 
-#: app/templates/administration/role_edit.html:11
+#: app/templates/administration/_tabs_role.html:19
 #, python-format
 msgid ""
 "Edit the role “%(role)s” and manage its permissions and the users assigned to "
@@ -165,52 +183,7 @@ msgstr ""
 "Bearbeite die Rolle „%(role)s“ und verwalte die ihr zugewiesenen Berechtigungen "
 "und Benutzer."
 
-#: app/templates/administration/role_edit.html:17
-msgid "Role"
-msgstr "Rolle"
-
-#: app/templates/administration/role_edit.html:21
-msgid "Permissions"
-msgstr "Berechtigungen"
-
-#: app/templates/administration/role_edit.html:29
-#: app/views/administration/forms.py:76
-msgid "Delete"
-msgstr "Löschen"
-
-#: app/templates/administration/role_edit.html:38
-msgid "Edit the role's header data."
-msgstr "Bearbeite die Kopfdaten der Rolle."
-
-#: app/templates/administration/role_edit.html:47
-msgid "Manage the role's permissions."
-msgstr "Verwalte die Rollenberechtigungen."
-
-#: app/templates/administration/role_edit.html:58
-msgid ""
-"View the users who have this role assigned to them. You can change a user's "
-"role in their profile."
-msgstr ""
-"Zeige alle Nutzer an, denen diese Rolle zugewiesen ist. Du kannst die Rolle "
-"eines Nutzers in seinem Profil ändern."
-
-#: app/templates/administration/role_edit.html:63
-#, python-format
-msgid "%(num)d user"
-msgid_plural "%(num)d users"
-msgstr[0] "%(num)d Benutzer"
-msgstr[1] "%(num)d Benutzer"
-
-#: app/templates/administration/role_edit.html:68
-#, python-format
-msgid "Edit user “%(user)s”"
-msgstr "Benutzer „%(user)s“ bearbeiten"
-
-#: app/templates/administration/role_edit.html:72
-msgid "Click on the name of a user to edit them."
-msgstr "Klicke auf den Namen eines Benutzers, um ihn zu bearbeiten."
-
-#: app/templates/administration/role_edit.html:79
+#: app/templates/administration/role_delete.html:8
 msgid ""
 "Permanently delete this role. If there are users who currently have this role "
 "assigned to them you must specify a new role for these users."
@@ -218,6 +191,35 @@ msgstr ""
 "Lösche diese Rolle unwiederbringlich. Sofern es noch Nutzer gibt, denen diese "
 "Rolle zugewiesen ist, musst Du eine andere Rolle angeben, die diesen Nutzern "
 "zugewiesen wird."
+
+#: app/templates/administration/role_header.html:8
+msgid "Edit the role's header data."
+msgstr "Bearbeite die Kopfdaten der Rolle."
+
+#: app/templates/administration/role_permissions.html:7
+msgid "Manage the role's permissions."
+msgstr "Verwalte die Rollenberechtigungen."
+
+#: app/templates/administration/role_users.html:9
+msgid ""
+"View the users who have this role assigned to them. You can change a user's "
+"role in their profile."
+msgstr ""
+"Zeige alle Nutzer an, denen diese Rolle zugewiesen ist. Du kannst die Rolle "
+"eines Nutzers in seinem Profil ändern."
+
+#: app/templates/administration/role_users.html:22
+msgid "Search users..."
+msgstr "Benutzer durchsuchen..."
+
+#: app/templates/administration/role_users.html:27
+#, python-format
+msgid "Edit user “%(user)s”"
+msgstr "Benutzer „%(user)s“ bearbeiten"
+
+#: app/templates/administration/role_users.html:32
+msgid "Click on the name of a user to edit them."
+msgstr "Klicke auf den Namen eines Benutzers, um ihn zu bearbeiten."
 
 #: app/templates/administration/roles.html:7
 msgid ""
@@ -320,7 +322,7 @@ msgstr ""
 "beliebige Zeichen an dieser Position zuzulassen."
 
 #: app/templates/userprofile/login.html:5
-#: app/views/userprofile/password_reset.py:53
+#: app/views/userprofile/password_reset.py:52
 msgid "Forgot Your Password?"
 msgstr "Passwort vergessen?"
 
@@ -461,7 +463,7 @@ msgstr ""
 "Passwort zurückzusetzen:"
 
 #: app/templates/userprofile/emails/reset_password_request.html:7
-#: app/userprofile/user.py:312 app/views/userprofile/password_reset.py:79
+#: app/userprofile/user.py:313 app/views/userprofile/password_reset.py:78
 msgid "Reset Your Password"
 msgstr "Passwort zurücksetzen"
 
@@ -472,7 +474,7 @@ msgstr ""
 "Wenn Du das Zurücksetzen Deines Passwortes nicht angefordert hast, kannst Du "
 "diese E-Mail ignorieren."
 
-#: app/userprofile/role.py:289
+#: app/userprofile/role.py:319
 #, python-format
 msgid ""
 "Displaying roles %(first_result)d to %(last_result)d of %(total_results)d "
@@ -481,49 +483,82 @@ msgstr ""
 "Zeige Rollen %(first_result)d bis %(last_result)d von %(total_results)d für "
 "„%(search)s“"
 
-#: app/userprofile/role.py:296
+#: app/userprofile/role.py:326
 #, python-format
 msgid "Displaying role %(result)d of %(total_results)d matching “%(search)s”"
 msgstr "Zeige Rolle %(result)d von %(total_results)d für „%(search)s“"
 
-#: app/userprofile/role.py:300
+#: app/userprofile/role.py:330
 #, python-format
 msgid "No roles found matching “%(search)s”"
 msgstr "Keine Rollen für „%(search)s“"
 
-#: app/userprofile/role.py:306
+#: app/userprofile/role.py:336
 #, python-format
 msgid "Displaying roles %(first_result)d to %(last_result)d of %(total_results)d"
 msgstr "Zeige Rollen %(first_result)d bis %(last_result)d von %(total_results)d"
 
-#: app/userprofile/role.py:311
+#: app/userprofile/role.py:341
 #, python-format
 msgid "Displaying role %(result)d of %(total_results)d"
 msgstr "Zeige Rolle %(result)d von %(total_results)d"
 
-#: app/userprofile/role.py:315
+#: app/userprofile/role.py:345
 msgid "No roles"
 msgstr "Keine Rollen"
 
-#: app/userprofile/user.py:206
+#: app/userprofile/user.py:207
 msgid "Your Email Address Has Been Changed"
 msgstr "Deine E-Mail-Adresse wurde geändert"
 
-#: app/userprofile/user.py:232
+#: app/userprofile/user.py:233
 msgid "Change Your Email Address"
 msgstr "E-Mail-Adresse ändern"
 
-#: app/userprofile/user.py:276
+#: app/userprofile/user.py:277
 msgid "Your Password Has Been Changed"
 msgstr "Dein Passwort wurde geändert"
 
-#: app/userprofile/user.py:348
+#: app/userprofile/user.py:349
 msgid "Delete Your User Profile"
 msgstr "Benutzerprofil löschen"
 
-#: app/userprofile/user.py:379
+#: app/userprofile/user.py:380
 msgid "Your User Profile Has Been Deleted"
 msgstr "Dein Benutzerprofil wurde gelöscht"
+
+#: app/userprofile/user.py:507
+#, python-format
+msgid ""
+"Displaying users %(first_result)d to %(last_result)d of %(total_results)d "
+"matching “%(search)s”"
+msgstr ""
+"Zeige Benutzer %(first_result)d bis %(last_result)d von %(total_results)d für "
+"„%(search)s“"
+
+#: app/userprofile/user.py:514
+#, python-format
+msgid "Displaying user %(result)d of %(total_results)d matching “%(search)s”"
+msgstr "Zeige Benutzer %(result)d von %(total_results)d für „%(search)s“"
+
+#: app/userprofile/user.py:518
+#, python-format
+msgid "No users found matching “%(search)s”"
+msgstr "Keine Benutzer für „%(search)s“"
+
+#: app/userprofile/user.py:524
+#, python-format
+msgid "Displaying users %(first_result)d to %(last_result)d of %(total_results)d"
+msgstr "Zeige Benutzer %(first_result)d bis %(last_result)d von %(total_results)d"
+
+#: app/userprofile/user.py:529
+#, python-format
+msgid "Displaying user %(result)d of %(total_results)d"
+msgstr "Zeige Benutzer %(result)d von %(total_results)d"
+
+#: app/userprofile/user.py:533
+msgid "No users"
+msgstr "Keine Rollen"
 
 #: app/views/forms.py:25
 msgid "Search:"
@@ -550,43 +585,38 @@ msgstr "Name:"
 msgid "Save"
 msgstr "Speichern"
 
-#: app/views/administration/roles.py:73
+#: app/views/administration/roles.py:67
 msgid "The role has been updated."
 msgstr "Die Rolle wurde aktualisiert."
 
-#: app/views/administration/roles.py:94
+#: app/views/administration/roles.py:142
 msgid "The role has been deleted."
 msgstr "Die Rolle wurde gelöscht."
 
-#: app/views/administration/roles.py:97
-#, python-format
-msgid "Edit Role “%(role)s”"
-msgstr "Rolle „%(role)s“ bearbeiten"
-
-#: app/views/main/errors.py:25
+#: app/views/main/errors.py:24
 msgid "Bad Request"
 msgstr "Fehlerhafte Anfrage"
 
-#: app/views/main/errors.py:26
+#: app/views/main/errors.py:25
 msgid ""
 "Your request was malformed and could therefore not be handled by the server."
 msgstr ""
 "Deine Anfrage war fehlerhaft aufgebaut und konnte deswegen nicht vom Server "
 "bearbeitet werden."
 
-#: app/views/main/errors.py:39
+#: app/views/main/errors.py:38
 msgid "Unauthorized Access"
 msgstr "Unauthorisierter Zugriff"
 
-#: app/views/main/errors.py:40
+#: app/views/main/errors.py:39
 msgid "The page you want to access requires you to login."
 msgstr "Du musst Dich anmelden, um diese Seite öffnen zu können."
 
-#: app/views/main/errors.py:53
+#: app/views/main/errors.py:52
 msgid "Permission Denied"
 msgstr "Zugriff verweigert"
 
-#: app/views/main/errors.py:54
+#: app/views/main/errors.py:53
 msgid ""
 "You do not have sufficient permissions to access this page. You can try logging "
 "in. If you are logged\n"
@@ -598,11 +628,11 @@ msgstr ""
 "weiterhin diese Meldung erhältst, bitte Deinen Administrator um die "
 "entsprechenden Berechtigungen."
 
-#: app/views/main/errors.py:68
+#: app/views/main/errors.py:67
 msgid "Page Not Found"
 msgstr "Seite nicht gefunden"
 
-#: app/views/main/errors.py:69
+#: app/views/main/errors.py:68
 msgid ""
 "The page you requested was not found on the server. If you are positive the "
 "link you clicked is\n"
@@ -611,19 +641,19 @@ msgstr ""
 "Die von Dir angeforderte Seite wurde auf dem Server nicht gefunden. Wenn Du Dir "
 "sicher bist, dass der Link korrekt ist, kontaktiere bitte Deinen Administrator."
 
-#: app/views/main/errors.py:83
+#: app/views/main/errors.py:82
 msgid "Method Not Allowed"
 msgstr "Methode nicht erlaubt"
 
-#: app/views/main/errors.py:84
+#: app/views/main/errors.py:83
 msgid "The HTTP method you used is not allowed to access this page."
 msgstr "Die von Dir genutzte HTTP-Methode ist für diese Seite nicht zugelassen."
 
-#: app/views/main/errors.py:97
+#: app/views/main/errors.py:96
 msgid "Internal Error"
 msgstr "Interner Fehler"
 
-#: app/views/main/errors.py:98
+#: app/views/main/errors.py:97
 msgid ""
 "The server encountered an internal error while processing your request. Please "
 "try again later.\n"
@@ -633,24 +663,24 @@ msgstr ""
 "Bitte versuche es später erneut. Der Administrator wurde hierüber "
 "benachrichtigt."
 
-#: app/views/userprofile/authentication.py:40
+#: app/views/userprofile/authentication.py:39
 #, python-format
 msgid "Welcome, %(name)s!"
 msgstr "Willkommen, %(name)s!"
 
-#: app/views/userprofile/authentication.py:50
+#: app/views/userprofile/authentication.py:49
 msgid "Invalid email address or password."
 msgstr "Ungültige E-Mail-Adresse oder ungültiges Passwort."
 
-#: app/views/userprofile/authentication.py:52 app/views/userprofile/forms.py:97
+#: app/views/userprofile/authentication.py:51 app/views/userprofile/forms.py:97
 msgid "Log In"
 msgstr "Anmelden"
 
-#: app/views/userprofile/authentication.py:65
+#: app/views/userprofile/authentication.py:64
 msgid "You were successfully logged out."
 msgstr "Du wurdest erfolgreich abgemeldet."
 
-#: app/views/userprofile/delete_profile.py:37
+#: app/views/userprofile/delete_profile.py:36
 #, python-format
 msgid ""
 "An email has been sent to your email address. Please open the link included in "
@@ -661,7 +691,7 @@ msgstr ""
 "innerhalb der nächsten %(validity)d Minuten, um Dein Benutzerprofil zu löschen. "
 "Ansonsten wird dein Benutzerprofil nicht gelöscht."
 
-#: app/views/userprofile/delete_profile.py:60
+#: app/views/userprofile/delete_profile.py:59
 msgid ""
 "Your user profile and all data linked to it have been deleted. We would be "
 "happy to see you again in the              future!"
@@ -669,7 +699,7 @@ msgstr ""
 "Dein Benutzerprofil und alle damit verbundenen Daten wurden gelöscht. Wir "
 "würden uns freuen, Dich in Zukunft wiederzusehen!"
 
-#: app/views/userprofile/forms.py:44 app/views/userprofile/profile.py:88
+#: app/views/userprofile/forms.py:44 app/views/userprofile/profile.py:87
 msgid "The email address already is in use."
 msgstr "Diese E-Mail-Adresse wird bereits von einem anderen Benutzer verwendet."
 
@@ -732,7 +762,7 @@ msgstr "Die Sprache, in der Du die Anwendung benutzen möchtest."
 msgid "Reset these settings to their default values."
 msgstr "Setze Deine Einstellungen auf die Standardwerte zurück."
 
-#: app/views/userprofile/password_reset.py:49
+#: app/views/userprofile/password_reset.py:48
 #, python-format
 msgid ""
 "An email has been sent to the specified address. Please be aware that the "
@@ -743,11 +773,11 @@ msgstr ""
 "enthaltene Link zum Zurücksetzen des Passworts nur %(validity)d Minuten lang "
 "gültig ist."
 
-#: app/views/userprofile/password_reset.py:76
+#: app/views/userprofile/password_reset.py:75
 msgid "Your password has successfully been changed."
 msgstr "Dein Passwort wurde erfolgreich geändert."
 
-#: app/views/userprofile/profile.py:59
+#: app/views/userprofile/profile.py:58
 #, python-format
 msgid ""
 "An email has been sent to the new address %(email)s. Please open the link "
@@ -759,14 +789,14 @@ msgstr ""
 "enthaltenen Link innerhalb der nächsten %(validity)d Minuten, um Deine neue E-"
 "Mail-Adresse zu bestätigen. Ansonsten wird Deine E-Mail-Adresse nicht geändert."
 
-#: app/views/userprofile/profile.py:62 app/views/userprofile/user_settings.py:44
+#: app/views/userprofile/profile.py:61 app/views/userprofile/user_settings.py:43
 msgid "Your changes have been saved."
 msgstr "Deine Änderungen wurden gespeichert."
 
-#: app/views/userprofile/profile.py:86
+#: app/views/userprofile/profile.py:85
 msgid "Your email address has successfully been changed."
 msgstr "Deine E-Mail-Adresse wurde erfolgreich geändert."
 
-#: app/views/userprofile/user_settings.py:71
+#: app/views/userprofile/user_settings.py:70
 msgid "The settings have been set to their default values."
 msgstr "Deine Einstellungen wurden auf die Standardwerte zurückgesetzt."
