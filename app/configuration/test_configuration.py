@@ -27,3 +27,6 @@ class TestConfiguration(BaseConfiguration):
 
     # Disable CSRF protection to easily test from submissions.
     WTF_CSRF_ENABLED: bool = False
+
+    # Use a small number of items per page.
+    ITEMS_PER_PAGE: int = 3
