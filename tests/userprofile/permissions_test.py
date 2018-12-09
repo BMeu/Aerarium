@@ -19,6 +19,19 @@ class PermissionTest(TestCase):
         self.assertEqual(2, Permission.EditUser.value)
         self.assertEqual(4, Permission.EditGlobalSettings.value)
 
+    def test_display_texts(self):
+        """
+            Test that the display attributes `title` and `description` are set for all permissions.
+
+            Expected result: The actual texts don't matter, but some texts must have been set for all permissions.
+                             The title must not be the name, the description must not be `None`.
+        """
+
+        # noinspection PyTypeChecker
+        for permission in list(Permission):
+            self.assertNotEqual(permission.name, permission.title)
+            self.assertIsNotNone(permission.description)
+
     def test_bitwise_and_success(self):
         """
             Test the bitwise and method.

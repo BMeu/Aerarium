@@ -112,6 +112,7 @@ class Role(db.Model):
         if self._permissions is None or self._permissions < 0:
             return Permission(0)
 
+        # noinspection PyTypeChecker
         return Permission(self._permissions)
 
     @permissions.setter

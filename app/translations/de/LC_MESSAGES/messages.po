@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-12-08 20:13+0100\n"
-"PO-Revision-Date: 2018-12-08 20:14+0100\n"
+"POT-Creation-Date: 2018-12-09 20:35+0100\n"
+"PO-Revision-Date: 2018-12-09 20:37+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -98,7 +98,7 @@ msgstr "Globale Einstellungen"
 msgid "Users"
 msgstr "Benutzer"
 
-#: app/templates/_header.html:44 app/views/administration/roles.py:44
+#: app/templates/_header.html:44 app/views/administration/roles.py:43
 msgid "Roles"
 msgstr "Rollen"
 
@@ -474,7 +474,34 @@ msgstr ""
 "Wenn Du das Zurücksetzen Deines Passwortes nicht angefordert hast, kannst Du "
 "diese E-Mail ignorieren."
 
-#: app/userprofile/role.py:343
+#: app/userprofile/permissions.py:25
+msgid "Edit Roles"
+msgstr "Rollen bearbeiten"
+
+#: app/userprofile/permissions.py:25
+msgid "The permission to create, read, update, or delete a role."
+msgstr ""
+"Die Berechtigung, Rollen anzulegen, zu lesen, zu aktualisieren oder zu löschen."
+
+#: app/userprofile/permissions.py:30
+msgid "Edit Users"
+msgstr "Benutzer bearbeiten"
+
+#: app/userprofile/permissions.py:30
+msgid "The permission to create, read, update, or delete a user."
+msgstr ""
+"Die Berechtigung, Benutzer anzulegen, zu lesen, zu aktualisieren oder zu "
+"löschen."
+
+#: app/userprofile/permissions.py:35
+msgid "Edit Global Settings"
+msgstr "Globale Einstellungen bearbeiten"
+
+#: app/userprofile/permissions.py:35
+msgid "The permission to modify the global settings."
+msgstr "Die Berechtigung, die globalen Einstellungen anzupassen."
+
+#: app/userprofile/role.py:344
 #, python-format
 msgid ""
 "Displaying roles %(first_result)d to %(last_result)d of %(total_results)d "
@@ -483,27 +510,27 @@ msgstr ""
 "Zeige Rollen %(first_result)d bis %(last_result)d von %(total_results)d für "
 "„%(search)s“"
 
-#: app/userprofile/role.py:350
+#: app/userprofile/role.py:351
 #, python-format
 msgid "Displaying role %(result)d of %(total_results)d matching “%(search)s”"
 msgstr "Zeige Rolle %(result)d von %(total_results)d für „%(search)s“"
 
-#: app/userprofile/role.py:354
+#: app/userprofile/role.py:355
 #, python-format
 msgid "No roles found matching “%(search)s”"
 msgstr "Keine Rollen für „%(search)s“"
 
-#: app/userprofile/role.py:360
+#: app/userprofile/role.py:361
 #, python-format
 msgid "Displaying roles %(first_result)d to %(last_result)d of %(total_results)d"
 msgstr "Zeige Rollen %(first_result)d bis %(last_result)d von %(total_results)d"
 
-#: app/userprofile/role.py:365
+#: app/userprofile/role.py:366
 #, python-format
 msgid "Displaying role %(result)d of %(total_results)d"
 msgstr "Zeige Rolle %(result)d von %(total_results)d"
 
-#: app/userprofile/role.py:369
+#: app/userprofile/role.py:370
 msgid "No roles"
 msgstr "Keine Rollen"
 
@@ -585,18 +612,18 @@ msgstr "Name:"
 msgid "Save"
 msgstr "Speichern"
 
-#: app/views/administration/roles.py:68
+#: app/views/administration/roles.py:67
 msgid "The role has been updated."
 msgstr "Die Rolle wurde aktualisiert."
 
-#: app/views/administration/roles.py:131
+#: app/views/administration/roles.py:130
 msgid ""
 "This role cannot be deleted because it is the only one that can edit roles."
 msgstr ""
 "Diese Rolle kann nicht gelöscht werden, da sie die einzige ist, die die "
 "Berechtigung hat, Rollen zu bearbeiten."
 
-#: app/views/administration/roles.py:147
+#: app/views/administration/roles.py:146
 msgid "The role has been deleted."
 msgstr "Die Rolle wurde gelöscht."
 
