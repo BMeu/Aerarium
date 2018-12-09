@@ -4,10 +4,12 @@ language: python
 
 python:
   - "3.6"
+  - "3.6-dev"
 
 env:
   global:
     - FLASK_APP=aerarium
+    - PIPENV_IGNORE_VIRTUALENVS=1
     - SECRET_KEY="Gallia est omnis divisa in partes tres"
     - SYS_ADMINS=aerarium@bastianmeyer.eu
 
