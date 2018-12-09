@@ -22,6 +22,8 @@
 
 ### Installation
 
+_TODO_
+
 ### Configuration
 
 Aerarium allows configuration in two ways: you can either use environment variables or use a `.env` file in the
@@ -57,18 +59,18 @@ request.
 
 #### Setting Up the Development Environment
 
-Ensure your system fulfills the [requirements](#system-requirements). Additionally, you will also need ``virtualenv``
-for Python 3.6. Then execute the following commands in your terminal (on Unix systems; assuming your executable for
-Python in the required version is called ``python3``) to set up your development environment:
+Ensure your system fulfills the [requirements](#system-requirements). Additionally, you will also need
+[``pipenv``](https://pipenv.readthedocs.io/en/latest/) for Python 3.6. Then execute the following commands in your
+terminal (on Unix systems; assuming your executable for Python in the required version is called ``python3``) to set
+up your development environment:
 
 ```bash
 git clone https://github.com/BMeu/Aerarium.git
 cd Aerarium
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
+pipenv install --dev
+pipenv shell
 export FLASK_APP=aerarium.py
+flask db upgrade
 flask translate compile
 ```
 
