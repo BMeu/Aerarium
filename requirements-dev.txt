@@ -1,4 +1,0 @@
-coverage==4.5.1
-blinker==1.4
-flake8==3.6.0
-Sphinx==1.8.1
