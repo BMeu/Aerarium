@@ -9,7 +9,7 @@ python:
 env:
   global:
     - FLASK_APP=aerarium
-    - PIPENV_IGNORE_VIRTUALENVS=1
+    - PIPENV_VERBOSITY=-1
     - SECRET_KEY="Gallia est omnis divisa in partes tres"
     - SYS_ADMINS=aerarium@bastianmeyer.eu
 
@@ -28,7 +28,6 @@ before_install:
 install:
   - pip install pipenv
   - pipenv install --dev
-  - pipenv shell
   - pipenv install codecov
 
 script:
