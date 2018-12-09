@@ -4,9 +4,6 @@ language: python
 
 python:
   - "3.6"
-  - "3.6-dev"
-  - "3.7-dev"
-  - "nightly"
 
 env:
   global:
@@ -27,9 +24,9 @@ before_install:
   - sed -i -e 's/# DATABASE_URI=/DATABASE_URI=mysql+pymysql:\/\/root@localhost\/aerarium_test/g' instance/.env
 
 install:
-  - pip install -r requirements.txt
-  - pip install -r requirements-dev.txt
-  - pip install codecov
+  - pip install pipenv
+  - pipenv sync
+  - pipenv install codecov
 
 script:
   - flake8
