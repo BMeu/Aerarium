@@ -29,8 +29,8 @@ class PermissionTest(TestCase):
 
         # noinspection PyTypeChecker
         for permission in list(Permission):
-            self.assertNotEqual(permission.name, permission.title)
-            self.assertIsNotNone(permission.description)
+            self.assertNotEqual(permission.name, permission.title, msg=f'Permission {permission.name}')
+            self.assertIsNotNone(permission.description, msg=f'Permission {permission.name}')
 
     def test_bitwise_and_success(self):
         """

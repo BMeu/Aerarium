@@ -6,7 +6,7 @@ from typing import Optional
 from enum import Flag
 from enum import unique
 
-from flask_babel import gettext as _
+from flask_babel import lazy_gettext as _l
 
 """
     The permissions used within the application.
@@ -22,17 +22,17 @@ class Permission(Flag):
         represented as an integer using bitwise operations.
     """
 
-    EditRole = (1, _('Edit Roles'), _('The permission to create, read, update, or delete a role.'))
+    EditRole = (1, _l('Edit Roles'), _l('The permission to create, read, update, or delete a role.'))
     """
         The permission to create, read, update, or delete a role.
     """
 
-    EditUser = (2, _('Edit Users'), _('The permission to create, read, update, or delete a user.'))
+    EditUser = (2, _l('Edit Users'), _l('The permission to create, read, update, or delete a user.'))
     """
         The permission to create, read, update, or delete a user.
     """
 
-    EditGlobalSettings = (4, _('Edit Global Settings'), _('The permission to modify the global settings.'))
+    EditGlobalSettings = (4, _l('Edit Global Settings'), _l('The permission to modify the global settings.'))
     """
         The permission to read and update the global settings.
     """
