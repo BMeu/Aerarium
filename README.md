@@ -70,11 +70,15 @@ cd Aerarium
 pipenv install --dev
 pipenv shell
 export FLASK_APP=aerarium.py
+```
+
+Now, [set up your configuration](#configuration). Once you have done that, finish the setup by preparing the database
+and compiling the translations:
+
+```bash
 flask db upgrade
 flask translate compile
 ```
-
-Remember to [set up your configuration](#configuration) as well!
 
 #### Running Locally
 
@@ -155,9 +159,6 @@ When you submit a pull request, please ensure that your changes fulfill the foll
     ```
     
     This makes it easier to find imports and spot changes in commits.
-* If you need to add a new package dependency only add the package itself to the ``requirements.txt`` file (i.e. do not
-  include the package's dependencies as well). That is, do **not** run ``pip freeze > requirements.txt``! This ensures
-  that there are no unused indirect dependencies because a direct dependency changed.
 * All texts that are displayed to the user must be localizable. If you added, changed, or deleted some of those texts
   put a note in the pull request so the translators can be informed, and update the translation files:
   ```bash
