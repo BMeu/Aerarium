@@ -25,7 +25,7 @@ before_install:
 
 install:
   - pip install pipenv
-  - pipenv sync
+  - pipenv install --dev
   - pipenv install codecov
 
 script:
