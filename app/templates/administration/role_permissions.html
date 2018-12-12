@@ -1,13 +1,12 @@
 {% extends 'administration/_tabs_role.html' %}
+{% from 'macros/form.html' import render_form %}
 
 {% set active_id = 'role-permissions' %}
 
 {% block tabcontent %}
 <p>
-    {{ _('Manage the role\'s permissions.') }}
+    {{ _('Define the permissions which the users to whom this role is assigned will have.') }}
 </p>
 
-<p>
-    <b># TODO</b>
-</p>
+{{ render_form(permission_form, cancel_button=True) }}
 {% endblock %}

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-12-09 20:35+0100\n"
-"PO-Revision-Date: 2018-12-09 20:37+0100\n"
+"POT-Creation-Date: 2018-12-11 21:18+0100\n"
+"PO-Revision-Date: 2018-12-11 21:19+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -98,7 +98,7 @@ msgstr "Globale Einstellungen"
 msgid "Users"
 msgstr "Benutzer"
 
-#: app/templates/_header.html:44 app/views/administration/roles.py:43
+#: app/templates/_header.html:44 app/views/administration/roles.py:45
 msgid "Roles"
 msgstr "Rollen"
 
@@ -162,7 +162,7 @@ msgid "Permissions"
 msgstr "Berechtigungen"
 
 #: app/templates/administration/_tabs_role.html:10
-#: app/views/administration/forms.py:76
+#: app/views/administration/forms.py:182
 msgid "Delete"
 msgstr "Löschen"
 
@@ -196,9 +196,12 @@ msgstr ""
 msgid "Edit the role's header data."
 msgstr "Bearbeite die Kopfdaten der Rolle."
 
-#: app/templates/administration/role_permissions.html:7
-msgid "Manage the role's permissions."
-msgstr "Verwalte die Rollenberechtigungen."
+#: app/templates/administration/role_permissions.html:8
+msgid ""
+"Define the permissions which the users to whom this role is assigned will have."
+msgstr ""
+"Definiere die Berechtigungen, die Benutzer haben werden, denen diese Rolle "
+"zugewiesen wurde."
 
 #: app/templates/administration/role_users.html:9
 msgid ""
@@ -261,7 +264,7 @@ msgstr "Klicke auf den Namen einer Rolle, um sie zu bearbeiten."
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: app/templates/macros/form.html:183
+#: app/templates/macros/form.html:185
 #, python-format
 msgid "Fields marked with an asterisk (%(asterisk)s) are required."
 msgstr "Mit einem Sternchen (%(asterisk)s) markierte Felder sind Pflichtfelder."
@@ -591,39 +594,44 @@ msgstr "Keine Rollen"
 msgid "Search:"
 msgstr "Suchen:"
 
-#: app/views/administration/forms.py:39
+#: app/views/administration/forms.py:47
 msgid "The role name already is in use."
 msgstr "Der Rollenname wird bereits verwendet."
 
-#: app/views/administration/forms.py:74
-msgid "New Role:"
-msgstr "Neue Rolle:"
-
-#: app/views/administration/forms.py:75
-msgid "Choose a new role for users to whom this role is assigned."
-msgstr "Wähle eine neue Rolle für die Benutzer, denen diese Rolle zugewiesen ist."
-
-#: app/views/administration/forms.py:110 app/views/userprofile/forms.py:115
+#: app/views/administration/forms.py:171 app/views/administration/forms.py:216
+#: app/views/userprofile/forms.py:115
 msgid "Name:"
 msgstr "Name:"
 
-#: app/views/administration/forms.py:111 app/views/userprofile/forms.py:122
-#: app/views/userprofile/forms.py:131
+#: app/views/administration/forms.py:172 app/views/administration/forms.py:217
+#: app/views/userprofile/forms.py:122 app/views/userprofile/forms.py:131
 msgid "Save"
 msgstr "Speichern"
 
-#: app/views/administration/roles.py:67
+#: app/views/administration/forms.py:180
+msgid "New Role:"
+msgstr "Neue Rolle:"
+
+#: app/views/administration/forms.py:181
+msgid "Choose a new role for users to whom this role is assigned."
+msgstr "Wähle eine neue Rolle für die Benutzer, denen diese Rolle zugewiesen ist."
+
+#: app/views/administration/roles.py:69
 msgid "The role has been updated."
 msgstr "Die Rolle wurde aktualisiert."
 
-#: app/views/administration/roles.py:130
+#: app/views/administration/roles.py:94
+msgid "The role's permissions have been updated."
+msgstr "Die Rollenberechtigungen wurden aktualisiert."
+
+#: app/views/administration/roles.py:140
 msgid ""
 "This role cannot be deleted because it is the only one that can edit roles."
 msgstr ""
 "Diese Rolle kann nicht gelöscht werden, da sie die einzige ist, die die "
 "Berechtigung hat, Rollen zu bearbeiten."
 
-#: app/views/administration/roles.py:146
+#: app/views/administration/roles.py:156
 msgid "The role has been deleted."
 msgstr "Die Rolle wurde gelöscht."
 

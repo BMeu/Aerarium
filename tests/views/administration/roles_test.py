@@ -163,7 +163,7 @@ class RolesTest(TestCase):
         self.assertIn(f'Edit the role\'s header data', data)
         self.assertNotIn(f'View the users who have this role assigned to them', data)
         self.assertNotIn(f'Permanently delete this role', data)
-        self.assertNotIn(f'Manage the role\'s permissions.', data)
+        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
 
     def test_role_header_post_header_data_existing_name(self):
         """
@@ -210,7 +210,7 @@ class RolesTest(TestCase):
         self.assertIn(f'Edit the role\'s header data', data)
         self.assertNotIn(f'View the users who have this role assigned to them', data)
         self.assertNotIn(f'Permanently delete this role', data)
-        self.assertNotIn(f'Manage the role\'s permissions.', data)
+        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
 
     def test_role_header_post_header_data_new_name(self):
         """
@@ -254,7 +254,7 @@ class RolesTest(TestCase):
         self.assertIn(f'Edit the role\'s header data', data)
         self.assertNotIn(f'View the users who have this role assigned to them', data)
         self.assertNotIn(f'Permanently delete this role', data)
-        self.assertNotIn(f'Manage the role\'s permissions.', data)
+        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
 
     def test_role_permissions_get_no_role(self):
         """
@@ -319,7 +319,52 @@ class RolesTest(TestCase):
         data = response.get_data(as_text=True)
 
         self.assertIn('<h1>Edit Role “', data)
-        self.assertIn(f'Manage the role\'s permissions.', data)
+        self.assertIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
+        self.assertNotIn(f'View the users who have this role assigned to them', data)
+        self.assertNotIn(f'Permanently delete this role', data)
+        self.assertNotIn(f'Edit the role\'s header data', data)
+
+    def test_role_permissions_post(self):
+        """
+            Test updating the permissions of a role.
+
+            Expected result: The new permissions are set on the role.
+        """
+
+        role_name = 'Administrator'
+        role = Role(name=role_name)
+        role.add_permission(Permission.EditRole)
+        db.session.add(role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = role
+        db.session.add(user)
+        db.session.commit()
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        new_permissions = Permission.EditRole | Permission.EditGlobalSettings
+        response = self.client.post(f'/administration/role/{role_name}/permissions', follow_redirects=True, data=dict(
+            editglobalsettings=True,
+            editrole=True,
+            edituser=None,
+        ))
+        data = response.get_data(as_text=True)
+
+        role = Role.load_from_name(role_name)
+        self.assertEqual(new_permissions, role.permissions)
+        self.assertIn('<h1>Edit Role “', data)
+        self.assertIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
+        # The apostrophe is escaped...
+        self.assertIn('The role&#39;s permissions have been updated.', data)
         self.assertNotIn(f'View the users who have this role assigned to them', data)
         self.assertNotIn(f'Permanently delete this role', data)
         self.assertNotIn(f'Edit the role\'s header data', data)
@@ -390,7 +435,7 @@ class RolesTest(TestCase):
         self.assertIn(f'View the users who have this role assigned to them', data)
         self.assertNotIn(f'Permanently delete this role', data)
         self.assertNotIn(f'Edit the role\'s header data', data)
-        self.assertNotIn(f'Manage the role\'s permissions.', data)
+        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
         self.assertIn(name, data)
 
     def test_role_delete_get_no_role(self):
@@ -464,7 +509,7 @@ class RolesTest(TestCase):
         self.assertIn('This role cannot be deleted because it is the only one that can edit roles.', data)
         self.assertNotIn(f'View the users who have this role assigned to them', data)
         self.assertNotIn(f'Edit the role\'s header data', data)
-        self.assertNotIn(f'Manage the role\'s permissions.', data)
+        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
         self.assertNotIn(f'Permanently delete this role', data)
         self.assertNotIn('The role has been deleted.', data)
 
@@ -513,7 +558,7 @@ class RolesTest(TestCase):
         self.assertIn('<h1>Edit Role “', data)
         self.assertNotIn(f'View the users who have this role assigned to them', data)
         self.assertNotIn(f'Edit the role\'s header data', data)
-        self.assertNotIn(f'Manage the role\'s permissions.', data)
+        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
         self.assertIn(f'Permanently delete this role', data)
         self.assertNotIn('The role has been deleted.', data)
 
@@ -605,7 +650,7 @@ class RolesTest(TestCase):
         self.assertIn('This role cannot be deleted because it is the only one that can edit roles.', data)
         self.assertNotIn(f'View the users who have this role assigned to them', data)
         self.assertNotIn(f'Edit the role\'s header data', data)
-        self.assertNotIn(f'Manage the role\'s permissions.', data)
+        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
         self.assertNotIn(f'Permanently delete this role', data)
         self.assertNotIn('The role has been deleted.', data)
 

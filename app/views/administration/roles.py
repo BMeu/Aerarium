@@ -21,6 +21,8 @@ from app.userprofile import User
 from app.userprofile import UserPagination
 from app.userprofile.decorators import permission_required
 from app.views.administration import bp
+from app.views.administration.forms import create_permission_form
+from app.views.administration.forms import PermissionForm
 from app.views.administration.forms import RoleDeleteForm
 from app.views.administration.forms import RoleHeaderDataForm
 from app.views.forms import SearchForm
@@ -84,7 +86,15 @@ def role_permissions(name: str) -> str:
     if role is None:
         abort(404)
 
-    return render_template('administration/role_permissions.html', role=name)
+    permission_form = create_permission_form(PermissionForm, role.permissions)
+    if permission_form.validate_on_submit():
+        role.permissions = permission_form.permissions
+        db.session.commit()
+
+        flash(_('The role\'s permissions have been updated.'))
+        return redirect(url_for('.role_permissions', name=role.name))
+
+    return render_template('administration/role_permissions.html', role=name, permission_form=permission_form)
 
 
 @bp.route('/role/<string:name>/users')

@@ -88,7 +88,9 @@
             {% if field.flags.required %}{{ required_flag }} {% endif %}{{ field.label.text }}
         </label>
         {% if field.description %}
-            <small class="text-form text-muted">{{ field.description }}</small>
+            <p class="text-form text-muted">
+                <small>{{ field.description }}</small>
+            </p>
         {% endif %}
         {% if field.errors %}
             {% for error in field.errors %}
