@@ -22,14 +22,14 @@ class Role(db.Model):
         The class representing a role with certain permissions.
     """
 
-    # region Fields
+    # region Fields and Properties
 
     id = db.Column(db.Integer, primary_key=True)
     """
         The role's unique ID.
     """
 
-    name = db.Column(db.String(255), unique=True)
+    _name = db.Column('name', db.String(255), unique=True)
     """
         A name describing the role.
     """
@@ -47,15 +47,49 @@ class Role(db.Model):
         A list of :class:`users` which have this role.
     """
 
-    # TODO: Add a property for the name that checks for invalid names when assigning a name.
     invalid_names: List[str] = ['new']
     """
         A list of names that may not be used for a role's name.
     """
 
+    @property
+    def name(self) -> str:
+        """
+            Get the role's name.
+
+            :return: The role's unique name.
+        """
+        return self._name
+
+    @name.setter
+    def name(self, value: str) -> None:
+        """
+            Set the role's name.
+
+            The name may not be one of the strings listed in :attr:`invalid_names`.
+
+            :param value: The role's new name.
+            :raise ValueError: if an invalid name is given.
+        """
+        if value in self.invalid_names:
+            raise ValueError('The name may not be one of ' + ', '.join(self.invalid_names))
+
+        # TODO: Check for unique name?
+
+        self._name = value
+
     # endregion
 
     # region Initialization
+
+    def __init__(self, name: str) -> None:
+        """
+            Initialize a role with the given name.
+
+            :param name: The role's name. It must not be one of the strings listed in :attr:`invalid_names`.
+            :raise ValueError: if an invalid name is given.
+        """
+        self.name = name
 
     @staticmethod
     def load_from_id(role_id: int) -> Optional['Role']:
@@ -75,7 +109,7 @@ class Role(db.Model):
             :param name: The name of the role load.
             :return: The loaded role if it exists, `None` otherwise.
         """
-        return Role.query.filter_by(name=name).first()
+        return Role.query.filter_by(_name=name).first()
 
     @staticmethod
     def load_roles_with_permission(permission: Permission) -> List['Role']:
@@ -311,7 +345,7 @@ class Role(db.Model):
 
         # Replace the wildcard character with the SQL wildcard.
         search_term = search_term.replace('*', '%')
-        return query.filter(Role.name.like(search_term))
+        return query.filter(Role._name.like(search_term))
 
     # endregion
 

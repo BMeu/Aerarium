@@ -971,7 +971,7 @@ class UserTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
 
         db.session.add(user)
         db.session.commit()
@@ -995,7 +995,7 @@ class UserTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
 
         db.session.add(user)
         db.session.commit()
@@ -1033,7 +1033,7 @@ class UserTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
 
         db.session.add(user)
         db.session.commit()
@@ -1057,7 +1057,7 @@ class UserTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
 
         db.session.add(user)
         db.session.commit()
@@ -1083,7 +1083,7 @@ class UserTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
 
         db.session.add(user)
         db.session.commit()
@@ -1141,7 +1141,7 @@ class UserTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
 
         db.session.add(user)
         db.session.commit()
@@ -1165,7 +1165,7 @@ class UserTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
 
         db.session.add(user)
         db.session.commit()
@@ -1192,7 +1192,7 @@ class UserTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
 
         db.session.add(user)
         db.session.commit()

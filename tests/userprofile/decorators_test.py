@@ -109,7 +109,7 @@ class DecoratorsTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
 
         db.session.add(user)
         db.session.commit()
@@ -134,7 +134,7 @@ class DecoratorsTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
 
         db.session.add(user)
         db.session.commit()
@@ -162,7 +162,7 @@ class DecoratorsTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
         user.role.add_permissions(Permission.EditRole)
 
         db.session.add(user)
@@ -188,7 +188,7 @@ class DecoratorsTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
         user.role.add_permissions(Permission.EditRole, Permission.EditUser)
 
         db.session.add(user)
@@ -214,7 +214,7 @@ class DecoratorsTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
 
         db.session.add(user)
         db.session.commit()
@@ -238,7 +238,7 @@ class DecoratorsTest(TestCase):
         password = '123456'
         user = User(email, name)
         user.set_password(password)
-        user.role = Role()
+        user.role = Role('Administrator')
         user.role.add_permission(Permission.EditRole)
 
         db.session.add(user)

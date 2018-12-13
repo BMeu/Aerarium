@@ -32,7 +32,80 @@ class RoleTest(TestCase):
         db.drop_all()
         self.app_context.pop()
 
+    # region Fields and Properties
+
+    def test_name_get(self):
+        """
+            Test getting the name.
+
+            Expected result: The role's name is returned.
+        """
+        role = Role('Administrator')
+        self.assertEqual(role._name, role.name)
+
+    def test_name_set_invalid(self):
+        """
+            Try setting an invalid name.
+
+            Expected result: An error is raised.
+        """
+        role = Role('Administrator')
+        with self.assertRaises(ValueError) as exception_cm:
+            role.name = role.invalid_names[0]
+
+            self.assertIsNone(role.name)
+            error = str(exception_cm.exception)
+            self.assertIn('The name may not be one of', error)
+            for name in role.invalid_names:
+                self.assertIn(name, error)
+
+    def test_name_set_valid(self):
+        """
+            Try setting a valid name.
+
+            Expected result: The name is set.
+        """
+        old_name = 'Guest'
+        new_name = 'Administrator'
+        role = Role(old_name)
+
+        self.assertNotIn(new_name, role.invalid_names)
+        self.assertEqual(old_name, role.name)
+
+        role.name = new_name
+        self.assertEqual(new_name, role._name)
+
+    # endregion
+
     # region Initialization
+
+    def test_init_invalid_name(self):
+        """
+            Try initializing a role with an invalid name.
+
+            Expected result: An error is raised.
+        """
+        name = Role.invalid_names[0]
+        with self.assertRaises(ValueError) as exception_cm:
+            Role(name)
+
+            error = str(exception_cm.exception)
+            self.assertIn('The name may not be one of', error)
+            for name in Role.invalid_names:
+                self.assertIn(name, error)
+
+    def test_init_valid_name(self):
+        """
+            Try initializing a role with a valid name.
+
+            Expected result: The role is initialized with the given name.
+        """
+        name = 'Administrator'
+        role = Role(name)
+
+        self.assertIsNotNone(role)
+        self.assertNotIn(name, role.invalid_names)
+        self.assertEqual(name, role._name)
 
     def test_load_from_id_success(self):
         """
@@ -156,7 +229,7 @@ class RoleTest(TestCase):
 
             Expected result: The empty permission.
         """
-        role = Role()
+        role = Role('Administrator')
 
         self.assertIsNone(role._permissions)
         self.assertEqual(Permission(0), role.permissions)
@@ -167,7 +240,7 @@ class RoleTest(TestCase):
 
             Expected result: The empty permission.
         """
-        role = Role()
+        role = Role('Administrator')
         role._permissions = -1
 
         self.assertEqual(Permission(0), role.permissions)
@@ -178,7 +251,7 @@ class RoleTest(TestCase):
 
             Expected result: The empty permission.
         """
-        role = Role()
+        role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
 
@@ -192,7 +265,7 @@ class RoleTest(TestCase):
 
             Expected result: The corresponding enum member is returned.
         """
-        role = Role()
+        role = Role('Administrator')
 
         role._permissions = Permission.EditRole.value
         self.assertEqual(Permission.EditRole, role.permissions)
@@ -207,7 +280,7 @@ class RoleTest(TestCase):
 
             Expected result: The corresponding enum member is returned.
         """
-        role = Role()
+        role = Role('Administrator')
 
         # Choose a value that is high enough to be very unlikely to exist as a permission.
         role._permissions = 2 ** 64
@@ -222,7 +295,7 @@ class RoleTest(TestCase):
 
             Expected result: The corresponding enum member is returned.
         """
-        role = Role()
+        role = Role('Administrator')
 
         role._permissions = (Permission.EditRole | Permission.EditUser).value
         self.assertEqual(Permission.EditRole | Permission.EditUser, role.permissions)
@@ -234,7 +307,7 @@ class RoleTest(TestCase):
 
             Expected result: The corresponding enum member is returned.
         """
-        role = Role()
+        role = Role('Administrator')
 
         # Choose a value that is high enough to be very unlikely to exist as a permission.
         role._permissions = (2 ** 64) + (2 ** 63)
@@ -248,7 +321,7 @@ class RoleTest(TestCase):
 
             Expected result: The empty permission is set.
         """
-        role = Role()
+        role = Role('Administrator')
         role._permissions = Permission.EditRole.value
         self.assertEqual(Permission.EditRole, role.permissions)
 
@@ -261,7 +334,7 @@ class RoleTest(TestCase):
 
             Expected result: The permission is set, overwriting previous values.
         """
-        role = Role()
+        role = Role('Administrator')
         role._permissions = Permission.EditRole.value
         self.assertEqual(Permission.EditRole, role.permissions)
 
@@ -274,7 +347,7 @@ class RoleTest(TestCase):
 
             Expected result: `False`.
         """
-        role = Role()
+        role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
 
@@ -289,7 +362,7 @@ class RoleTest(TestCase):
 
             Expected result: `True` when requesting this permission, `False` otherwise.
         """
-        role = Role()
+        role = Role('Administrator')
 
         role._permissions = Permission.EditRole.value
         self.assertTrue(role.has_permission(Permission.EditRole))
@@ -311,7 +384,7 @@ class RoleTest(TestCase):
 
             Expected result: `False`.
         """
-        role = Role()
+        role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
 
@@ -326,7 +399,7 @@ class RoleTest(TestCase):
 
             Expected result: `False`.
         """
-        role = Role()
+        role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
 
@@ -342,7 +415,7 @@ class RoleTest(TestCase):
 
             Expected result: `True` when requesting this permission, `False` otherwise.
         """
-        role = Role()
+        role = Role('Administrator')
 
         role._permissions = Permission.EditRole.value
         self.assertTrue(role.has_permissions_all(Permission.EditRole))
@@ -364,7 +437,7 @@ class RoleTest(TestCase):
 
             Expected result: `True` when requesting the set permissions.
         """
-        role = Role()
+        role = Role('Administrator')
 
         role._permissions = (Permission.EditRole | Permission.EditUser).value
         self.assertTrue(role.has_permissions_all(Permission.EditRole))
@@ -377,7 +450,7 @@ class RoleTest(TestCase):
 
             Expected result: `False`.
         """
-        role = Role()
+        role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
 
@@ -392,7 +465,7 @@ class RoleTest(TestCase):
 
             Expected result: `False`.
         """
-        role = Role()
+        role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
 
@@ -408,7 +481,7 @@ class RoleTest(TestCase):
 
             Expected result: `True` when requesting this permission, `False` otherwise.
         """
-        role = Role()
+        role = Role('Administrator')
 
         role._permissions = Permission.EditRole.value
         self.assertTrue(role.has_permissions_one_of(Permission.EditRole))
@@ -430,7 +503,7 @@ class RoleTest(TestCase):
 
             Expected result: `True` when requesting the set permissions.
         """
-        role = Role()
+        role = Role('Administrator')
 
         role._permissions = (Permission.EditRole | Permission.EditUser).value
         self.assertTrue(role.has_permissions_one_of(Permission.EditRole))
@@ -443,7 +516,7 @@ class RoleTest(TestCase):
 
             Expected result: The permission is added, existing ones are kept.
         """
-        role = Role()
+        role = Role('Administrator')
         role.permissions = Permission.EditRole
 
         role.add_permission(Permission.EditGlobalSettings)
@@ -455,7 +528,7 @@ class RoleTest(TestCase):
 
             Expected result: An error is raised.
         """
-        role = Role()
+        role = Role('Administrator')
         with self.assertRaises(ValueError) as exception_cm:
             # noinspection PyTypeChecker
             role.add_permission(None)
@@ -467,7 +540,7 @@ class RoleTest(TestCase):
 
             Expected result: Nothing is changed.
         """
-        role = Role()
+        role = Role('Administrator')
         permission = Permission.EditRole
         role.permissions = permission
 
@@ -482,7 +555,7 @@ class RoleTest(TestCase):
         """
 
         # No permission in the beginning.
-        role = Role()
+        role = Role('Administrator')
         self.assertEqual(Permission(0), role.permissions)
 
         # Add the first permission.
@@ -501,7 +574,7 @@ class RoleTest(TestCase):
         """
 
         # No permission in the beginning.
-        role = Role()
+        role = Role('Administrator')
         self.assertEqual(Permission(0), role.permissions)
 
         role.add_permissions(Permission.EditRole, Permission.EditUser)
@@ -513,7 +586,7 @@ class RoleTest(TestCase):
 
             Expected result: Nothing happens.
         """
-        role = Role()
+        role = Role('Administrator')
         permissions = Permission.EditRole | Permission.EditUser
         role.permissions = permissions
 
@@ -526,7 +599,7 @@ class RoleTest(TestCase):
 
             Expected result: The permission is removed, others are kept.
         """
-        role = Role()
+        role = Role('Administrator')
         role.add_permissions(Permission.EditGlobalSettings, Permission.EditRole, Permission.EditUser)
 
         role.remove_permission(Permission.EditRole)
@@ -539,7 +612,7 @@ class RoleTest(TestCase):
 
             Expected result: An error is raised.
         """
-        role = Role()
+        role = Role('Administrator')
         with self.assertRaises(ValueError) as exception_cm:
             # noinspection PyTypeChecker
             role.remove_permissions(None)
@@ -551,7 +624,7 @@ class RoleTest(TestCase):
 
             Expected result: Nothing is changed.
         """
-        role = Role()
+        role = Role('Administrator')
         permission = Permission.EditRole
         role.permissions = permission
 
@@ -566,7 +639,7 @@ class RoleTest(TestCase):
         """
 
         # All permissions in the beginning.
-        role = Role()
+        role = Role('Administrator')
         role.permissions = Permission.EditRole | Permission.EditUser
         self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditUser))
 
@@ -586,7 +659,7 @@ class RoleTest(TestCase):
         """
 
         # All permissions in the beginning.
-        role = Role()
+        role = Role('Administrator')
         full_permissions = Permission.EditRole | Permission.EditUser
         role.permissions = full_permissions
         self.assertTrue(role.has_permissions_all(Permission.EditRole))
@@ -602,7 +675,7 @@ class RoleTest(TestCase):
 
             Expected result: Nothing happens.
         """
-        role = Role()
+        role = Role('Administrator')
         permission_to_remove = Permission.EditRole
         permission = Permission.EditUser
         role.permissions = permission
@@ -908,7 +981,7 @@ class RoleTest(TestCase):
         db.session.add(role_4)
         db.session.commit()
 
-        base_query = Role.query.order_by(Role.name.desc())
+        base_query = Role.query.order_by(Role._name.desc())
 
         # Matching term.
         query = Role.get_search_query(query=base_query, search_term='A*')

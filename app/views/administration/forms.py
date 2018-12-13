@@ -208,7 +208,8 @@ class RoleDeleteForm(FlaskForm):
             choices = [(0, '')]
 
             # Add all but the current role.
-            all_roles = Role.query.filter(Role.id != role.id).order_by(Role.name).all()
+            # noinspection PyProtectedMember
+            all_roles = Role.query.filter(Role.id != role.id).order_by(Role._name).all()
             choices.extend([(r.id, r.name) for r in all_roles])
 
             self.new_role.choices = choices

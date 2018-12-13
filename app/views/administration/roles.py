@@ -41,7 +41,8 @@ def roles_list() -> str:
     # Get a search term and the resulting query. If no search term is given, all roles will by returned.
     search_form = SearchForm()
     role_query = Role.get_search_query(search_term=search_form.search_term)
-    pagination = RolePagination(role_query.order_by(Role.name))
+    # noinspection PyProtectedMember
+    pagination = RolePagination(role_query.order_by(Role._name))
 
     title = _('Roles')
     return render_template('administration/roles.html', title=title, pagination=pagination, search_form=search_form)
