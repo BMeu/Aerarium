@@ -25,6 +25,7 @@ from app.views.administration.forms import create_permission_form
 from app.views.administration.forms import PermissionForm
 from app.views.administration.forms import RoleDeleteForm
 from app.views.administration.forms import RoleHeaderDataForm
+from app.views.administration.forms import RoleNewForm
 from app.views.forms import SearchForm
 
 
@@ -44,6 +45,29 @@ def roles_list() -> str:
 
     title = _('Roles')
     return render_template('administration/roles.html', title=title, pagination=pagination, search_form=search_form)
+
+
+@bp.route('/role/new', methods=['GET', 'POST'])
+@login_required
+@permission_required(Permission.EditRole)
+def role_new() -> str:
+    """
+        Show a form to create a new role.
+
+        :return: The HTML response.
+    """
+
+    new_role_form = create_permission_form(RoleNewForm, Permission(0))
+    if new_role_form.validate_on_submit():
+        role = Role(name=new_role_form.name.data)
+        role.permissions = new_role_form.permissions
+        db.session.add(role)
+        db.session.commit()
+
+        flash(_('The new role has been created.'))
+        return redirect(url_for('.roles_list'))
+
+    return render_template('administration/role_new.html', new_role_form=new_role_form)
 
 
 @bp.route('/role/<string:name>', methods=['GET', 'POST'])

@@ -1,0 +1,16 @@
+{% extends '_base_standard.html' %}
+{% from 'macros/form.html' import render_form %}
+
+{% set title = _('Add a New Role') %}
+
+{% block content %}
+    <p>
+        <a href="{{ url_for('administration.roles_list') }}" title="{{ _('Go back to the list of all roles') }}">&laquo; {{ _('Back to Roles') }}</a>
+    </p>
+    <p>
+        {# TODO: Link to list of users. #}
+        {{ _('Create a new role by giving it a name and the permissions that users of this role may have. You can assign users by editing their profile.') }}
+    </p>
+
+    {{ render_form(new_role_form) }}
+{% endblock %}

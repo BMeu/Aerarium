@@ -47,6 +47,12 @@ class Role(db.Model):
         A list of :class:`users` which have this role.
     """
 
+    # TODO: Add a property for the name that checks for invalid names when assigning a name.
+    invalid_names: List[str] = ['new']
+    """
+        A list of names that may not be used for a role's name.
+    """
+
     # endregion
 
     # region Initialization

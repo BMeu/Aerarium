@@ -129,6 +129,117 @@ class RolesTest(TestCase):
         response = self.client.get(f'/administration/role/{non_existing_role}', follow_redirects=True)
         self.assertEqual(404, response.status_code)
 
+    def test_role_new_get(self):
+        """
+            Test showing the form to create a new role.
+
+            Expected result: The new-role page is shown.
+        """
+
+        role = Role(name='Administrator')
+        role.add_permission(Permission.EditRole)
+        db.session.add(role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = role
+        db.session.add(user)
+        db.session.commit()
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.get('/administration/role/new', follow_redirects=True)
+        data = response.get_data(as_text=True)
+
+        self.assertIn('Add a New Role', data)
+        self.assertNotIn('The new role has been created.', data)
+
+    def test_role_new_post_invalid_name(self):
+        """
+            Test creating a new role with an invalid name.
+
+            Expected result: The new-role page is shown and no role has been created.
+        """
+
+        role = Role(name='Administrator')
+        role.add_permission(Permission.EditRole)
+        db.session.add(role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = role
+        db.session.add(user)
+        db.session.commit()
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        name = Role.invalid_names[0]
+        response = self.client.post('/administration/role/new', follow_redirects=True, data=dict(
+            name=name
+        ))
+        data = response.get_data(as_text=True)
+
+        self.assertIn('Add a New Role', data)
+        self.assertNotIn('The new role has been created.', data)
+        self.assertIsNone(Role.load_from_name(name))
+
+    def test_role_new_post_success(self):
+        """
+            Test creating a new role.
+
+            Expected result: The list of roles is shown and the new role has been created.
+        """
+
+        role = Role(name='Administrator')
+        role.add_permission(Permission.EditRole)
+        db.session.add(role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = role
+        db.session.add(user)
+        db.session.commit()
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        name = 'Guest'
+        permissions = Permission.EditRole | Permission.EditGlobalSettings
+        response = self.client.post('/administration/role/new', follow_redirects=True, data=dict(
+            name=name,
+            editrole=True,
+            editglobalsettings=True
+        ))
+        data = response.get_data(as_text=True)
+
+        self.assertIn('Roles', data)
+        self.assertNotIn('Add a New Role', data)
+        self.assertIn('The new role has been created.', data)
+
+        role = Role.load_from_name(name)
+        self.assertIsNotNone(role)
+        self.assertEqual(permissions, role.permissions)
+
     def test_role_header_get_existing_role(self):
         """
             Test showing the edit form for an existing role.

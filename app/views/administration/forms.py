@@ -16,6 +16,7 @@ from wtforms import SelectField
 from wtforms import StringField
 from wtforms import SubmitField
 from wtforms import ValidationError
+from wtforms.validators import NoneOf
 from wtforms.validators import DataRequired
 from wtforms.validators import Length
 
@@ -218,8 +219,23 @@ class RoleHeaderDataForm(FlaskForm):
         A form to edit a role's header data.
     """
 
-    name = StringField(_l('Name:'), validators=[DataRequired(), Length(max=255), UniqueRoleName()])
+    name = StringField(_l('Name:'),
+                       validators=[DataRequired(), Length(max=255), NoneOf(Role.invalid_names), UniqueRoleName()],
+                       description=_l('The name must be unique: different roles cannot have the same name.'))
     submit = SubmitField(_l('Save'))
+
+
+class RoleNewForm(RoleHeaderDataForm, PermissionForm):
+    """
+        A form to add a new role.
+
+        This form automatically inherits the header data fields and the permission functionality from its two base
+        classes to avoid redundancies.
+    """
+
+    permission_fields_after = 'name'
+
+    submit = SubmitField(_l('Create'))
 
 # endregion
 
