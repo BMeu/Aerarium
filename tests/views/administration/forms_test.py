@@ -390,7 +390,7 @@ class PermissionFormFactoryTest(TestCase):
             Test that the fields for the permissions are correctly added.
 
             Expected result: For each permission, a field is added and correctly preset. The permissions field
-                             dictionary is filled.
+                             dictionary is filled. Permissions given as disabled result in their fields being disabled.
         """
 
         class PermissionTestForm(BasePermissionForm):
@@ -399,7 +399,8 @@ class PermissionFormFactoryTest(TestCase):
             """
             pass
 
-        form = create_permission_form(PermissionTestForm, self.permissions)
+        disabled_permissions = Permission.EditRole
+        form = create_permission_form(PermissionTestForm, self.permissions, disabled_permissions=disabled_permissions)
 
         self.assertIsNotNone(form)
         self.assertTrue(isinstance(form, PermissionTestForm))
@@ -424,6 +425,14 @@ class PermissionFormFactoryTest(TestCase):
                 self.assertTrue(field.default, msg=f'Field for permission {permission} not preselected')
             else:
                 self.assertFalse(field.default, msg=f'Field for permission {permission} incorrectly preselected')
+
+            # The field is disabled if the permission is given as a disabled permission.
+            if permission & disabled_permissions == permission:
+                self.assertTrue(field.render_kw.get('disabled', False),
+                                msg=f'Field for permission {permission} is not disabled')
+            else:
+                self.assertFalse(field.render_kw.get('disabled', False),
+                                 msg=f'Field for permission {permission} is incorrectly disabled')
 
             # The field to permission relation is remembered in the dictionary.
             self.assertEqual(permission, form.permission_fields.get(field_name, None))

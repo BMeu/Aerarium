@@ -162,11 +162,19 @@ class Role(db.Model):
 
             This will overwrite all existing permissions.
 
+            If this role is only one allowed to edit roles, but the new permissions do not include the permission to
+            edit roles,
+
             :param permission: An enum member of :class:`Permission` representing the role`s new permissions (may be a
                           combination of multiple enum members).
         """
         if permission is None:
             permission = Permission(0)
+
+        # If the permission to edit roles is not included in the new permissions, but this is the only role allowed to
+        # edit roles, re-add the permission to avoid a situation where no one can edit roles anymore.
+        if permission & Permission.EditRole != Permission.EditRole and self.is_only_role_allowed_to_edit_roles():
+            permission |= Permission.EditRole
 
         self._permissions = permission.value
 

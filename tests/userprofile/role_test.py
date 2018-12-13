@@ -341,6 +341,45 @@ class RoleTest(TestCase):
         role.permissions = Permission.EditUser
         self.assertEqual(Permission.EditUser.value, role._permissions)
 
+    def test_permissions_set_permission_no_edit_role_only_role(self):
+        """
+            Test setting permissions with giving permissions that do not include the permission to edit roles if this
+            is the only role allowed to edit roles.
+
+            Expected result: The permission to edit roles is set automatically.
+        """
+        role = Role('Administrator')
+        role.permissions = Permission.EditRole
+        db.session.add(role)
+        db.session.commit()
+
+        self.assertTrue(role.is_only_role_allowed_to_edit_roles())
+
+        role.permissions = Permission.EditUser
+        self.assertEqual(Permission.EditUser | Permission.EditRole, role.permissions)
+
+    def test_permissions_set_permission_no_edit_role_other_roles(self):
+        """
+            Test setting permissions with giving permissions that do not include the permission to edit roles if there
+            are also other roles allowed to edit roles.
+
+            Expected result: The permission to edit roles is not set.
+        """
+        other_role = Role('Guest')
+        other_role.permissions = Permission.EditRole
+        db.session.add(other_role)
+
+        role = Role('Administrator')
+        role.permissions = Permission.EditRole
+        db.session.add(role)
+        db.session.commit()
+
+        self.assertFalse(role.is_only_role_allowed_to_edit_roles())
+
+        new_permissions = Permission.EditUser
+        role.permissions = new_permissions
+        self.assertEqual(new_permissions, role.permissions)
+
     def test_has_permission_no_permissions(self):
         """
             Test the has_permission() method if a role does not have any permissions.

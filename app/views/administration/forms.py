@@ -243,13 +243,14 @@ class RoleNewForm(RoleHeaderDataForm, PermissionForm):
 # region Factories
 
 
-def create_permission_form(form_class: Type[BasePermissionForm], preset_permissions: Permission, *args, **kwargs)\
-        -> BasePermissionForm:
+def create_permission_form(form_class: Type[BasePermissionForm], preset_permissions: Permission, *args,
+                           disabled_permissions: Optional[Permission] = None, **kwargs) -> BasePermissionForm:
     """
         Create a form object of the given class with fields to (un-)set permissions.
 
         :param form_class: The _class_ of the form of which the object will be created.
         :param preset_permissions: The permissions whose fields will be preselected.
+        :param disabled_permissions: The permissions whose state cannot be changed.
         :param args: Further arguments that will be passed into the form constructor.
         :param kwargs: Further keyword arguments that will be passed into the form constructor.
         :return: An object of the given form class, extended with the fields for setting permissions.
@@ -267,6 +268,9 @@ def create_permission_form(form_class: Type[BasePermissionForm], preset_permissi
     if not issubclass(form_class, BasePermissionForm):
         raise ValueError('The form does not inherit from BasePermissionForm')
 
+    if not disabled_permissions:
+        disabled_permissions = Permission(0)
+
     # Insert the permission fields.
     # noinspection PyTypeChecker
     permissions = list(Permission)
@@ -277,9 +281,15 @@ def create_permission_form(form_class: Type[BasePermissionForm], preset_permissi
         if permission & preset_permissions == permission:
             default = True
 
+        # Disable the field if necessary.
+        disabled = False
+        if permission & disabled_permissions == permission:
+            disabled = True
+
         # Create the field.
         field_name = permission.name.lower()
-        field = BooleanField(permission.title, description=permission.description, default=default)
+        field = BooleanField(permission.title, description=permission.description, default=default,
+                             render_kw={'disabled': disabled})
 
         # Add the field to the form and remember which permission it belongs to.
         setattr(ExtendedPermissionForm, field_name, field)

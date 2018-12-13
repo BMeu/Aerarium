@@ -111,7 +111,12 @@ def role_permissions(name: str) -> str:
     if role is None:
         abort(404)
 
-    permission_form = create_permission_form(PermissionForm, role.permissions)
+    disabled_permissions = None
+    if role.is_only_role_allowed_to_edit_roles():
+        disabled_permissions = Permission.EditRole
+
+    permission_form = create_permission_form(PermissionForm, role.permissions,
+                                             disabled_permissions=disabled_permissions)
     if permission_form.validate_on_submit():
         role.permissions = permission_form.permissions
         db.session.commit()

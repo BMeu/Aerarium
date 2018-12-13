@@ -22,7 +22,9 @@ class Permission(Flag):
         represented as an integer using bitwise operations.
     """
 
-    EditRole = (1, _l('Edit Roles'), _l('The permission to create, read, update, or delete a role.'))
+    EditRole = (1, _l('Edit Roles'), _l('The permission to create, read, update, or delete a role. '
+                                        'This permission cannot be removed from a role if the role is the only one '
+                                        'allowed to edit roles.'))
     """
         The permission to create, read, update, or delete a role.
     """

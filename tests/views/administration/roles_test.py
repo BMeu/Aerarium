@@ -442,10 +442,63 @@ class RolesTest(TestCase):
             Expected result: The new permissions are set on the role.
         """
 
+        other_role_name = 'Administrator'
+        other_role = Role(name=other_role_name)
+        other_role.add_permission(Permission.EditRole)
+        db.session.add(other_role)
+
+        role_name = 'Moderator'
+        role = Role(name=role_name)
+        role.add_permission(Permission.EditRole)
+        db.session.add(role)
+
+        # Add a user with permissions to view this page.
+        name = 'Jane Doe'
+        email = 'test@example.com'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = other_role
+        db.session.add(user)
+        db.session.commit()
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        new_permissions = Permission.EditRole | Permission.EditGlobalSettings
+        response = self.client.post(f'/administration/role/{role_name}/permissions', follow_redirects=True, data=dict(
+            editglobalsettings=True,
+            editrole=True,
+            edituser=None,
+        ))
+        data = response.get_data(as_text=True)
+
+        role = Role.load_from_name(role_name)
+        self.assertEqual(new_permissions, role.permissions)
+        self.assertIn('<h1>Edit Role “', data)
+        self.assertIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
+        # The apostrophe is escaped...
+        self.assertIn('The role&#39;s permissions have been updated.', data)
+        self.assertNotIn(f'View the users who have this role assigned to them', data)
+        self.assertNotIn(f'Permanently delete this role', data)
+        self.assertNotIn(f'Edit the role\'s header data', data)
+
+    def test_role_permissions_post_only_role_to_edit_roles(self):
+        """
+            Test updating the permissions of a role that is the only role allowed to edit roles. Unset the permission
+            to edit roles.
+
+            Expected result: The new permissions are set on the role, but the role keeps the permission to edit roles.
+        """
+
         role_name = 'Administrator'
         role = Role(name=role_name)
         role.add_permission(Permission.EditRole)
         db.session.add(role)
+
+        self.assertTrue(role.is_only_role_allowed_to_edit_roles())
 
         # Add a user with permissions to view this page.
         name = 'Jane Doe'
@@ -465,7 +518,7 @@ class RolesTest(TestCase):
         new_permissions = Permission.EditRole | Permission.EditGlobalSettings
         response = self.client.post(f'/administration/role/{role_name}/permissions', follow_redirects=True, data=dict(
             editglobalsettings=True,
-            editrole=True,
+            editrole=False,
             edituser=None,
         ))
         data = response.get_data(as_text=True)
