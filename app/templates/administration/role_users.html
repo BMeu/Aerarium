@@ -19,7 +19,7 @@
                 {# Only show the reset button if the user has searched for something. #}
                 {% set reset_url=url_for('administration.role_users', name=role) %}
             {% endif %}
-            {{ render_search_form(search_form, reset_url=reset_url, placeholder=_('Search users...')) }}
+            {{ render_search_form(search_form, reset_url=reset_url, placeholder=_('Search assigned users...')) }}
         </li>
     {% for user in pagination.rows %}
         <li class="list-group-item list-group-item-action">
