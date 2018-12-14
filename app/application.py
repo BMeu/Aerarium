@@ -165,6 +165,9 @@ def _initialize_extensions(application: Flask) -> None:
     login.login_message = _l('Please log in to access this page.')
     login.login_message_category = 'error'
     login.login_view = 'userprofile.login'
+    login.needs_refresh_message = _l('To protect your profile, please confirm your login.')
+    login.needs_refresh_message_category = 'warning'
+    login.refresh_view = 'userprofile.login_refresh'
 
     mail.init_app(application)
 

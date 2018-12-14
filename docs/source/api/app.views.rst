@@ -21,6 +21,14 @@ app.views.forms module
     :undoc-members:
     :show-inheritance:
 
+app.views.tools module
+----------------------
+
+.. automodule:: app.views.tools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

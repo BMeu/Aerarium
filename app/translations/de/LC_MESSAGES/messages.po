@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2018-12-13 17:01+0100\n"
-"PO-Revision-Date: 2018-12-13 17:03+0100\n"
+"POT-Creation-Date: 2018-12-14 06:47+0100\n"
+"PO-Revision-Date: 2018-12-14 06:47+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -22,6 +22,10 @@ msgstr ""
 #: app/application.py:165
 msgid "Please log in to access this page."
 msgstr "Bitte melde Dich an, um diese Seite öffnen zu können."
+
+#: app/application.py:168
+msgid "To protect your profile, please confirm your login."
+msgstr "Bitte bestätige zur Sicherheit Deines Profils Dein Passwort."
 
 #: app/pagination.py:117
 #, python-format
@@ -322,7 +326,7 @@ msgid "Search..."
 msgstr "Suchen..."
 
 #: app/templates/macros/search_form.html:24
-#: app/templates/macros/search_form.html:26 app/views/userprofile/forms.py:151
+#: app/templates/macros/search_form.html:26 app/views/userprofile/forms.py:160
 msgid "Reset"
 msgstr "Zurücksetzen"
 
@@ -481,7 +485,7 @@ msgstr ""
 "Passwort zurückzusetzen:"
 
 #: app/templates/userprofile/emails/reset_password_request.html:7
-#: app/userprofile/user.py:313 app/views/userprofile/password_reset.py:78
+#: app/userprofile/user.py:333 app/views/userprofile/password_reset.py:78
 msgid "Reset Your Password"
 msgstr "Passwort zurücksetzen"
 
@@ -556,27 +560,27 @@ msgstr "Zeige Rolle %(result)d von %(total_results)d"
 msgid "No roles"
 msgstr "Keine Rollen"
 
-#: app/userprofile/user.py:207
+#: app/userprofile/user.py:227
 msgid "Your Email Address Has Been Changed"
 msgstr "Deine E-Mail-Adresse wurde geändert"
 
-#: app/userprofile/user.py:233
+#: app/userprofile/user.py:253
 msgid "Change Your Email Address"
 msgstr "E-Mail-Adresse ändern"
 
-#: app/userprofile/user.py:277
+#: app/userprofile/user.py:297
 msgid "Your Password Has Been Changed"
 msgstr "Dein Passwort wurde geändert"
 
-#: app/userprofile/user.py:349
+#: app/userprofile/user.py:369
 msgid "Delete Your User Profile"
 msgstr "Benutzerprofil löschen"
 
-#: app/userprofile/user.py:380
+#: app/userprofile/user.py:400
 msgid "Your User Profile Has Been Deleted"
 msgstr "Dein Benutzerprofil wurde gelöscht"
 
-#: app/userprofile/user.py:507
+#: app/userprofile/user.py:527
 #, python-format
 msgid ""
 "Displaying users %(first_result)d to %(last_result)d of %(total_results)d "
@@ -585,27 +589,27 @@ msgstr ""
 "Zeige Benutzer %(first_result)d bis %(last_result)d von %(total_results)d für "
 "„%(search)s“"
 
-#: app/userprofile/user.py:514
+#: app/userprofile/user.py:534
 #, python-format
 msgid "Displaying user %(result)d of %(total_results)d matching “%(search)s”"
 msgstr "Zeige Benutzer %(result)d von %(total_results)d für „%(search)s“"
 
-#: app/userprofile/user.py:518
+#: app/userprofile/user.py:538
 #, python-format
 msgid "No users found matching “%(search)s”"
 msgstr "Keine Benutzer für „%(search)s“"
 
-#: app/userprofile/user.py:524
+#: app/userprofile/user.py:544
 #, python-format
 msgid "Displaying users %(first_result)d to %(last_result)d of %(total_results)d"
 msgstr "Zeige Benutzer %(first_result)d bis %(last_result)d von %(total_results)d"
 
-#: app/userprofile/user.py:529
+#: app/userprofile/user.py:549
 #, python-format
 msgid "Displaying user %(result)d of %(total_results)d"
 msgstr "Zeige Benutzer %(result)d von %(total_results)d"
 
-#: app/userprofile/user.py:533
+#: app/userprofile/user.py:553
 msgid "No users"
 msgstr "Keine Benutzer"
 
@@ -618,7 +622,7 @@ msgid "The role name already is in use."
 msgstr "Der Rollenname wird bereits verwendet."
 
 #: app/views/administration/forms.py:178 app/views/administration/forms.py:226
-#: app/views/userprofile/forms.py:122 app/views/userprofile/forms.py:131
+#: app/views/userprofile/forms.py:131 app/views/userprofile/forms.py:140
 msgid "Save"
 msgstr "Speichern"
 
@@ -630,7 +634,7 @@ msgstr "Neue Rolle:"
 msgid "Choose a new role for users to whom this role is assigned."
 msgstr "Wähle eine neue Rolle für die Benutzer, denen diese Rolle zugewiesen ist."
 
-#: app/views/administration/forms.py:223 app/views/userprofile/forms.py:115
+#: app/views/administration/forms.py:223 app/views/userprofile/forms.py:124
 msgid "Name:"
 msgstr "Name:"
 
@@ -736,20 +740,30 @@ msgstr ""
 "Bitte versuche es später erneut. Der Administrator wurde hierüber "
 "benachrichtigt."
 
-#: app/views/userprofile/authentication.py:39
+#: app/views/userprofile/authentication.py:41
+#: app/views/userprofile/authentication.py:64
 #, python-format
 msgid "Welcome, %(name)s!"
 msgstr "Willkommen, %(name)s!"
 
-#: app/views/userprofile/authentication.py:49
+#: app/views/userprofile/authentication.py:47
 msgid "Invalid email address or password."
 msgstr "Ungültige E-Mail-Adresse oder ungültiges Passwort."
 
-#: app/views/userprofile/authentication.py:51 app/views/userprofile/forms.py:97
+#: app/views/userprofile/authentication.py:49 app/views/userprofile/forms.py:97
+#: app/views/userprofile/forms.py:106
 msgid "Log In"
 msgstr "Anmelden"
 
-#: app/views/userprofile/authentication.py:64
+#: app/views/userprofile/authentication.py:69
+msgid "Invalid password."
+msgstr "Ungültiges Passwort."
+
+#: app/views/userprofile/authentication.py:71
+msgid "Confirm Login"
+msgstr "Anmeldung bestätigen"
+
+#: app/views/userprofile/authentication.py:84
 msgid "You were successfully logged out."
 msgstr "Du wurdest erfolgreich abgemeldet."
 
@@ -781,7 +795,7 @@ msgid "Delete your user profile and all data linked to it."
 msgstr "Lösche Dein Benutzerprofil und alle damit verbundenen Daten."
 
 #: app/views/userprofile/forms.py:85 app/views/userprofile/forms.py:94
-#: app/views/userprofile/forms.py:116
+#: app/views/userprofile/forms.py:125
 msgid "Email:"
 msgstr "E-Mail:"
 
@@ -789,7 +803,7 @@ msgstr "E-Mail:"
 msgid "Submit"
 msgstr "Abschicken"
 
-#: app/views/userprofile/forms.py:95
+#: app/views/userprofile/forms.py:95 app/views/userprofile/forms.py:105
 msgid "Password:"
 msgstr "Passwort:"
 
@@ -797,19 +811,19 @@ msgstr "Passwort:"
 msgid "Remember Me"
 msgstr "Angemeldet bleiben"
 
-#: app/views/userprofile/forms.py:105 app/views/userprofile/forms.py:119
+#: app/views/userprofile/forms.py:114 app/views/userprofile/forms.py:128
 msgid "New Password:"
 msgstr "Neues Passwort:"
 
-#: app/views/userprofile/forms.py:106 app/views/userprofile/forms.py:121
+#: app/views/userprofile/forms.py:115 app/views/userprofile/forms.py:130
 msgid "Confirm Your New Password:"
 msgstr "Bitte bestätige Dein neues Passwort:"
 
-#: app/views/userprofile/forms.py:108
+#: app/views/userprofile/forms.py:117
 msgid "Change Password"
 msgstr "Passwort ändern"
 
-#: app/views/userprofile/forms.py:117
+#: app/views/userprofile/forms.py:126
 msgid ""
 "We will send you an email to your new address with a link to confirm "
 "the                                         changes. The email address will not "
@@ -819,19 +833,19 @@ msgstr ""
 "die neue Adresse schicken. Die E-Mail-Adresse wird erst aktualisiert, sobald Du "
 "diese Aktion bestätigst."
 
-#: app/views/userprofile/forms.py:120
+#: app/views/userprofile/forms.py:129
 msgid "Leave this field empty if you do not want to change your password."
 msgstr "Lasse dieses Feld leer, um Dein Passwort nicht zu ändern."
 
-#: app/views/userprofile/forms.py:129
+#: app/views/userprofile/forms.py:138
 msgid "Language:"
 msgstr "Sprache:"
 
-#: app/views/userprofile/forms.py:130
+#: app/views/userprofile/forms.py:139
 msgid "The language in which you want to use the application."
 msgstr "Die Sprache, in der Du die Anwendung benutzen möchtest."
 
-#: app/views/userprofile/forms.py:152
+#: app/views/userprofile/forms.py:161
 msgid "Reset these settings to their default values."
 msgstr "Setze Deine Einstellungen auf die Standardwerte zurück."
 

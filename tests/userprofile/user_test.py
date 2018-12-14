@@ -317,6 +317,59 @@ class UserTest(TestCase):
         self.assertNotEqual(current_user.get_id(), user_id)
         self.assertFalse(current_user.is_authenticated)
 
+    def test_refresh_login_no_user(self):
+        """
+            Test refreshing the login if no user is logged in.
+
+            Expected result: Nothing happens.
+        """
+        password = '123456'
+        user = User.refresh_login(password)
+
+        self.assertIsNone(user)
+
+    def test_refresh_login_wrong_password(self):
+        """
+            Test refreshing the login with a wrong password.
+
+            Expected result: The user is not logged in.
+        """
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        user = User.refresh_login('invalid' + password)
+        self.assertIsNone(user)
+
+    def test_refresh_login_success(self):
+        """
+            Test refreshing the login with a wrong password.
+
+            Expected result: The user is not logged in.
+        """
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        user_id = user.id
+        user.login(email, password)
+
+        user = User.refresh_login(password)
+        self.assertIsNotNone(user)
+        self.assertEqual(user_id, user.id)
+
     def test_logout(self):
         """
             Test logging out a user.

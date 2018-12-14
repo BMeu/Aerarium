@@ -8,16 +8,18 @@
 from flask import flash
 from flask import redirect
 from flask import render_template
-from flask import request
 from flask import url_for
 from flask_babel import gettext as _
 from flask_login import current_user
-from werkzeug.urls import url_parse
+from flask_login import login_required
+from flask_login import login_fresh
 
 from app.userprofile import logout_required
 from app.userprofile import User
+from app.views.tools import get_next_page
 from app.views.userprofile import bp
 from app.views.userprofile.forms import LoginForm
+from app.views.userprofile.forms import LoginRefreshForm
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -38,17 +40,40 @@ def login() -> str:
             # Login succeeded.
             flash(_('Welcome, %(name)s!', name=user.name))
 
-            # Redirect to the next page if given (and if the next page is a valid URL). Otherwise, redirect to home.
-            next_page = request.args.get('next')
-            if not next_page or url_parse(next_page).netloc != '':
-                next_page = url_for('main.index')
-
+            next_page = get_next_page()
             return redirect(next_page)
 
         # Login failed. Just show the login form again.
         flash(_('Invalid email address or password.'), 'error')
 
     return render_template('userprofile/login.html', title=_('Log In'), form=form)
+
+
+@bp.route('/login/refresh', methods=['GET', 'POST'])
+@login_required
+def login_refresh() -> str:
+    """
+        Show a form to refresh a user's login after their login has become stale.
+
+        :return: The HTML response.
+    """
+
+    if login_fresh():
+        return redirect(url_for('main.index'))
+
+    form = LoginRefreshForm()
+    if form.validate_on_submit():
+        user = User.refresh_login(form.password.data)
+        if user:
+            # Login refresh succeeded.
+            flash(_('Welcome, %(name)s!', name=user.name))
+
+            next_page = get_next_page()
+            return redirect(next_page)
+
+        flash(_('Invalid password.'), 'error')
+
+    return render_template('userprofile/login.html', title=_('Confirm Login'), form=form)
 
 
 @bp.route('/logout')

@@ -97,6 +97,15 @@ class LoginForm(FlaskForm):
     submit = SubmitField(_l('Log In'))
 
 
+class LoginRefreshForm(FlaskForm):
+    """
+        A form to refresh a stale login.
+    """
+
+    password = PasswordField(_l('Password:'), validators=[DataRequired()])
+    submit = SubmitField(_l('Log In'))
+
+
 class PasswordResetForm(FlaskForm):
     """
         A form for resetting a user's password.

@@ -6,6 +6,7 @@ from typing import Tuple
 
 from flask import url_for
 from flask_babel import gettext as _
+from flask_login import confirm_login
 from flask_login import current_user
 from flask_login import login_user
 from flask_login import logout_user
@@ -155,6 +156,26 @@ class User(UserMixin, db.Model):
         if not logged_in:
             return None
 
+        return user
+
+    @staticmethod
+    def refresh_login(password: str) -> Optional['User']:
+        """
+            Try to refresh the current user's login.
+
+            :param password: The user's (plaintext) password.
+            :return: The user if the password is valid for the given user; `None` otherwise.
+        """
+
+        user_id = current_user.get_id()
+        if user_id is None:
+            return None
+
+        user = User.load_from_id(user_id)
+        if not user.check_password(password):
+            return None
+
+        confirm_login()
         return user
 
     @staticmethod

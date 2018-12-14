@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
+from unittest.mock import MagicMock
+from unittest.mock import patch
 
 from app import create_app
 from app import db
@@ -154,6 +156,138 @@ class AuthenticationTest(TestCase):
         self.assertIn('<h1>Log In</h1>', data)
         self.assertIn('Invalid email address or password.', data)
         self.assertNotIn('<h1>Dashboard</h1>', data)
+
+    # endregion
+
+    # region Refresh Login
+
+    def test_login_refresh_get_fresh(self):
+        """
+            Test accessing the login refresh page with an freshly authorized user.
+
+            Expected result: The user is redirected to the home page.
+        """
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+        self.assertEqual(user_id, user.id)
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.get('/user/login/refresh', follow_redirects=True)
+        data = response.get_data(as_text=True)
+
+        self.assertNotIn('<h1>Confirm Login</h1>', data)
+        self.assertIn('<h1>Dashboard</h1>', data)
+
+    @patch('app.views.userprofile.authentication.login_fresh')
+    def test_login_refresh_get_stale(self, mock_login_fresh: MagicMock):
+        """
+            Test accessing the login refresh page with a stale login.
+
+            Expected result: The refresh login page is shown.
+        """
+        mock_login_fresh.return_value = False
+
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+        self.assertEqual(user_id, user.id)
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.get('/user/login/refresh', follow_redirects=True)
+        data = response.get_data(as_text=True)
+
+        self.assertIn('<h1>Confirm Login</h1>', data)
+        self.assertNotIn('<h1>Dashboard</h1>', data)
+
+    @patch('app.views.userprofile.authentication.login_fresh')
+    def test_login_refresh_post_invalid_password(self, mock_login_fresh: MagicMock):
+        """
+            Test refreshing the login with an invalid password.
+
+            Expected result: The refresh login page is shown, the login is not refreshed.
+        """
+        mock_login_fresh.return_value = False
+
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+        self.assertEqual(user_id, user.id)
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.post('/user/login/refresh', follow_redirects=True, data=dict(
+            password='invalid' + password
+        ))
+        data = response.get_data(as_text=True)
+
+        self.assertIn('<h1>Confirm Login</h1>', data)
+        self.assertIn('Invalid password', data)
+        self.assertNotIn('<h1>Dashboard</h1>', data)
+
+    @patch('app.views.userprofile.authentication.login_fresh')
+    def test_login_refresh_post_valid_password(self, mock_login_fresh: MagicMock):
+        """
+            Test refreshing the login with a valid password.
+
+            Expected result: The refresh home page is shown, the login is refreshed.
+        """
+        mock_login_fresh.return_value = False
+
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+        self.assertEqual(user_id, user.id)
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        response = self.client.post('/user/login/refresh', follow_redirects=True, data=dict(
+            password=password
+        ))
+        data = response.get_data(as_text=True)
+
+        self.assertNotIn('<h1>Confirm Login</h1>', data)
+        self.assertNotIn('Invalid password', data)
+        self.assertIn(f'Welcome, {name}!', data)
+        self.assertIn('<h1>Dashboard</h1>', data)
 
     # endregion
 
