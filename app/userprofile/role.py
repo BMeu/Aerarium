@@ -223,63 +223,6 @@ class Role(db.Model):
 
         return has_permission
 
-    def add_permission(self, permission: Permission) -> None:
-        """
-            Add the given permission to the role.
-
-            Existing permissions will be kept.
-
-            Alias of :meth:`add_permissions` wil only a single permission.
-
-            :param permission: The permission that will be added to the role
-        """
-        self.add_permissions(permission)
-
-    def add_permissions(self, *permissions: Permission) -> None:
-        """
-            Add the given permissions to this role.
-
-            Existing permissions will be kept.
-
-            :param permissions: The permissions that will be added to the role.
-        """
-        # The permissions attribute is a property. For some reason, PyCharm complains about its being defined outside
-        # the init() method.
-        # noinspection PyAttributeOutsideInit
-        self.permissions = Permission.bitwise_or(self.permissions, *permissions)
-
-    def remove_permission(self, permission: Permission) -> None:
-        """
-            Remove a permission from this role.
-
-            Other permissions will be kept.
-
-            Alias of :meth:`remove_permissions` with only a single permission.
-
-            :param permission: The :class:`Permission` that will be removed from the role.
-        """
-        self.remove_permissions(permission)
-
-    def remove_permissions(self, *permissions: Permission) -> None:
-        """
-            Remove the permissions from this role.
-
-            Other permissions will be kept.
-
-            :param permissions: The permissions that will be removed from the role.
-        """
-
-        # For each of the given permissions, we have to check if it actually is set on the role. If a permission is not
-        # set, the bitwise XOR ^ would add it. Thus, Permission.bitwise_xor() cannot be used here.
-        for permission in permissions:
-            if permission is None:
-                raise ValueError('None is not a valid permission')
-
-            if not self.has_permission(permission):
-                continue
-
-            self.permissions ^= permission
-
     def is_only_role_allowed_to_edit_roles(self) -> bool:
         """
             Determine if this role is the only one allowed to edit roles.

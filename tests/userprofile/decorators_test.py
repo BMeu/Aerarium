@@ -142,7 +142,7 @@ class DecoratorsTest(TestCase):
         user.login(email, password)
 
         permission = Permission.EditRole
-        user.role.add_permission(permission)
+        user.role.permissions = permission
 
         self.assertTrue(user.role.has_permission(permission))
 
@@ -163,7 +163,7 @@ class DecoratorsTest(TestCase):
         user = User(email, name)
         user.set_password(password)
         user.role = Role('Administrator')
-        user.role.add_permissions(Permission.EditRole)
+        user.role.permissions = Permission.EditRole
 
         db.session.add(user)
         db.session.commit()
@@ -189,7 +189,7 @@ class DecoratorsTest(TestCase):
         user = User(email, name)
         user.set_password(password)
         user.role = Role('Administrator')
-        user.role.add_permissions(Permission.EditRole, Permission.EditUser)
+        user.role.permissions = Permission.EditRole | Permission.EditUser
 
         db.session.add(user)
         db.session.commit()
@@ -239,7 +239,7 @@ class DecoratorsTest(TestCase):
         user = User(email, name)
         user.set_password(password)
         user.role = Role('Administrator')
-        user.role.add_permission(Permission.EditRole)
+        user.role.permissions = Permission.EditRole
 
         db.session.add(user)
         db.session.commit()

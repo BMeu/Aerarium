@@ -105,7 +105,7 @@ class RolesTest(TestCase):
         """
 
         role = Role(name='Administrator')
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -137,7 +137,7 @@ class RolesTest(TestCase):
         """
 
         role = Role(name='Administrator')
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -169,7 +169,7 @@ class RolesTest(TestCase):
         """
 
         role = Role(name='Administrator')
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -205,7 +205,7 @@ class RolesTest(TestCase):
         """
 
         role = Role(name='Administrator')
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -249,7 +249,7 @@ class RolesTest(TestCase):
 
         role_name = 'Administrator'
         role = Role(name=role_name)
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -289,7 +289,7 @@ class RolesTest(TestCase):
 
         role_name = 'Administrator'
         role = Role(name=role_name)
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -332,7 +332,7 @@ class RolesTest(TestCase):
 
         role_name = 'Administrator'
         role = Role(name=role_name)
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -375,7 +375,7 @@ class RolesTest(TestCase):
         """
 
         role = Role(name='Administrator')
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -408,7 +408,7 @@ class RolesTest(TestCase):
 
         role_name = 'Administrator'
         role = Role(name=role_name)
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -444,12 +444,12 @@ class RolesTest(TestCase):
 
         other_role_name = 'Administrator'
         other_role = Role(name=other_role_name)
-        other_role.add_permission(Permission.EditRole)
+        other_role.permissions = Permission.EditRole
         db.session.add(other_role)
 
         role_name = 'Moderator'
         role = Role(name=role_name)
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -495,7 +495,7 @@ class RolesTest(TestCase):
 
         role_name = 'Administrator'
         role = Role(name=role_name)
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         self.assertTrue(role.is_only_role_allowed_to_edit_roles())
@@ -541,7 +541,7 @@ class RolesTest(TestCase):
         """
 
         role = Role(name='Administrator')
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -574,7 +574,7 @@ class RolesTest(TestCase):
 
         role_name = 'Administrator'
         role = Role(name=role_name)
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -610,7 +610,7 @@ class RolesTest(TestCase):
         """
 
         role = Role(name='Administrator')
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -643,7 +643,7 @@ class RolesTest(TestCase):
 
         role_name = 'Administrator'
         role = Role(name=role_name)
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -686,7 +686,7 @@ class RolesTest(TestCase):
 
         other_role_name = 'Administrator'
         other_role = Role(name=other_role_name)
-        other_role.add_permission(Permission.EditRole)
+        other_role.permissions = Permission.EditRole
         db.session.add(other_role)
 
         # Add a user with permissions to view this page.
@@ -735,7 +735,7 @@ class RolesTest(TestCase):
 
         other_role_name = 'Administrator'
         other_role = Role(name=other_role_name)
-        other_role.add_permission(Permission.EditRole)
+        other_role.permissions = Permission.EditRole
         db.session.add(other_role)
 
         # Add a user with permissions to view this page.
@@ -782,7 +782,7 @@ class RolesTest(TestCase):
 
         role_name = 'Administrator'
         role = Role(name=role_name)
-        role.add_permission(Permission.EditRole)
+        role.permissions = Permission.EditRole
         db.session.add(role)
 
         # Add a user with permissions to view this page.
@@ -827,7 +827,7 @@ class RolesTest(TestCase):
 
         other_role_name = 'Administrator'
         other_role = Role(name=other_role_name)
-        other_role.add_permission(Permission.EditRole)
+        other_role.permissions = Permission.EditRole
         db.session.add(other_role)
 
         # Add a user with permissions to view this page.

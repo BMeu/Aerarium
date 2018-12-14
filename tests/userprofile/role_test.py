@@ -175,15 +175,15 @@ class RoleTest(TestCase):
         other_permission = Permission.EditUser
 
         role_without_permission = Role(name='No Permission')
-        role_without_permission.add_permission(other_permission)
+        role_without_permission.permissions = other_permission
         db.session.add(role_without_permission)
 
         role_with_permission = Role(name='With Permission')
-        role_with_permission.add_permission(requested_permission)
+        role_with_permission.permissions = requested_permission
         db.session.add(role_with_permission)
 
         role_with_permissions = Role(name='With Permissions')
-        role_with_permissions.add_permissions(requested_permission, other_permission)
+        role_with_permissions.permissions = requested_permission | other_permission
         db.session.add(role_with_permissions)
 
         db.session.commit()
@@ -202,16 +202,16 @@ class RoleTest(TestCase):
         other_permission = Permission.EditUser
 
         role_without_permission = Role(name='No Permission')
-        role_without_permission.add_permission(other_permission)
+        role_without_permission.permissions = other_permission
         db.session.add(role_without_permission)
 
         role_with_one_permission = Role(name='With One Permission')
-        role_with_one_permission.add_permission(first_requested_permission)
+        role_with_one_permission.permissions = first_requested_permission
         db.session.add(role_with_one_permission)
 
         role_with_all_permissions = Role(name='With All Permissions')
-        role_with_all_permissions.add_permissions(first_requested_permission, second_requested_permission,
-                                                  other_permission)
+        role_with_all_permissions.permissions = (first_requested_permission | second_requested_permission |
+                                                 other_permission)
         db.session.add(role_with_all_permissions)
 
         db.session.commit()
@@ -549,180 +549,6 @@ class RoleTest(TestCase):
         self.assertTrue(role.has_permissions_one_of(Permission.EditUser))
         self.assertTrue(role.has_permissions_one_of(Permission.EditRole, Permission.EditUser, Permission(0)))
 
-    def test_add_permission(self):
-        """
-            Test adding a single permission.
-
-            Expected result: The permission is added, existing ones are kept.
-        """
-        role = Role('Administrator')
-        role.permissions = Permission.EditRole
-
-        role.add_permission(Permission.EditGlobalSettings)
-        self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditGlobalSettings))
-
-    def test_add_permissions_none(self):
-        """
-            Test adding the value `None` as a permission.
-
-            Expected result: An error is raised.
-        """
-        role = Role('Administrator')
-        with self.assertRaises(ValueError) as exception_cm:
-            # noinspection PyTypeChecker
-            role.add_permission(None)
-            self.assertEqual('None is not a valid permission', str(exception_cm.exception))
-
-    def test_add_permissions_empty(self):
-        """
-            Test adding the empty permission.
-
-            Expected result: Nothing is changed.
-        """
-        role = Role('Administrator')
-        permission = Permission.EditRole
-        role.permissions = permission
-
-        role.add_permission(Permission(0))
-        self.assertEqual(permission, role.permissions)
-
-    def test_add_permissions_single_permission(self):
-        """
-            Test adding a permission to the permissions.
-
-            Expected result: The new permission is added, existing ones are kept.
-        """
-
-        # No permission in the beginning.
-        role = Role('Administrator')
-        self.assertEqual(Permission(0), role.permissions)
-
-        # Add the first permission.
-        role.add_permission(Permission.EditRole)
-        self.assertEqual(Permission.EditRole, role.permissions)
-
-        # Add another one.
-        role.add_permission(Permission.EditUser)
-        self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditUser))
-
-    def test_add_permissions_multiple_permission(self):
-        """
-            Test adding multiple permissions add once to the permissions.
-
-            Expected result: The new permissions are added, existing ones are kept.
-        """
-
-        # No permission in the beginning.
-        role = Role('Administrator')
-        self.assertEqual(Permission(0), role.permissions)
-
-        role.add_permissions(Permission.EditRole, Permission.EditUser)
-        self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditUser))
-
-    def test_add_permissions_existing_permission(self):
-        """
-            Test adding a permission if it already is set.
-
-            Expected result: Nothing happens.
-        """
-        role = Role('Administrator')
-        permissions = Permission.EditRole | Permission.EditUser
-        role.permissions = permissions
-
-        role.add_permission(Permission.EditRole)
-        self.assertEqual(permissions, role.permissions)
-
-    def test_remove_permission(self):
-        """
-            Test removing a permission from the permissions.
-
-            Expected result: The permission is removed, others are kept.
-        """
-        role = Role('Administrator')
-        role.add_permissions(Permission.EditGlobalSettings, Permission.EditRole, Permission.EditUser)
-
-        role.remove_permission(Permission.EditRole)
-        self.assertTrue(role.has_permissions_all(Permission.EditGlobalSettings, Permission.EditUser))
-        self.assertFalse(role.has_permission(Permission.EditRole))
-
-    def test_remove_permissions_none(self):
-        """
-            Test removing the value `None` from the permissions.
-
-            Expected result: An error is raised.
-        """
-        role = Role('Administrator')
-        with self.assertRaises(ValueError) as exception_cm:
-            # noinspection PyTypeChecker
-            role.remove_permissions(None)
-            self.assertEqual('None is not a valid permission', str(exception_cm.exception))
-
-    def test_remove_permissions_empty(self):
-        """
-            Test removing the empty permission.
-
-            Expected result: Nothing is changed.
-        """
-        role = Role('Administrator')
-        permission = Permission.EditRole
-        role.permissions = permission
-
-        role.remove_permissions(Permission(0))
-        self.assertEqual(permission, role.permissions)
-
-    def test_remove_permissions_single_permission(self):
-        """
-            Test removing a permission from the permissions.
-
-            Expected result: The given permission is removed, others are kept.
-        """
-
-        # All permissions in the beginning.
-        role = Role('Administrator')
-        role.permissions = Permission.EditRole | Permission.EditUser
-        self.assertTrue(role.has_permissions_all(Permission.EditRole, Permission.EditUser))
-
-        # Remove the first permission.
-        role.remove_permissions(Permission.EditRole)
-        self.assertEqual(Permission.EditUser, role.permissions)
-
-        # Remove another one.
-        role.remove_permissions(Permission.EditUser)
-        self.assertEqual(Permission(0), role.permissions)
-
-    def test_remove_permissions_multiple_permission(self):
-        """
-            Test removing multiple permissions add once from the permissions.
-
-            Expected result: The given permissions are removed, existing ones are kept.
-        """
-
-        # All permissions in the beginning.
-        role = Role('Administrator')
-        full_permissions = Permission.EditRole | Permission.EditUser
-        role.permissions = full_permissions
-        self.assertTrue(role.has_permissions_all(Permission.EditRole))
-        self.assertTrue(role.has_permissions_all(Permission.EditUser))
-
-        # Remove all.
-        role.remove_permissions(Permission.EditRole, Permission.EditUser)
-        self.assertEqual(Permission(0), role.permissions)
-
-    def test_remove_permissions_non_existing_permission(self):
-        """
-            Test removing a permission if it is not set.
-
-            Expected result: Nothing happens.
-        """
-        role = Role('Administrator')
-        permission_to_remove = Permission.EditRole
-        permission = Permission.EditUser
-        role.permissions = permission
-        self.assertFalse(role.has_permissions_all(permission_to_remove))
-
-        role.remove_permissions(permission_to_remove)
-        self.assertEqual(permission, role.permissions)
-
     def test_is_only_role_allowed_to_edit_roles(self):
         """
             Test if a role is the only one allowed to edit roles.
@@ -738,13 +564,13 @@ class RoleTest(TestCase):
         self.assertFalse(role.is_only_role_allowed_to_edit_roles())
 
         # Add the permission. Now it should be the only one.
-        role.add_permission(permission)
+        role.permissions = permission
         db.session.commit()
         self.assertTrue(role.is_only_role_allowed_to_edit_roles())
 
         # Add another role with the required permission.
         other_role = Role(name='Guest')
-        other_role.add_permission(permission)
+        other_role.permissions = permission
         db.session.add(other_role)
         db.session.commit()
 
@@ -763,7 +589,7 @@ class RoleTest(TestCase):
         name = 'Administrator'
         permission = Permission.EditRole
         role = Role(name=name)
-        role.add_permission(permission)
+        role.permissions = permission
         db.session.add(role)
         db.session.commit()
 
@@ -775,7 +601,7 @@ class RoleTest(TestCase):
 
         # Add another role with the required permission. Now, it is possible to delete the first role.
         other_role = Role(name='Guest')
-        other_role.add_permission(permission)
+        other_role.permissions = permission
         db.session.add(other_role)
         db.session.commit()
 
