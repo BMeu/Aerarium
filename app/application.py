@@ -132,9 +132,6 @@ def _initialize_context_processors(application: Flask) -> None:
         from app.userprofile import User
 
         processors = dict(
-            bitwise_and=Permission.bitwise_and,
-            bitwise_or=Permission.bitwise_or,
-            bitwise_xor=Permission.bitwise_xor,
             has_permission=User.current_user_has_permission,
             has_permissions_all=User.current_user_has_permissions_all,
             has_permissions_one_of=User.current_user_has_permissions_one_of,

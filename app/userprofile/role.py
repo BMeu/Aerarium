@@ -116,24 +116,11 @@ class Role(db.Model):
         """
             Get all roles that have the given permission.
 
-            Alias of :meth:`get_roles_with_permissions_all` with only a single permission.
-
             :param permission: The permission that the roles must have.
             :return: A list of roles that have the given permission.
         """
-        return Role.load_roles_with_permissions_all(permission)
 
-    @staticmethod
-    def load_roles_with_permissions_all(*permissions: Permission) -> List['Role']:
-        """
-            Get all roles that have all the given permissions.
-
-            :param permissions: The permissions that the roles must have.
-            :return: A list of roles that have all of the given permissions.
-        """
-        permission = Permission.bitwise_or(*permissions)
         raw_value = permission.value
-
         return Role.query.filter(Role._permissions.op('&')(raw_value) == raw_value).all()
 
     # endregion
@@ -182,46 +169,43 @@ class Role(db.Model):
         """
             Determine if the role has the given permission.
 
-            Alias of :meth:`has_permissions_all` with only a single permission.
+            The role will always have the empty permission `Permission(0)`.
 
             :param permission: The permission to check for.
             :return: `True` if the role has the requested permission, `False` otherwise.
         """
-        return self.has_permissions_all(permission)
+        return permission & self.permissions == permission
 
     def has_permissions_all(self, *permissions: Permission) -> bool:
         """
             Determine if the role has all of the given permissions.
 
-            If the empty permission `Permission(0)` is given, the result will always be `False`.
+            The role will always have the empty permission `Permission(0)`.
 
             :param permissions: The permissions to check for.
             :return: `True` if the role has all of the requested permissions, `False` otherwise.
         """
-        permission = Permission.bitwise_or(*permissions)
+        for permission in permissions:
+            if permission & self.permissions != permission:
+                return False
 
-        if permission.value == 0:
-            return False
-
-        return permission & self.permissions == permission
+        return True
 
     def has_permissions_one_of(self, *permissions: Permission) -> bool:
         """
             Determine if the role has (at least) one of the given permissions.
 
-            If the empty permission `Permission(0)` is given, the result will always be `False`.
+            The role will always have the empty permission `Permission(0)`. Thus, if the empty permission is part of
+            the given permissions, the result will always be `True`.
 
             :param permissions: The permissions to check for.
             :return: `True` if the role has one of the requested permission, `False` otherwise.
         """
-        has_permission = False
         for permission in permissions:
-            if permission == Permission(0):
-                continue
+            if permission & self.permissions == permission:
+                return True
 
-            has_permission = has_permission or self.has_permission(permission)
-
-        return has_permission
+        return False
 
     def is_only_role_allowed_to_edit_roles(self) -> bool:
         """
