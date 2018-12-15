@@ -19,20 +19,21 @@ class UserSettings(db.Model):
     _user_id = db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
     """
         The ID of the user to which this setting instance belongs. The actual user object can be accessed via the
-        attribute `user`.
+        attribute :attr:`user`.
     """
 
     _language = db.Column('language', db.String(5), default=get_default_language())
     """
-        The language in which the user will see the application. Use :attr:`.language` to access it.
+        The language in which the user will see the application. Use :attr:`language` to access it.
     """
 
     @property
     def language(self) -> str:
         """
-            Get the user's language.
+            The language in which the user will see the application.
 
             :return: The code of the user's language.
+            :raise ValueError: If the assigned language is not supported by the application.
         """
         return self._language
 
@@ -53,7 +54,7 @@ class UserSettings(db.Model):
 
     def reset(self) -> None:
         """
-            Reset the settings to their original values.
+            Reset the settings to their default values.
         """
 
         for setting, column in self.__class__.__table__.columns.items():

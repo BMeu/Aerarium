@@ -30,7 +30,9 @@ class JWToken(object):
         token (there will be a few meta payload fields in the token as well that :class:`JWToken` needs to verify the
         token).
 
-        For example, assume you want to allow your users to change their email address, but you want to be sure that the
+        :Example:
+
+        Assume you want to allow your users to change their email address, but you want to be sure that the
         users actually have access to the new address. Therefore, you want to send them a confirmation mail to the new
         address, with a link that the users will have to open to verify their new email address. The user's old
         email address will not be changed until the user opens the link. The link contains a token with payload
@@ -122,9 +124,9 @@ class JWToken(object):
 
     def __init__(self, validity: Optional[int] = None) -> None:
         """
-            :param validity: If not `None`, the specified value will be used as the validity (in seconds) for the
-                             token from its time of creation. If `None`, the validity set in the application
-                             configuration (`TOKEN_VALIDITY`) will be used.
+            :param validity: If not ``None``, the specified value will be used as the validity (in seconds) for the
+                             token from its time of creation. If ``None``, the validity set in the application
+                             configuration (:attr:`TOKEN_VALIDITY`) will be used.
         """
         application = get_app()
 

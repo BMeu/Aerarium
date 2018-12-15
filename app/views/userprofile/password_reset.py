@@ -27,7 +27,7 @@ from app.views.userprofile.forms import PasswordResetForm
 @logout_required
 def reset_password_request() -> str:
     """
-        Show a form to request resetting the password and process it upon submission.
+        Show and process a form to request resetting the password.
 
         :return: The HTML response.
     """
@@ -56,7 +56,7 @@ def reset_password_request() -> str:
 @logout_required
 def reset_password(token: str) -> str:
     """
-        Show a form to reset the password.
+        Show and process a form to reset the password.
 
         :param token: The token the user has been sent confirming that the password reset is valid.
         :return: The HTML response.

@@ -24,7 +24,7 @@ from app.views.userprofile.forms import UserSettingsResetForm
 @login_required
 def user_settings() -> str:
     """
-        Show a page to edit a user's settings. Upon submission, change the account details.
+        Show and process a form to edit a user's settings.
 
         :return: The HTML response.
     """

@@ -30,8 +30,6 @@ class Email(object):
 
     def __init__(self, subject, body: str, sender: Optional[str] = None) -> None:
         """
-            Initialize a new email message.
-
             :param subject: The mail's subject line.
             :param body: The path (within the template folder) to the template for this mail's body (without the file
                          extension).
@@ -65,7 +63,7 @@ class Email(object):
 
     def prepare_and_send(self, recipients: Union[str, List[str]], **template_parameters: Any) -> None:
         """
-            Prepare (:meth:`.prepare`) and send (:meth:`.send`) the mail to the given recipients.
+            Prepare (:meth:`prepare`) and send (:meth:`send`) the mail to the given recipients.
 
             :param recipients: A single recipient or a list of recipients to which the mail will be send.
             :param template_parameters: Parameters that will be passed down to the templates while rendering.

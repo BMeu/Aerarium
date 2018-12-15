@@ -26,7 +26,7 @@ from app.userprofile.tokens import DeleteAccountToken
 from app.userprofile.tokens import ResetPasswordToken
 
 """
-    The application's user model.
+    Classes for representing the application's user model.
 """
 
 
@@ -47,6 +47,7 @@ class User(UserMixin, db.Model):
         The user's email address.
     """
 
+    # TODO: Make private.
     password_hash = db.Column(db.String(128))
     """
         The user's password, salted and hashed.
@@ -64,19 +65,19 @@ class User(UserMixin, db.Model):
 
     settings = db.relationship('UserSettings', backref='user', cascade='all, delete-orphan', uselist=False)
     """
-        The user's settings (:class:`UserSettings`).
+        The user's settings (:class:`app.userprofile.UserSettings`).
     """
 
     _role_id = db.Column('role_id', db.Integer, db.ForeignKey('role.id'))
     """
         The ID of the role (:class:`.Role`) to which the user is assigned. The actual role object can be accessed via
-        the attribute `role`.
+        the attribute :attr:`role`.
     """
 
     @property
     def is_active(self) -> bool:
         """
-            Determine if the user has activated their account.
+            The activation status of the user's account.
 
             :return: ``True`` if the user account is activated.
         """
@@ -97,8 +98,6 @@ class User(UserMixin, db.Model):
 
     def __init__(self, email: str, name: str) -> None:
         """
-            Initialize the user.
-
             :param email: The user's email address.
             :param name: The user's (full) name.
         """
@@ -114,7 +113,7 @@ class User(UserMixin, db.Model):
             Load the user with the given ID from the database.
 
             :param user_id: The ID of the user to load.
-            :return: The loaded user if it exists, ``None`` otherwise.
+            :return: The loaded user if they exist, ``None`` otherwise.
         """
 
         return User.query.get(user_id)
@@ -125,7 +124,7 @@ class User(UserMixin, db.Model):
             Load the user with the given email address from the database.
 
             :param email: The email address of the user to load.
-            :return: The loaded user if it exists, ``None`` otherwise.
+            :return: The loaded user if they exist, ``None`` otherwise.
         """
 
         return User.query.filter_by(_email=email).first()
@@ -141,7 +140,7 @@ class User(UserMixin, db.Model):
 
             :param email: The user's email address.
             :param password: The user's (plaintext) password.
-            :param remember_me: ``True`` if the user shall be kept logged in across sessions.
+            :param remember_me: ``True`` if the user wishes to stay logged in across sessions.
             :return: The user if the email/password combination is valid and the user is logged in, ``None`` otherwise.
         """
 
@@ -164,7 +163,7 @@ class User(UserMixin, db.Model):
             Try to refresh the current user's login.
 
             :param password: The user's (plaintext) password.
-            :return: The user if the password is valid for the given user; `None` otherwise.
+            :return: The user if the password is valid for the given user; ``None`` otherwise.
         """
 
         user_id = current_user.get_id()
@@ -199,6 +198,7 @@ class User(UserMixin, db.Model):
 
             :return: The user's email address.
         """
+        # TODO: Make property if set_email is private.
         return self._email
 
     def set_email(self, email: str) -> bool:
@@ -208,6 +208,7 @@ class User(UserMixin, db.Model):
             :param email: The user's new email address. Must not be used by a different user.
             :return: ``False`` if the email address already is in use by another user, ``True`` otherwise.
         """
+        # TODO: Make private?
 
         old_email = self.get_email()
         if old_email == email:
@@ -240,6 +241,7 @@ class User(UserMixin, db.Model):
                           changed upon verification.
             :return: The token send in the mail.
         """
+        # TODO: Rename to make clear that this method must be called to change a user's email address.
 
         token_obj = ChangeEmailAddressToken()
         token_obj.user_id = self.id
@@ -257,15 +259,17 @@ class User(UserMixin, db.Model):
 
         return token_obj
 
+    # TODO: Shouldn't the return type be Optional[Tuple['User', str]]?
     @staticmethod
     def verify_change_email_address_token(token: str) -> Tuple[Optional['User'], Optional[str]]:
         """
-            Verify the JWT to change a user's email address.
+            Verify the token to change a user's email address.
 
             :param token: The change-email token.
             :return: The user to which the token belongs and the new email address; both are ``None`` if the token is
                      invalid.
         """
+        # TODO: Set the user's new email address.
         token_obj = ChangeEmailAddressToken.verify(token)
         user = User.load_from_id(token_obj.user_id)
         return user, token_obj.new_email
@@ -280,6 +284,7 @@ class User(UserMixin, db.Model):
 
             :param password: The plaintext password.
         """
+        # TODO: Make private?
 
         if not password:
             return
@@ -306,7 +311,7 @@ class User(UserMixin, db.Model):
             Check if the given password matches the user's password.
 
             :param password: The plaintext password to verify.
-            :return: ``True`` if the ``password`` matches the user's password.
+            :return: ``True`` if the given password matches the user's password.
         """
         if not self.password_hash:
             return False
@@ -317,8 +322,9 @@ class User(UserMixin, db.Model):
         """
             Send a mail for resetting the user's password to their email address.
 
-            :return: The token send in the mail
+            :return: The token send in the mail.
         """
+        # TODO: Rename to make clear that this method must be called to change a user's password.
 
         if self.get_email() is None:
             return None
@@ -346,6 +352,7 @@ class User(UserMixin, db.Model):
             :return: The user for whom the token is valid. ``None`` if the token is invalid or if outside the
                      application context.
         """
+        # TODO: Set new password.
         token_obj = ResetPasswordToken.verify(token)
         return User.load_from_id(token_obj.user_id)
 
@@ -359,6 +366,7 @@ class User(UserMixin, db.Model):
 
             :return: The token sent in the mail.
         """
+        # TODO: Rename to make clear that this method must be called to delete a user.
         token_obj = DeleteAccountToken()
         token_obj.user_id = self.id
 
@@ -381,6 +389,7 @@ class User(UserMixin, db.Model):
             :param token: The delete-account token.
             :return: The user to which the token belongs; ``None`` if the token is invalid.
         """
+        # TODO: Delete user.
         token_obj = DeleteAccountToken.verify(token)
         user = User.load_from_id(token_obj.user_id)
         return user
@@ -391,6 +400,7 @@ class User(UserMixin, db.Model):
 
             This action will directly be committed to the database.
         """
+        # TODO: Make private.
         if self == current_user:
             self.logout()
 
@@ -412,24 +422,24 @@ class User(UserMixin, db.Model):
     @classmethod
     def current_user_has_permission(cls, permission: Permission) -> bool:
         """
-            Check if the current user has the given permission.
-
-            Alias of :meth:`current_user_has_permissions_all` with a single permission.
+            Check if the current user (:attr:`flask_login.current_user`) has the given permission.
 
             :param permission: The permission to check for.
-            :return: `True` if the current user has the permission, `False` otherwise.
+            :return: ``True`` if the current user has the permission, ``False`` otherwise.
         """
+        # TODO: Don't make this an alias of current_user_has_permissions_all.
+
         return cls.current_user_has_permissions_all(permission)
 
     @staticmethod
     def current_user_has_permissions_all(*permissions: Permission) -> bool:
         """
-            Check if the current user has all of the given permissions.
+            Check if the current user (:attr:`flask_login.current_user`) has all of the given permissions.
 
             This does not check if the current user is logged in.
 
             :param permissions: The permission enumeration members to check for.
-            :return: `True` if the current user has the permissions, `False` otherwise.
+            :return: ``True`` if the current user has the permissions, ``False`` otherwise.
         """
 
         # If the current user does not have a role, the user cannot have the permissions.
@@ -446,12 +456,12 @@ class User(UserMixin, db.Model):
     @staticmethod
     def current_user_has_permissions_one_of(*permissions: Permission) -> bool:
         """
-            Check if the current user has (at least) one of the given permissions.
+            Check if the current user (:attr:`flask_login.current_user`) has (at least) one of the given permissions.
 
             This does not check if the current user is logged in.
 
             :param permissions: The permission enumeration members to check for.
-            :return: `True` if the current user the permissions, `False` otherwise.
+            :return: ``True`` if the current user the permissions, ``False`` otherwise.
         """
 
         # If the current user does not have a role, the user cannot have the permissions.
@@ -472,13 +482,13 @@ class User(UserMixin, db.Model):
     @staticmethod
     def get_search_query(query: Optional[BaseQuery] = None, search_term: Optional[str] = None) -> BaseQuery:
         """
-            Get a query that searches the users for the given search term on their names or emails
+            Get a query that searches the users for the given search term on their names or email addresses.
 
-            The search term may contain wildcards (`*`).
+            The search term may contain wildcards (``*``).
 
-            :param query: A base query object. If not given, the `User.query` will be used.
-            :param search_term: The term for which the users will be searched. If `None`, a non-filtering query will be
-                                returned.
+            :param query: A base query object. If not given, the :attr:`User.query` will be used.
+            :param search_term: The term for which the users will be searched. If ``None``, a non-filtering query will
+                                be returned.
             :return: The query object.
         """
         if query is None:

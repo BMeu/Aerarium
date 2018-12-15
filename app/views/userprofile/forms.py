@@ -35,8 +35,6 @@ class UniqueEmail(object):
 
     def __init__(self, message=None) -> None:
         """
-            Initialize the validator.
-
             :param message: The error message shown to the user if the validation fails.
         """
 
@@ -75,6 +73,9 @@ class DeleteUserProfileForm(FlaskForm):
 
     submit = SubmitField(_l('Delete User Profile'),
                          description=_l('Delete your user profile and all data linked to it.'))
+    """
+        The submit button.
+    """
 
 
 class EmailForm(FlaskForm):
@@ -83,7 +84,14 @@ class EmailForm(FlaskForm):
     """
 
     email = StringField(_l('Email:'), validators=[DataRequired(), IsEmail()])
+    """
+        The field for the user's email address.
+    """
+
     submit = SubmitField(_l('Submit'))
+    """
+        The submit button.
+    """
 
 
 class LoginForm(FlaskForm):
@@ -92,9 +100,24 @@ class LoginForm(FlaskForm):
     """
 
     email = StringField(_l('Email:'), validators=[DataRequired(), IsEmail()])
+    """
+        The field for the user's email address.
+    """
+
     password = PasswordField(_l('Password:'), validators=[DataRequired()])
+    """
+        The field for the user's password.
+    """
+
     remember_me = BooleanField(_l('Remember Me'))
+    """
+        A checkbox allowing the user to specify if they want to stay logged in across sessions.
+    """
+
     submit = SubmitField(_l('Log In'))
+    """
+        The submit button.
+    """
 
 
 class LoginRefreshForm(FlaskForm):
@@ -103,7 +126,14 @@ class LoginRefreshForm(FlaskForm):
     """
 
     password = PasswordField(_l('Password:'), validators=[DataRequired()])
+    """
+        The field for the user's password.
+    """
+
     submit = SubmitField(_l('Log In'))
+    """
+        The submit button.
+    """
 
 
 class PasswordResetForm(FlaskForm):
@@ -112,23 +142,54 @@ class PasswordResetForm(FlaskForm):
     """
 
     password = PasswordField(_l('New Password:'), validators=[DataRequired()])
+    """
+        The field for the user's new password.
+    """
+
     password_confirmation = PasswordField(_l('Confirm Your New Password:'),
                                           validators=[DataRequired(), EqualTo('password')])
+    """
+        The field for confirming the new password.
+    """
+
     submit = SubmitField(_l('Change Password'))
+    """
+        The submit button.
+    """
 
 
 class UserProfileForm(FlaskForm):
     """
         A form allowing a user to change their profile.
     """
+
     name = StringField(_l('Name:'), validators=[DataRequired()])
+    """
+        The field for the user's new name.
+    """
+
     email = StringField(_l('Email:'), validators=[DataRequired(), IsEmail(), UniqueEmail()],
                         description=_l('We will send you an email to your new address with a link to confirm the \
                                         changes. The email address will not be changed until you confirm this action.'))
+    """
+        The field for the user's new email address.
+    """
+
     password = PasswordField(_l('New Password:'),
                              description=_l('Leave this field empty if you do not want to change your password.'))
+    """
+        The field for the user's new password.
+    """
+
     password_confirmation = PasswordField(_l('Confirm Your New Password:'), validators=[EqualTo('password')])
+    """
+        The field for confirming the user's new password.
+    """
+
     submit = SubmitField(_l('Save'))
+    """
+        The submit button.
+    """
 
 
 class UserSettingsForm(FlaskForm):
@@ -137,14 +198,19 @@ class UserSettingsForm(FlaskForm):
     """
     language = SelectField(_l('Language:'), validators=[DataRequired()],
                            description=_l('The language in which you want to use the application.'))
+    """
+        The field for selecting the language in which the user wants to use the application.
+    """
+
     submit = SubmitField(_l('Save'))
+    """
+        The submit button.
+    """
 
     def __init__(self, *args, **kwargs) -> None:
         """
-            Initialize the form.
-
             :param args: The arguments for initializing the form.
-            :param kwargs: The keyworded argument for initializing the form.
+            :param kwargs: The keyword argument for initializing the form.
         """
         super().__init__(*args, **kwargs)
 
@@ -159,5 +225,8 @@ class UserSettingsResetForm(FlaskForm):
 
     submit = SubmitField(_l('Reset'),
                          description=_l('Reset these settings to their default values.'))
+    """
+        The submit button.
+    """
 
 # endregion

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Classes and functionality related to user profiles.
+    Classes and functionality related to users and their profiles.
 """
 
 from app.userprofile.permissions import Permission

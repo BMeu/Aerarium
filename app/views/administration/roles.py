@@ -53,7 +53,7 @@ def roles_list() -> str:
 @permission_required(Permission.EditRole)
 def role_new() -> str:
     """
-        Show a form to create a new role.
+        Show and process a form to create a new role.
 
         :return: The HTML response.
     """
@@ -76,9 +76,9 @@ def role_new() -> str:
 @permission_required(Permission.EditRole)
 def role_edit(name: str) -> str:
     """
-        Show a form to edit an existing role.
+        Show and process a form to edit an existing role.
 
-        :param name: The name of the role to edit.
+        :param name: The name of the role.
         :return: The HTML response.
     """
     role = Role.load_from_name(name)
@@ -102,7 +102,7 @@ def role_edit(name: str) -> str:
 @permission_required(Permission.EditRole)
 def role_permissions(name: str) -> str:
     """
-        Show a form to a role's permissions.
+        Show and process a form to change a role's permissions.
 
         :param name: The name of the role.
         :return: The HTML response.
@@ -132,7 +132,7 @@ def role_permissions(name: str) -> str:
 @permission_required(Permission.EditRole)
 def role_users(name: str) -> str:
     """
-        List all users to whom the given role is assigned.
+        Show a list of all users to whom the given role is assigned.
 
         :param name: The name of the role.
         :return: The HTML response.
@@ -156,7 +156,7 @@ def role_users(name: str) -> str:
 @permission_required(Permission.EditRole)
 def role_delete(name: str) -> str:
     """
-        Show a form to delete the given role and process that form.
+        Show and process a form to delete the given role.
 
         :param name: The name of the role.
         :return: The HTML response.

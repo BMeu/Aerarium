@@ -23,7 +23,7 @@ class ChangeEmailAddressToken(JWToken):
 
         self.new_email: str = None
         """
-            The new email address to which the user wishes to change.
+            The new email address to which the user wants to change.
         """
 
 

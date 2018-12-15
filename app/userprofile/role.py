@@ -13,7 +13,7 @@ from app.exceptions import DeletionPreconditionViolationError
 from app.userprofile import Permission
 
 """
-    The application's role model.
+    Classes for representing the application's role model.
 """
 
 
@@ -44,7 +44,7 @@ class Role(db.Model):
 
     users = db.relationship('User', backref='role', lazy='dynamic')
     """
-        A list of :class:`users` which have this role.
+        A list of users (:class:`app.userprofile.User`) which have this role.
     """
 
     invalid_names: List[str] = ['new']
@@ -55,9 +55,12 @@ class Role(db.Model):
     @property
     def name(self) -> str:
         """
-            Get the role's name.
+            A name describing the role.
+
+            The name may not be one of the strings listed in :attr:`invalid_names`.
 
             :return: The role's unique name.
+            :raise ValueError: If an invalid name is assigned.
         """
         return self._name
 
@@ -69,7 +72,7 @@ class Role(db.Model):
             The name may not be one of the strings listed in :attr:`invalid_names`.
 
             :param value: The role's new name.
-            :raise ValueError: if an invalid name is given.
+            :raise ValueError: If an invalid name is given.
         """
         if value in self.invalid_names:
             raise ValueError('The name may not be one of ' + ', '.join(self.invalid_names))
@@ -84,10 +87,8 @@ class Role(db.Model):
 
     def __init__(self, name: str) -> None:
         """
-            Initialize a role with the given name.
-
             :param name: The role's name. It must not be one of the strings listed in :attr:`invalid_names`.
-            :raise ValueError: if an invalid name is given.
+            :raise ValueError: If an invalid name is given.
         """
         self.name = name
 
@@ -97,7 +98,7 @@ class Role(db.Model):
             Load the role with the given ID from the database.
 
             :param role_id: The ID of the role to load.
-            :return: The loaded role if it exists, `None` otherwise.
+            :return: The loaded role if it exists, ``None`` otherwise.
         """
         return Role.query.get(role_id)
 
@@ -106,8 +107,8 @@ class Role(db.Model):
         """
             Load the role with the given name from the database.
 
-            :param name: The name of the role load.
-            :return: The loaded role if it exists, `None` otherwise.
+            :param name: The name of the role to load.
+            :return: The loaded role if it exists, ``None`` otherwise.
         """
         return Role.query.filter_by(_name=name).first()
 
@@ -130,9 +131,15 @@ class Role(db.Model):
     @property
     def permissions(self) -> Permission:
         """
-            Get the permission (combination) that represents the permissions this role has.
+            The (combination of) permissions that represent the permissions this role has.
 
-            :return: An enum member of :class:`Permission` representing the role`s permissions.
+            Assigning permissions will overwrite all existing permissions.
+
+            If this role is the only one allowed to edit roles, but the new permissions do not include the permission to
+            edit roles, this permission will automatically be added to the role to prevent cases where there is no role
+            that can edit roles.
+
+            :return: An enum member of :class:`app.userprofile.Permission` representing the role's permissions.
         """
         # For some reason, PyCharm thinks, self._permissions has type Permission...
         # noinspection PyTypeChecker
@@ -149,11 +156,12 @@ class Role(db.Model):
 
             This will overwrite all existing permissions.
 
-            If this role is only one allowed to edit roles, but the new permissions do not include the permission to
-            edit roles,
+            If this role is the only one allowed to edit roles, but the new permissions do not include the permission to
+            edit roles, this permission will automatically be added to the role to prevent cases where there is no role
+            that can edit roles.
 
-            :param permission: An enum member of :class:`Permission` representing the role`s new permissions (may be a
-                          combination of multiple enum members).
+            :param permission: An enum member of :class:`app.userprofile.Permission` representing the role's new
+                               permissions (may be a combination of multiple enum members).
         """
         if permission is None:
             permission = Permission(0)
@@ -169,10 +177,10 @@ class Role(db.Model):
         """
             Determine if the role has the given permission.
 
-            The role will always have the empty permission `Permission(0)`.
+            The role will always have the empty permission ``Permission(0)``.
 
             :param permission: The permission to check for.
-            :return: `True` if the role has the requested permission, `False` otherwise.
+            :return: ``True`` if the role has the requested permission, ``False`` otherwise.
         """
         return permission & self.permissions == permission
 
@@ -180,10 +188,10 @@ class Role(db.Model):
         """
             Determine if the role has all of the given permissions.
 
-            The role will always have the empty permission `Permission(0)`.
+            The role will always have the empty permission ``Permission(0)``.
 
             :param permissions: The permissions to check for.
-            :return: `True` if the role has all of the requested permissions, `False` otherwise.
+            :return: ``True`` if the role has all of the requested permissions, ``False`` otherwise.
         """
         for permission in permissions:
             if permission & self.permissions != permission:
@@ -195,11 +203,11 @@ class Role(db.Model):
         """
             Determine if the role has (at least) one of the given permissions.
 
-            The role will always have the empty permission `Permission(0)`. Thus, if the empty permission is part of
-            the given permissions, the result will always be `True`.
+            The role will always have the empty permission ``Permission(0)``. Thus, if the empty permission is part of
+            the given permissions, the result will always be ``True``.
 
             :param permissions: The permissions to check for.
-            :return: `True` if the role has one of the requested permission, `False` otherwise.
+            :return: ``True`` if the role has one of the requested permission, ``False`` otherwise.
         """
         for permission in permissions:
             if permission & self.permissions == permission:
@@ -211,8 +219,8 @@ class Role(db.Model):
         """
             Determine if this role is the only one allowed to edit roles.
 
-            :return: `True` if it is the only role, `False` otherwise or if this role does not have the permission to
-                     edit roles.
+            :return: ``True`` if it is the only role, ``False`` otherwise or if this role does not have the permission
+                     to edit roles.
         """
         permission = Permission.EditRole
         if not self.has_permission(permission):
@@ -230,13 +238,14 @@ class Role(db.Model):
 
     def delete(self, new_role: Optional['Role'] = None):
         """
-            Delete this role. If there are users to whom this role is assigned, their role will be set to `new_role`.
+            Delete this role. If there are users to whom this role is assigned, their role will be set to ``new_role``.
 
-            The role cannot be deleted if this is the last role that has the permission to edit roles. In this case,
+            The role cannot be deleted if this is the last role that has the permission to edit roles. In this case, a
+            :class:`.DeletionPreconditionViolationError` will be raised.
 
             :param new_role: Required if there are users to whom this role is assigned. Must not be this role.
             :raise DeletionPreconditionViolationError: If this role is the only one with the permission to edit roles.
-            :raise ValueError: If there are users to whom this role is assigned and `new_role` is not valid.
+            :raise ValueError: If there are users to whom this role is assigned and ``new_role`` is not valid.
         """
         if self.is_only_role_allowed_to_edit_roles():
             raise DeletionPreconditionViolationError('Cannot delete the only role with the permission to edit roles.')
@@ -265,11 +274,11 @@ class Role(db.Model):
         """
             Get a query that searches the roles for the given search term on their names.
 
-            The search term may contain wildcards (`*`).
+            The search term may contain wildcards (``*``).
 
-            :param query: A base query object. If not given, the `User.query` will be used.
-            :param search_term: The name for which the roles will be searched. If `None`, a non-filtering query be
-                                returned.
+            :param query: A base query object. If not given, the :attr:`User.query` will be used.
+            :param search_term: The name for which the roles will be searched. If ``None``, a non-filtering query will
+                                be returned.
             :return: The query object.
         """
         if query is None:

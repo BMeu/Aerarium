@@ -24,7 +24,7 @@ from app.views.userprofile.forms import DeleteUserProfileForm
 @fresh_login_required
 def delete_profile_request() -> str:
     """
-        Send an email to the user to confirm the account deletion request.
+        Send an email to the user to confirm the account deletion request. Then redirect to the user's profile page.
 
         :return: The HTML response.
     """
@@ -46,7 +46,7 @@ def delete_profile_request() -> str:
 @fresh_login_required
 def delete_profile(token: str) -> str:
     """
-        Delete account of the user given in the token.
+        Delete account of the user given in the token. Then redirect to the home page.
 
         :return: The HTML response.
     """
