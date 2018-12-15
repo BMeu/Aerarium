@@ -23,13 +23,11 @@ class Pagination(object):
 
     def __init__(self, query: BaseQuery, page_param: str = 'page') -> None:
         """
-            Initialize the pagination object.
-
             The current page will be determined from the page parameter in the request arguments. If the page parameter
-            is not included in the request arguments, the current page defaults to `1`.
+            is not included in the request arguments, the current page defaults to ``1``.
 
             :param query: The base query that will be paginated.
-            :param page_param: The name of the page parameter specifying the current page. Defaults to `page`.
+            :param page_param: The name of the page parameter specifying the current page. Defaults to ``'page'``.
         """
 
         # Get the current page from the request arguments.

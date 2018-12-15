@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Configuration for the Flask application.
+    Configurations for the application.
 """
 
 from app.configuration.base_configuration import BaseConfiguration

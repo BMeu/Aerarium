@@ -79,7 +79,7 @@ def login_refresh() -> str:
 @bp.route('/logout')
 def logout() -> str:
     """
-        Log out the user and redirect them to the homepage.
+        Log the user out and redirect them to the homepage.
 
         :return: The HTML response.
     """

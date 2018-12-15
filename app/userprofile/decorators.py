@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Function decorators related to a user's profile.
+    Function decorators related to users and their profiles.
 """
 
 from typing import Any
@@ -47,23 +47,24 @@ def logout_required(view_function: Callable[..., str]) -> Callable[..., str]:
 
 def permission_required(permission: Permission) -> Callable[[Callable[..., str]], Callable[..., str]]:
     """
-        A wrapper for view functions requiring the current user to have the given permission (:class:`permission`). If
-        the user does not have the permission abort the request with an error 403.
+        A wrapper for view functions requiring the current user to have the given permission
+        (:class:`app.userprofile.Permission`). If the user does not have the permission the request will be aborted with
+        an error 403.
 
         This decorator does not check if the user is logged in.
-
-        Alias of :meth:`permission_required_all` with a single permission argument.
 
         :param permission: The permission required to access the wrapped view.
         :return: The decorator for checking if the current user has the given permission.
     """
+    # TODO: This should not be an alias of permission_required_all.
     return permission_required_all(permission)
 
 
 def permission_required_all(*permissions: Permission) -> Callable[[Callable[..., str]], Callable[..., str]]:
     """
-        A wrapper for view functions requiring the current user to have the given permissions (:class:`permission`). If
-        the user does not have all of these permission abort the request with an error 403.
+        A wrapper for view functions requiring the current user to have the given permissions
+        (:class:`app.userprofile.Permission`). If the user does not have all of these permission the request will be
+        aborted with an error 403.
 
         This decorator does not check if the user is logged in.
 
@@ -102,7 +103,8 @@ def permission_required_all(*permissions: Permission) -> Callable[[Callable[...,
 def permission_required_one_of(*permissions: Permission) -> Callable[[Callable[..., str]], Callable[..., str]]:
     """
         A wrapper for view functions requiring the current user to have (at least) one of the given permissions
-        (:class:`permission`). If the user does not have one of these permission abort the request with an error 403.
+        (:class:`app.userprofile.Permission`). If the user does not have one of these permission the request will be
+        aborted with an error 403.
 
         This decorator does not check if the user is logged in.
 

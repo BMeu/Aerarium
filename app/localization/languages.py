@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from typing import Iterable
+from typing import Optional
 from typing import Tuple
 
 from os import listdir
@@ -32,8 +33,8 @@ def get_language_names(translation_dir: str, with_native_names: bool = True) -> 
         Get a list of languages supported by the application, each with their name in the current language
 
         :param translation_dir: The directory within which the GetText translation folders can be found.
-        :param with_native_names: If set to `True`, the languages' names will not only be given in the current language,
-                                  but also in their native language.
+        :param with_native_names: If set to ``True``, the languages' names will not only be given in the current
+                                  language, but also in their native language.
         :return: A list of tuples, with the first element being the language code and the second one being the
                  language's name.
     """
@@ -64,7 +65,7 @@ def get_language_names(translation_dir: str, with_native_names: bool = True) -> 
     return names
 
 
-def get_languages(translation_dir: str, default_language: str = 'en') -> Iterable[str]:
+def get_languages(translation_dir: str, default_language: Optional[str] = None) -> Iterable[str]:
     """
         Get a list of available languages.
 
@@ -92,11 +93,13 @@ def get_languages(translation_dir: str, default_language: str = 'en') -> Iterabl
         * ``en-us``
         * ``en-USA``
 
-        :param default_language: The default language as used in the GetText functions within the code (defaults to
-            ``en``).
-        :param translation_dir: The directory within which the GetText translation folders can be found.
+        :param default_language: The default language as used in the GetText functions within the code. If not given,
+                                 the default language from :meth:`get_default_language` will be used.
+        :param translation_dir: The directory within which the translation folders can be found.
         :return: A list of language codes supported by the application.
     """
+    if not default_language:
+        default_language = get_default_language()
 
     # Get a list of all entries in the translations folder and filter it. If the given folder could not be read, do not
     # include any additional languages.
@@ -111,7 +114,7 @@ def get_languages(translation_dir: str, default_language: str = 'en') -> Iterabl
 
 def get_locale() -> str:
     """
-        Get the language most suitable to the user's settings.
+        Get the language most suitable to the user's preferences.
 
         :return: The chosen language code.
     """

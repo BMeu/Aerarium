@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 
 from app.localization import get_languages
 
-# These basic directories have to be set outside the configuration class so the .env file is loaded before the class.
+# These basic directories have to be set outside the configuration class since the .env file is loaded before the class.
 _basedir = path.abspath(path.dirname(path.dirname(path.dirname(__file__))))
 _instance_dir = path.join(_basedir, 'instance')
 

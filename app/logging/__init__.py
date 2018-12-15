@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Extensions to the logging interface.
+    Extensions for the Flask logging interface.
 """
 
 from app.logging.secure_smtp_handler import SecureSMTPHandler

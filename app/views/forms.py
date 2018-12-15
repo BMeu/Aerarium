@@ -10,7 +10,7 @@ from wtforms import StringField
 from wtforms import SubmitField
 
 """
-    Forms and form related functionality for the all blueprints.
+    Forms and form related functionality for all blueprints.
 """
 
 # region Forms
@@ -23,12 +23,17 @@ class SearchForm(FlaskForm):
         This form is intended to be used for GET requests without further validation.
     """
     search = StringField(_l('Search:'))
+    """
+        The search field.
+    """
+
     submit = SubmitField(_l('Search'))
+    """
+        The submit button.
+    """
 
     def __init__(self, *args, **kwargs):
         """
-            Initialize the form.
-
             The search field will automatically be filled from the request.
 
             :param args: The arguments for initializing the form.
@@ -44,7 +49,7 @@ class SearchForm(FlaskForm):
         """
             Get the search parameter for the URL.
 
-            :return: The name of the
+            :return: The name of the URL parameter that contains the search term.
         """
         return self.search.name
 
@@ -53,7 +58,7 @@ class SearchForm(FlaskForm):
         """
             Get the term for which the user searched.
 
-            :return: The string for which the user searched. `None` if the user did not search for anything.
+            :return: The string for which the user searched. ``None`` if the user did not search for anything.
         """
         return self.search.data
 
@@ -61,7 +66,7 @@ class SearchForm(FlaskForm):
         """
             Get the search term from the URL.
 
-            :return: The string for which the user searched. `None` if the user did not search for anything.
+            :return: The string for which the user searched. ``None`` if the user did not search for anything.
         """
         term = request.args.get(self.search_param, None)
         return term

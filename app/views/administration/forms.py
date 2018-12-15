@@ -40,8 +40,6 @@ class UniqueRoleName(object):
 
     def __init__(self, message=None) -> None:
         """
-            Initialize the validator.
-
             :param message: The error message shown to the user if the validation fails.
         """
         if not message:
@@ -80,15 +78,15 @@ class BasePermissionForm(FlaskForm):
         A base class for all forms having fields to select permissions.
 
         Do not instantiate this form directly. Instead, create a subclass of :class:`BasePermissionForm` with all the
-        needed fields *except* for the permission fields. Then, use :meth:`.create_permission_form` to create an object
+        needed fields *except* for the permission fields. Then, use :meth:`create_permission_form` to create an object
         of your form including the permission fields. To define the position at which the permission fields will be
         inserted within the form, see :attr:`permission_fields_after`.
     """
 
     permission_fields_after: Optional[str] = None
     """
-        The name of the field after which the permission fields will be inserted. If `None`, the permission fields will
-        be inserted before all other fields.
+        The name of the field after which the permission fields will be inserted. If ``None``, the permission fields
+        will be inserted before all other fields.
     """
 
     permission_fields: Dict[str, Permission] = OrderedDict()
@@ -96,13 +94,13 @@ class BasePermissionForm(FlaskForm):
         A dictionary associating a permission field in this form (via its attribute name) to the permission which it
         sets.
 
-        This dict will be initialized by the permission form factory, :meth:`.create_permission_form`.
+        This dictionary will be initialized by the permission form factory, :meth:`create_permission_form`.
     """
 
     @property
     def permissions(self) -> Permission:
         """
-            Get the permissions given by the form's data.
+            Get the permissions (:class:`.app.userprofile.Permission`) given by the form's data.
 
             :return: The (combined) permissions given by the form's data.
         """
@@ -172,10 +170,13 @@ class PermissionForm(BasePermissionForm):
     """
         A form to edit a role's permissions.
 
-        The permission fields must be added dynamically, e.g. via
+        The permission fields must be added dynamically with :meth:`create_permission_form`.
     """
 
     submit = SubmitField(_l('Save'))
+    """
+        The submit button.
+    """
 
 
 class RoleDeleteForm(FlaskForm):
@@ -185,15 +186,20 @@ class RoleDeleteForm(FlaskForm):
 
     new_role = SelectField(_l('New Role:'), validators=[DataRequired()], coerce=int,
                            description=_l('Choose a new role for users to whom this role is assigned.'))
+    """
+        A field for selecting a new role for all users who were previously assigned to the role that will be deleted.
+    """
+
     submit = SubmitField(_l('Delete'))
+    """
+        The submit button.
+    """
 
     def __init__(self, role: Role, *args, **kwargs):
         """
-            Initialize the form.
-
             :param role: The role that will be deleted. Required for correctly initializing the :attr:`new_role` field.
             :param args: The arguments for initializing the form.
-            :param kwargs: The keyworded arguments for initializing the form.
+            :param kwargs: The keyword arguments for initializing the form.
         """
 
         super().__init__(*args, **kwargs)
@@ -223,7 +229,14 @@ class RoleHeaderDataForm(FlaskForm):
     name = StringField(_l('Name:'),
                        validators=[DataRequired(), Length(max=255), NoneOf(Role.invalid_names), UniqueRoleName()],
                        description=_l('The name must be unique: different roles cannot have the same name.'))
+    """
+        A field for the role's name.
+    """
+
     submit = SubmitField(_l('Save'))
+    """
+        The submit button.
+    """
 
 
 class RoleNewForm(RoleHeaderDataForm, PermissionForm):
@@ -231,12 +244,18 @@ class RoleNewForm(RoleHeaderDataForm, PermissionForm):
         A form to add a new role.
 
         This form automatically inherits the header data fields and the permission functionality from its two base
-        classes to avoid redundancies.
+        classes (:class:`RoleHeaderDataForm`, :class:`PermissionForm`) to avoid redundancies.
     """
 
     permission_fields_after = 'name'
+    """
+        The name of the field after which the permission fields will be inserted.
+    """
 
     submit = SubmitField(_l('Create'))
+    """
+        The submit button.
+    """
 
 # endregion
 
@@ -246,15 +265,15 @@ class RoleNewForm(RoleHeaderDataForm, PermissionForm):
 def create_permission_form(form_class: Type[BasePermissionForm], preset_permissions: Permission, *args,
                            disabled_permissions: Optional[Permission] = None, **kwargs) -> BasePermissionForm:
     """
-        Create a form object of the given class with fields to (un-)set permissions.
+        Create a form object of the given class with fields to select permissions.
 
-        :param form_class: The _class_ of the form of which the object will be created.
+        :param form_class: The *class* of the form of which the object will be created.
         :param preset_permissions: The permissions whose fields will be preselected.
         :param disabled_permissions: The permissions whose state cannot be changed.
         :param args: Further arguments that will be passed into the form constructor.
         :param kwargs: Further keyword arguments that will be passed into the form constructor.
         :return: An object of the given form class, extended with the fields for setting permissions.
-        :raise ValueError: If `form_class` is not a subclass of :class:`BasePermissionForm`.
+        :raise ValueError: If ``form_class`` is not a subclass of :class:`BasePermissionForm`.
     """
 
     class ExtendedPermissionForm(form_class):

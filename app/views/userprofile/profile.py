@@ -28,7 +28,7 @@ from app.views.userprofile.forms import UserProfileForm
 @fresh_login_required
 def user_profile() -> str:
     """
-        Show a page to edit account details. Upon submission, change the account details.
+        Show and process a form to edit account details.
 
         :return: The HTML response.
     """
@@ -69,9 +69,10 @@ def user_profile() -> str:
 @bp.route('/change-email-address/<string:token>')
 def change_email(token: str) -> str:
     """
-        Change the email address of the user given in the token to the new address specified in the token.
+        Change the email address of the user given in the token to the new address specified in the token. Then redirect
+        to the home page.
 
-        :param token: The change-email JWT.
+        :param token: The change-email token.
         :return: The HTML response.
     """
     try:

@@ -20,6 +20,8 @@ class Permission(Flag):
 
         Each permission is represented by a value that is a power of two. Thus, combinations of permissions can be
         represented as an integer using bitwise operations.
+
+        The permission with the value ``0``, ``Permission(0)``, is called the *empty permission*.
     """
 
     EditRole = (1, _l('Edit Roles'), _l('The permission to create, read, update, or delete a role. '
@@ -53,6 +55,7 @@ class Permission(Flag):
         member.description = description
         member.title = title
 
+        # TODO: Raise a value error if the value is not a power of two.
         # Set the actual underlying value and name.
         member._value_ = value
 
@@ -60,8 +63,6 @@ class Permission(Flag):
 
     def __init__(self, _value: int, _title: Optional[str] = None, _description: Optional[str] = None) -> None:
         """
-            Initialize the enum member.
-
             :param _value: The enum member's actual value. Should be a power of two.
             :param _title: A title used for displaying the enum member. If not given, the member's name will be used.
             :param _description: An optional description used to display additional information about the permission.
