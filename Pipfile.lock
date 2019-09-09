@@ -52,11 +52,11 @@
         },
         "bidict": {
             "hashes": [
-                "sha256:7d3f85240934b3eef3ec4b44820692280f998a72c406fb545928d382ff75a611",
-                "sha256:a918cf422f03fc6e8e08caaf5fe1955025cf58fa269d11653c24f9d2288c2998"
+                "sha256:70af520df680b00a8ff554e60ce305644a59e8d693af1ab28bd89ad2b6a4232f",
+                "sha256:ba01c15664af7bd2b032a60fa21ed3575a66fd8b20b35436bedce45837ae556d"
             ],
             "index": "pypi",
-            "version": "==0.18.1"
+            "version": "==0.18.2"
         },
         "blinker": {
             "hashes": [
@@ -522,9 +522,9 @@
         },
         "snowballstemmer": {
             "hashes": [
-                "sha256:9f3b9ffe0809d174f7047e121431acf99c89a7040f0ca84f94ba53a498e6d0c9"
+                "sha256:713e53b79cbcf97bc5245a06080a33d54a77e7cce2f789c835a143bcdb5c033e"
             ],
-            "version": "==1.9.0"
+            "version": "==1.9.1"
         },
         "sphinx": {
             "hashes": [
