@@ -18,9 +18,9 @@
     "default": {
         "alembic": {
             "hashes": [
-                "sha256:4a4811119efbdc5259d1f4c8f6de977b36ad3bcc919f59a29c2960c5ef9149e4"
+                "sha256:5609afbb2ab142a991b15ae436347c475f8a517f1610f2fd1b09cdca7c311f3f"
             ],
-            "version": "==1.1.0"
+            "version": "==1.2.0"
         },
         "babel": {
             "hashes": [
@@ -52,11 +52,11 @@
         },
         "bidict": {
             "hashes": [
-                "sha256:70af520df680b00a8ff554e60ce305644a59e8d693af1ab28bd89ad2b6a4232f",
-                "sha256:ba01c15664af7bd2b032a60fa21ed3575a66fd8b20b35436bedce45837ae556d"
+                "sha256:1742a25a9ef1b1ac4000683406879a3e1a6577faa02f31e482e6c84e2e3bf628",
+                "sha256:621db384daef94b7031897ca479f4feed025989a64e91c6fae88fb88a842488c"
             ],
             "index": "pypi",
-            "version": "==0.18.2"
+            "version": "==0.18.3"
         },
         "blinker": {
             "hashes": [
