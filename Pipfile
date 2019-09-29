@@ -25,6 +25,3 @@ PyJWT = "*"
 PyMySQL = "*"
 Werkzeug = "*"
 WTForms = "*"
-
-[requires]
-python_version = "3.6"
