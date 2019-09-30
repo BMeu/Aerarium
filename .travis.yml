@@ -5,10 +5,16 @@ language: python
 matrix:
   include:
     - python: "3.6"
+    - python: "3.6"
+      env: FLASK_DEBUG=0
     - python: "3.6-dev"
     - python: "3.7"
       dist: xenial
       sudo: true
+    - python: "3.7"
+      dist: xenial
+      sudo: true
+      env: FLASK_DEBUG=0
     - python: "3.7-dev"
     - python: "3.8-dev"
       dist: xenial
@@ -17,14 +23,11 @@ matrix:
 
 env:
   global:
+    - FLASK_DEBUG=1
     - FLASK_APP=aerarium
     - PIPENV_VERBOSITY=-1
     - SECRET_KEY="Gallia est omnis divisa in partes tres"
     - SYS_ADMINS=aerarium@bastianmeyer.eu
-
-  matrix:
-    - FLASK_DEBUG=1
-    - FLASK_DEBUG=0
 
 services:
   - mysql
