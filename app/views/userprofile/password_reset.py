@@ -11,10 +11,10 @@ from flask import redirect
 from flask import render_template
 from flask import url_for
 from flask_babel import gettext as _
-from jwt import PyJWTError
+from flask_easyjwt import EasyJWTError
 
 from app import db
-from app.exceptions import InvalidJWTokenPayloadError
+from app import timedelta_to_minutes
 from app.userprofile import logout_required
 from app.userprofile import User
 from app.userprofile.tokens import ChangeEmailAddressToken
@@ -41,7 +41,7 @@ def reset_password_request() -> str:
             # Create a fake token to get the validity.
             token = ChangeEmailAddressToken()
 
-        validity = token.get_validity(in_minutes=True)
+        validity = timedelta_to_minutes(token.get_validity())
 
         # Display a success message even if the specified address does not belong to a user account. Otherwise,
         # infiltrators could deduce if an account exists and use this information for attacks.
@@ -64,7 +64,7 @@ def reset_password(token: str) -> str:
 
     try:
         user = User.verify_password_reset_token(token)
-    except (InvalidJWTokenPayloadError, PyJWTError):
+    except EasyJWTError:
         return abort(404)
 
     form = PasswordResetForm()

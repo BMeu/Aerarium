@@ -12,12 +12,12 @@ from flask import redirect
 from flask import render_template
 from flask import url_for
 from flask_babel import gettext as _
+from flask_easyjwt import EasyJWTError
 from flask_login import current_user
 from flask_login import fresh_login_required
-from jwt import PyJWTError
 
 from app import db
-from app.exceptions import InvalidJWTokenPayloadError
+from app import timedelta_to_minutes
 from app.userprofile import User
 from app.views.userprofile import bp
 from app.views.userprofile.forms import DeleteUserProfileForm
@@ -51,7 +51,7 @@ def user_profile() -> str:
         if user.get_email() != profile_form.email.data:
             token = user.send_change_email_address_email(profile_form.email.data)
 
-            validity = token.get_validity(in_minutes=True)
+            validity = timedelta_to_minutes(token.get_validity())
             flash(Markup(_('An email has been sent to the new address %(email)s. Please open the link included in the \
                             mail within the next %(validity)d minutes to confirm your new email address. Otherwise, \
                             your email address will not be changed.',
@@ -77,7 +77,7 @@ def change_email(token: str) -> str:
     """
     try:
         user, email = User.verify_change_email_address_token(token)
-    except (InvalidJWTokenPayloadError, PyJWTError):
+    except EasyJWTError:
         return abort(404)
 
     changed_email = user.set_email(email)

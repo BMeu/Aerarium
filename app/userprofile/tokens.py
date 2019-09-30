@@ -5,10 +5,10 @@
     Tokens for verifying user actions.
 """
 
-from app.token import JWToken
+from flask_easyjwt import FlaskEasyJWT
 
 
-class ChangeEmailAddressToken(JWToken):
+class ChangeEmailAddressToken(FlaskEasyJWT):
     """
         A token for verifying requests to change a user's email address.
     """
@@ -27,7 +27,7 @@ class ChangeEmailAddressToken(JWToken):
         """
 
 
-class DeleteAccountToken(JWToken):
+class DeleteAccountToken(FlaskEasyJWT):
     """
         A token for verifying requests to delete a user's account.
     """
@@ -41,7 +41,7 @@ class DeleteAccountToken(JWToken):
         """
 
 
-class ResetPasswordToken(JWToken):
+class ResetPasswordToken(FlaskEasyJWT):
     """
         A token for verifying requests to change a user's password.
     """

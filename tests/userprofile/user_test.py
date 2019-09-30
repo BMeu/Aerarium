@@ -6,13 +6,14 @@ from unittest.mock import MagicMock
 from unittest.mock import patch
 
 from flask import url_for
+from flask_easyjwt import EasyJWTError
 from flask_login import current_user
 
 from app import create_app
 from app import db
 from app import mail
+from app import timedelta_to_minutes
 from app.configuration import TestConfiguration
-from app.exceptions import InvalidJWTokenPayloadError
 from app.userprofile import Permission
 from app.userprofile import Role
 from app.userprofile import User
@@ -500,7 +501,7 @@ class UserTest(TestCase):
             self.assertFalse(changed_email)
             self.assertEqual(old_email, user.get_email())
 
-    @patch('app.token.encode')
+    @patch('easyjwt.easyjwt.jwt_encode')
     def test_send_change_email_address_email(self, mock_encode: MagicMock):
         """
             Test sending a email address change email to the user.
@@ -526,10 +527,9 @@ class UserTest(TestCase):
         new_email = 'test2@example.com'
         with mail.record_messages() as outgoing:
             token_obj = user.send_change_email_address_email(new_email)
-            validity_in_minutes = token_obj.get_validity(in_minutes=True)
+            validity_in_minutes = timedelta_to_minutes(token_obj.get_validity())
 
             self.assertIsNotNone(token_obj)
-            self.assertEqual(token, token_obj._token)
             self.assertEqual(1, len(outgoing))
             self.assertEqual([new_email], outgoing[0].recipients)
             self.assertIn('Change Your Email Address', outgoing[0].subject)
@@ -585,7 +585,7 @@ class UserTest(TestCase):
         token_obj.part_of_the_payload = True
         token = token_obj.create()
 
-        with self.assertRaises(InvalidJWTokenPayloadError):
+        with self.assertRaises(EasyJWTError):
             loaded_user, loaded_email = User.verify_change_email_address_token(token)
             self.assertIsNone(loaded_user)
             self.assertIsNone(loaded_email)
@@ -725,7 +725,7 @@ class UserTest(TestCase):
         is_correct = user.check_password(None)
         self.assertFalse(is_correct)
 
-    @patch('app.token.encode')
+    @patch('easyjwt.easyjwt.jwt_encode')
     def test_send_password_reset_email_success(self, mock_encode: MagicMock):
         """
             Test sending a password reset email to the user.
@@ -750,10 +750,9 @@ class UserTest(TestCase):
 
         with mail.record_messages() as outgoing:
             token_obj = user.send_password_reset_email()
-            validity_in_minutes = token_obj.get_validity(in_minutes=True)
+            validity_in_minutes = timedelta_to_minutes(token_obj.get_validity())
 
             self.assertIsNotNone(token_obj)
-            self.assertEqual(token, token_obj._token)
             self.assertEqual(1, len(outgoing))
             self.assertEqual([user.get_email()], outgoing[0].recipients)
             self.assertIn('Reset Your Password', outgoing[0].subject)
@@ -822,7 +821,7 @@ class UserTest(TestCase):
         token_obj.part_of_the_payload = True
         token = token_obj.create()
 
-        with self.assertRaises(InvalidJWTokenPayloadError):
+        with self.assertRaises(EasyJWTError):
             loaded_user = User.verify_password_reset_token(token)
             self.assertIsNone(loaded_user)
 
@@ -830,7 +829,7 @@ class UserTest(TestCase):
 
     # region Delete
 
-    @patch('app.token.encode')
+    @patch('easyjwt.easyjwt.jwt_encode')
     def test_send_delete_account_email(self, mock_encode: MagicMock):
         """
             Test sending a delete account email to the user.
@@ -855,10 +854,9 @@ class UserTest(TestCase):
 
         with mail.record_messages() as outgoing:
             token_obj = user.send_delete_account_email()
-            validity_in_minutes = token_obj.get_validity(in_minutes=True)
+            validity_in_minutes = timedelta_to_minutes(token_obj.get_validity())
 
             self.assertIsNotNone(token_obj)
-            self.assertEqual(token, token_obj._token)
             self.assertEqual(1, len(outgoing))
             self.assertEqual([email], outgoing[0].recipients)
             self.assertIn('Delete Your User Profile', outgoing[0].subject)
@@ -906,7 +904,7 @@ class UserTest(TestCase):
         token_obj.part_of_the_payload = True
         token = token_obj.create()
 
-        with self.assertRaises(InvalidJWTokenPayloadError):
+        with self.assertRaises(EasyJWTError):
             loaded_user = User.verify_delete_account_token(token)
             self.assertIsNotNone(loaded_user)
 

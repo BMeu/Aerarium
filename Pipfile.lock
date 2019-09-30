@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4e42606d9ba5751e61dc233d93baa06e0bc58a801ba15576e250607ba919940b"
+            "sha256": "0edf3edf3154c07c1a6ad31ca7ffedb828907fd0e52c51df7762275df04dbcde"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -53,7 +53,6 @@
                 "sha256:1742a25a9ef1b1ac4000683406879a3e1a6577faa02f31e482e6c84e2e3bf628",
                 "sha256:621db384daef94b7031897ca479f4feed025989a64e91c6fae88fb88a842488c"
             ],
-            "index": "pypi",
             "version": "==0.18.3"
         },
         "blinker": {
@@ -103,6 +102,13 @@
             "index": "pypi",
             "version": "==7.0"
         },
+        "easyjwt": {
+            "hashes": [
+                "sha256:a2d03018678bc0eb2356cf7cdf1cc231a2a37b99dfa400f577d62de81269f805",
+                "sha256:ddf34d3b6062e6ff30f1ee80de70ad157b4991d823ec9fc83dd7ded9e56ac9da"
+            ],
+            "version": "==0.1.1"
+        },
         "flask": {
             "hashes": [
                 "sha256:13f9f196f330c7c2c5d7a5cf91af894110ca0215ac051b5844701f2bfd934d52",
@@ -124,6 +130,14 @@
             ],
             "index": "pypi",
             "version": "==0.7.1"
+        },
+        "flask-easyjwt": {
+            "hashes": [
+                "sha256:01eec3f49b4dd9ecad9de6a8cfe22b74334b48ddf08e23e588721f91d06faaf4",
+                "sha256:85a9a20e15e73861ceb2d81ac73b71049400d09996f54745ea74aeed3fe8cd11"
+            ],
+            "index": "pypi",
+            "version": "==0.2.0"
         },
         "flask-login": {
             "hashes": [
@@ -218,7 +232,6 @@
         },
         "pycparser": {
             "hashes": [
-                "sha256:1c156cfe086dd061a060442527fb2db051fe5bd025ca34a1cea1e7ca4c772695",
                 "sha256:a988718abfad80b6b157acce7bf130a30876d27603738ac39f140993246b25b3"
             ],
             "version": "==2.19"
@@ -228,7 +241,6 @@
                 "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e",
                 "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"
             ],
-            "index": "pypi",
             "version": "==1.7.1"
         },
         "pymysql": {

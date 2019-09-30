@@ -10,11 +10,11 @@ from flask import flash
 from flask import redirect
 from flask import url_for
 from flask_babel import gettext as _
+from flask_easyjwt import EasyJWTError
 from flask_login import current_user
 from flask_login import fresh_login_required
-from jwt import PyJWTError
 
-from app.exceptions import InvalidJWTokenPayloadError
+from app import timedelta_to_minutes
 from app.userprofile import User
 from app.views.userprofile import bp
 from app.views.userprofile.forms import DeleteUserProfileForm
@@ -32,7 +32,7 @@ def delete_profile_request() -> str:
     if form.validate_on_submit():
         token = current_user.send_delete_account_email()
 
-        validity = token.get_validity(in_minutes=True)
+        validity = timedelta_to_minutes(token.get_validity())
         flash(_('An email has been sent to your email address. Please open the link included in the mail within the \
                  next %(validity)d minutes to delete your user profile. Otherwise, your user profile will not be \
                  deleted.',
@@ -46,13 +46,13 @@ def delete_profile_request() -> str:
 @fresh_login_required
 def delete_profile(token: str) -> str:
     """
-        Delete account of the user given in the token. Then redirect to the home page.
+        Delete the account of the user given in the token. Then redirect to the home page.
 
         :return: The HTML response.
     """
     try:
         user = User.verify_delete_account_token(token)
-    except (InvalidJWTokenPayloadError, PyJWTError):
+    except EasyJWTError:
         return abort(404)
 
     user.delete()

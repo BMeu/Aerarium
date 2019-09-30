@@ -20,13 +20,6 @@ class DeletionPreconditionViolationError(AerariumError):
     pass
 
 
-class InvalidJWTokenPayloadError(AerariumError):
-    """
-        Raised when an :class:`app.token.JWToken` cannot be verified due to invalid payload.
-    """
-    pass
-
-
 class NoMailSenderError(AerariumError):
     """
         Raised when an :class:`app.email.Email` does not have a sender.

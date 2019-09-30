@@ -16,6 +16,7 @@ from app.application import get_app
 from app.application import login
 from app.application import mail
 from app.application import migrate
+from app.converters import timedelta_to_minutes
 from app.email import Email
 from app.pagination import Pagination
 
@@ -33,4 +34,5 @@ __all__ = [
             'Pagination',
             'register_after_request_handlers',
             'register_before_request_handlers',
+            'timedelta_to_minutes',
            ]

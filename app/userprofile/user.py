@@ -19,6 +19,7 @@ from app import Email
 from app import get_app
 from app import login as app_login
 from app import Pagination
+from app import timedelta_to_minutes
 from app.userprofile import Permission
 from app.userprofile import UserSettings
 from app.userprofile.tokens import ChangeEmailAddressToken
@@ -248,7 +249,7 @@ class User(UserMixin, db.Model):
         token_obj.new_email = email
 
         token = token_obj.create()
-        validity = token_obj.get_validity(in_minutes=True)
+        validity = timedelta_to_minutes(token_obj.get_validity())
 
         link = url_for('userprofile.change_email', token=token, _external=True)
         email_old = self.get_email()
@@ -333,7 +334,7 @@ class User(UserMixin, db.Model):
         token_obj.user_id = self.id
         token = token_obj.create()
 
-        validity = token_obj.get_validity(in_minutes=True)
+        validity = timedelta_to_minutes(token_obj.get_validity())
 
         link = url_for('userprofile.reset_password', token=token, _external=True)
 
@@ -371,7 +372,7 @@ class User(UserMixin, db.Model):
         token_obj.user_id = self.id
 
         token = token_obj.create()
-        validity = token_obj.get_validity(in_minutes=True)
+        validity = timedelta_to_minutes(token_obj.get_validity())
 
         link = url_for('userprofile.delete_profile', token=token, _external=True)
 
