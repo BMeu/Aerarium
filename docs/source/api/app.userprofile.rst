@@ -8,55 +8,55 @@ app.userprofile.decorators module
 ---------------------------------
 
 .. automodule:: app.userprofile.decorators
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 app.userprofile.permissions module
 ----------------------------------
 
 .. automodule:: app.userprofile.permissions
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 app.userprofile.role module
 ---------------------------
 
 .. automodule:: app.userprofile.role
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 app.userprofile.settings module
 -------------------------------
 
 .. automodule:: app.userprofile.settings
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 app.userprofile.tokens module
 -----------------------------
 
 .. automodule:: app.userprofile.tokens
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 app.userprofile.user module
 ---------------------------
 
 .. automodule:: app.userprofile.user
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 Module contents
 ---------------
 
 .. automodule:: app.userprofile
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:
