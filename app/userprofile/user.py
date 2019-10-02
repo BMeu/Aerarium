@@ -108,7 +108,7 @@ class User(UserMixin, db.Model):  # type: ignore
         self.settings = UserSettings()
 
     @staticmethod
-    @app_login.user_loader
+    @app_login.user_loader  # type: ignore
     def load_from_id(user_id: int) -> Optional['User']:
         """
             Load the user with the given ID from the database.

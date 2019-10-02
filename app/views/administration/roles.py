@@ -31,7 +31,7 @@ from app.views.forms import SearchForm
 
 
 @bp.route('/roles')
-@login_required
+@login_required  # type: ignore
 @permission_required(Permission.EditRole)
 def roles_list() -> str:
     """
@@ -50,7 +50,7 @@ def roles_list() -> str:
 
 
 @bp.route('/role/new', methods=['GET', 'POST'])
-@login_required
+@login_required  # type: ignore
 @permission_required(Permission.EditRole)
 def role_new() -> ResponseType:
     """
@@ -73,7 +73,7 @@ def role_new() -> ResponseType:
 
 
 @bp.route('/role/<string:name>', methods=['GET', 'POST'])
-@login_required
+@login_required  # type: ignore
 @permission_required(Permission.EditRole)
 def role_edit(name: str) -> ResponseType:
     """
@@ -99,7 +99,7 @@ def role_edit(name: str) -> ResponseType:
 
 
 @bp.route('/role/<string:name>/permissions', methods=['GET', 'POST'])
-@login_required
+@login_required  # type: ignore
 @permission_required(Permission.EditRole)
 def role_permissions(name: str) -> ResponseType:
     """
@@ -129,7 +129,7 @@ def role_permissions(name: str) -> ResponseType:
 
 
 @bp.route('/role/<string:name>/users')
-@login_required
+@login_required  # type: ignore
 @permission_required(Permission.EditRole)
 def role_users(name: str) -> str:
     """
@@ -153,7 +153,7 @@ def role_users(name: str) -> str:
 
 
 @bp.route('/role/<string:name>/delete', methods=['GET', 'POST'])
-@login_required
+@login_required  # type: ignore
 @permission_required(Permission.EditRole)
 def role_delete(name: str) -> ResponseType:
     """

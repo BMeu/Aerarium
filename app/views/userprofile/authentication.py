@@ -51,7 +51,7 @@ def login() -> ResponseType:
 
 
 @bp.route('/login/refresh', methods=['GET', 'POST'])
-@login_required
+@login_required  # type: ignore
 def login_refresh() -> ResponseType:
     """
         Show a form to refresh a user's login after their login has become stale.

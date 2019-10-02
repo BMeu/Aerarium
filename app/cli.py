@@ -32,7 +32,7 @@ def register(application: Flask) -> None:
     babel_pot_file = os.path.join(application.config['TMP_DIR'], 'messages.pot')
     babel_translation_dir = os.path.join(application.config['BASE_DIR'], 'app', 'translations')
 
-    @application.cli.command(name='pw_hash_rounds',
+    @application.cli.command(name='pw_hash_rounds',  # type: ignore
                              help='Determine the number of bcrypt hashing rounds that can be handled within the '
                                   'given maximum time MAX_TIME (in ms).')
     @click.argument('max_time')
@@ -88,7 +88,7 @@ def register(application: Flask) -> None:
         click.echo(f'You can set this value in your configuration file with')
         click.echo(f'   BCRYPT_LOG_ROUNDS={rounds}')
 
-    @application.cli.group()
+    @application.cli.group()  # type: ignore
     def translate() -> None:
         """
             Translation and localization commands.
@@ -96,7 +96,7 @@ def register(application: Flask) -> None:
         pass
 
     # noinspection PyShadowingBuiltins
-    @translate.command(name='compile', help='Compile all languages.')
+    @translate.command(name='compile', help='Compile all languages.')  # type: ignore
     def translate_compile() -> None:
         """
             Compile all languages.
@@ -108,7 +108,7 @@ def register(application: Flask) -> None:
             click.echo('PyBabel: Compilation failed.')
             sys.exit(1)
 
-    @translate.command(name='init', help='Initialize a new language with the given LANGUAGE code.')
+    @translate.command(name='init', help='Initialize a new language with the given LANGUAGE code.')  # type: ignore
     @click.argument('language')
     def translate_init(language: str) -> None:
         """
@@ -126,7 +126,7 @@ def register(application: Flask) -> None:
 
         os.remove(babel_pot_file)
 
-    @translate.command(name='update', help='Update all languages.')
+    @translate.command(name='update', help='Update all languages.')  # type: ignore
     def translate_update() -> None:
         """
             Update all languages.

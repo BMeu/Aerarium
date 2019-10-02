@@ -22,7 +22,7 @@ from app.views.userprofile.forms import UserSettingsResetForm
 
 
 @bp.route('/settings', methods=['GET', 'POST'])
-@login_required
+@login_required  # type: ignore
 def user_settings() -> ResponseType:
     """
         Show and process a form to edit a user's settings.
@@ -50,7 +50,7 @@ def user_settings() -> ResponseType:
 
 
 @bp.route('/settings/reset', methods=['POST'])
-@login_required
+@login_required  # type: ignore
 def user_settings_reset() -> ResponseType:
     """
         Reset the user settings and redirect to the settings page.

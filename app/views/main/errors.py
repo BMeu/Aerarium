@@ -13,7 +13,7 @@ from app.views.main import bp
 from app.typing import ResponseType
 
 
-@bp.app_errorhandler(400)
+@bp.app_errorhandler(400)  # type: ignore
 def bad_request_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``400 - Bad Request`` errors.
@@ -26,7 +26,7 @@ def bad_request_error(_error: HTTPException) -> ResponseType:
     return render_template('error.html', title=title, message=message), 400
 
 
-@bp.app_errorhandler(401)
+@bp.app_errorhandler(401)  # type: ignore
 def unauthorized_access_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``401 - Unauthorized Access`` errors.
@@ -39,7 +39,7 @@ def unauthorized_access_error(_error: HTTPException) -> ResponseType:
     return render_template('error.html', title=title, message=message, show_login_link=True), 401
 
 
-@bp.app_errorhandler(403)
+@bp.app_errorhandler(403)  # type: ignore
 def permission_denied_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``403 - Permission Denied`` errors.
@@ -53,7 +53,7 @@ def permission_denied_error(_error: HTTPException) -> ResponseType:
     return render_template('error.html', title=title, message=message, show_login_link=True), 403
 
 
-@bp.app_errorhandler(404)
+@bp.app_errorhandler(404)  # type: ignore
 def page_not_found_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``404 - Page Not Found`` errors.
@@ -67,7 +67,7 @@ def page_not_found_error(_error: HTTPException) -> ResponseType:
     return render_template('error.html', title=title, message=message), 404
 
 
-@bp.app_errorhandler(405)
+@bp.app_errorhandler(405)  # type: ignore
 def method_not_allowed_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``405 - Method Not Allowed`` errors.
@@ -80,7 +80,7 @@ def method_not_allowed_error(_error: HTTPException) -> ResponseType:
     return render_template('error.html', title=title, message=message), 405
 
 
-@bp.app_errorhandler(500)
+@bp.app_errorhandler(500)  # type: ignore
 def internal_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``500 - Internal Server Error`` errors.

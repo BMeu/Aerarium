@@ -26,7 +26,7 @@ from app.views.userprofile.forms import UserProfileForm
 
 
 @bp.route('/profile', methods=['GET', 'POST'])
-@fresh_login_required
+@fresh_login_required  # type: ignore
 def user_profile() -> ResponseType:
     """
         Show and process a form to edit account details.
