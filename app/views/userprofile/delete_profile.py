@@ -59,6 +59,10 @@ def delete_profile(token: str) -> ResponseType:
     if user is None:
         return abort(404)
 
+    # A user can only delete their own account.
+    if current_user != user:
+        return abort(404)
+
     user.delete()
     flash(_('Your user profile and all data linked to it have been deleted. We would be happy to see you again in the \
              future!'))
