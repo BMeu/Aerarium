@@ -11,7 +11,7 @@ from app.localization import get_default_language
 from app.localization import get_languages
 
 
-class UserSettings(db.Model):
+class UserSettings(db.Model):  # type: ignore
     """
         A collection of settings each user can individually define.
     """
@@ -35,7 +35,7 @@ class UserSettings(db.Model):
             :return: The code of the user's language.
             :raise ValueError: If the assigned language is not supported by the application.
         """
-        return self._language
+        return self._language  # type: ignore
 
     @language.setter
     def language(self, value: str) -> None:

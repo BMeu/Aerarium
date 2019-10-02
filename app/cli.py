@@ -45,7 +45,7 @@ def register(application: Flask) -> None:
             :param verbose: Show the duration for all tried number of rounds.
             :param max_time: The maximum time allowed for password hashing in milliseconds.
         """
-        max_time = float(max_time)
+        max_duration = float(max_time)
         password = 'Aerarium'
 
         # Bcrypt allows only 4 to 31 rounds of hashing.
@@ -64,7 +64,7 @@ def register(application: Flask) -> None:
             if verbose:
                 click.echo(f'Rounds: {rounds:02d} | Duration: {duration:.1f}ms')
 
-            if duration > max_time:
+            if duration > max_duration:
                 # If the duration is larger than the maximum time, the last number of rounds gives the correct result.
                 rounds -= 1
                 break

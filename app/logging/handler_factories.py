@@ -56,11 +56,11 @@ def create_mail_handler(level: int, formatter: Formatter, sender: str, recipient
     """
 
     # Set some options.
-    credentials = (user, password) if user or password else None
-    tls = () if tls else None
+    credentials = (user, password) if user and password else None
+    secure = () if tls else None
     host = (server, port)
 
-    handler = SecureSMTPHandler(host, sender, recipients, subject, credentials, tls, ssl)
+    handler = SecureSMTPHandler(host, sender, recipients, subject, credentials, secure, ssl)
     handler.setFormatter(formatter)
     handler.setLevel(level)
     return handler

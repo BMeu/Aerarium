@@ -28,13 +28,14 @@ class Email(object):
         Emails will be sent asynchronously to avoid latencies.
     """
 
-    def __init__(self, subject, body: str, sender: Optional[str] = None) -> None:
+    def __init__(self, subject: str, body: str, sender: Optional[str] = None) -> None:
         """
             :param subject: The mail's subject line.
             :param body: The path (within the template folder) to the template for this mail's body (without the file
                          extension).
             :param sender: The sender of the mail. If not set, the sender will be taken from the app configuration.
             :raise NoMailSenderError: If no sender is given and none is configured in the app configuration.
+            :raise RuntimeError: If no application is available (i.e. outside the application context).
         """
         application = get_app()
         title = application.config['TITLE_SHORT']
@@ -44,7 +45,7 @@ class Email(object):
         self._body_html: Optional[str] = None
         self._subject: str = f'{title} » {subject}'
 
-        self._sender: str = sender
+        self._sender: Optional[str] = sender
         if self._sender is None:
             self._sender = application.config['MAIL_FROM']
 

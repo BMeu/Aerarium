@@ -14,6 +14,7 @@ from flask_babel import gettext as _
 from flask_login import login_required
 
 from app import db
+from app.typing import ResponseType
 from app.userprofile import Permission
 from app.userprofile import Role
 from app.userprofile import RolePagination
@@ -51,7 +52,7 @@ def roles_list() -> str:
 @bp.route('/role/new', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.EditRole)
-def role_new() -> str:
+def role_new() -> ResponseType:
     """
         Show and process a form to create a new role.
 
@@ -74,7 +75,7 @@ def role_new() -> str:
 @bp.route('/role/<string:name>', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.EditRole)
-def role_edit(name: str) -> str:
+def role_edit(name: str) -> ResponseType:
     """
         Show and process a form to edit an existing role.
 
@@ -100,7 +101,7 @@ def role_edit(name: str) -> str:
 @bp.route('/role/<string:name>/permissions', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.EditRole)
-def role_permissions(name: str) -> str:
+def role_permissions(name: str) -> ResponseType:
     """
         Show and process a form to change a role's permissions.
 
@@ -154,7 +155,7 @@ def role_users(name: str) -> str:
 @bp.route('/role/<string:name>/delete', methods=['GET', 'POST'])
 @login_required
 @permission_required(Permission.EditRole)
-def role_delete(name: str) -> str:
+def role_delete(name: str) -> ResponseType:
     """
         Show and process a form to delete the given role.
 

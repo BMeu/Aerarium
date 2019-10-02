@@ -12,10 +12,11 @@ from flask_babel import gettext as _
 from flask_login import current_user
 
 from app.views.main import bp
+from app.typing import ResponseType
 
 
 @bp.route('/')
-def index() -> str:
+def index() -> ResponseType:
     """
         Show the dashboard.
 

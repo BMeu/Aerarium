@@ -30,6 +30,9 @@ class Pagination(object):
             :param page_param: The name of the page parameter specifying the current page. Defaults to ``'page'``.
         """
 
+        self.current_page: int
+        self.rows_per_page: int
+
         # Get the current page from the request arguments.
         try:
             self.current_page = request.args.get(page_param, 1, type=int)
@@ -63,13 +66,13 @@ class Pagination(object):
         return self.first_row + self.rows_on_page - 1
 
     @property
-    def rows(self) -> List[db.Model]:
+    def rows(self) -> List[db.Model]:  # type: ignore
         """
             Get the actual objects for the current page.
 
             :return: The SQLAlchemy models shown on the current page.
         """
-        return self._rows.items
+        return self._rows.items  # type: ignore
 
     @property
     def rows_on_page(self) -> int:
@@ -87,7 +90,7 @@ class Pagination(object):
 
             :return: The number of pages needed to display all rows.
         """
-        return self._rows.pages
+        return self._rows.pages  # type: ignore
 
     @property
     def total_rows(self) -> int:
@@ -96,7 +99,7 @@ class Pagination(object):
 
             :return: The number of total rows across all pages.
         """
-        return self._rows.total
+        return self._rows.total  # type: ignore
 
     def get_info_text(self, search_term: Optional[str] = None) -> str:
         """
@@ -112,30 +115,30 @@ class Pagination(object):
 
             # More than one result on the page.
             if self.rows_on_page >= 2:
-                return _('Displaying results %(first_result)d to %(last_result)d of %(total_results)d matching '
-                         '“%(search)s”',
+                return _('Displaying results %(first_result)d to %(last_result)d of %(total_results)d '  # type: ignore
+                         'matching “%(search)s”',
                          first_result=self.first_row, last_result=self.last_row, total_results=self.total_rows,
                          search=search_term)
 
             # One result on the page.
             if self.rows_on_page == 1:
-                return _('Displaying result %(result)d of %(total_results)d matching “%(search)s”',
+                return _('Displaying result %(result)d of %(total_results)d matching “%(search)s”',  # type: ignore
                          result=self.first_row, total_results=self.total_rows, search=search_term)
 
             # No results.
-            return _('No results found matching “%(search)s”', search=search_term)
+            return _('No results found matching “%(search)s”', search=search_term)  # type: ignore
 
         # Text without a search.
 
         # More than one result on the page.
         if self.rows_on_page >= 2:
-            return _('Displaying results %(first_result)d to %(last_result)d of %(total_results)d',
+            return _('Displaying results %(first_result)d to %(last_result)d of %(total_results)d',  # type: ignore
                      first_result=self.first_row, last_result=self.last_row, total_results=self.total_rows)
 
         # One result on the page.
         if self.rows_on_page == 1:
-            return _('Displaying result %(result)d of %(total_results)d',
+            return _('Displaying result %(result)d of %(total_results)d',  # type: ignore
                      result=self.first_row, total_results=self.total_rows)
 
         # No results.
-        return _('No results')
+        return _('No results')  # type: ignore

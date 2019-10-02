@@ -1,6 +1,7 @@
 #!venv/bin/python
 # -*- coding: utf-8 -*-
 
+from typing import cast
 from typing import Optional
 
 from enum import Flag
@@ -59,7 +60,7 @@ class Permission(Flag):
         # Set the actual underlying value and name.
         member._value_ = value
 
-        return member
+        return cast('Permission', member)
 
     def __init__(self, _value: int, _title: Optional[str] = None, _description: Optional[str] = None) -> None:
         """
@@ -67,6 +68,9 @@ class Permission(Flag):
             :param _title: A title used for displaying the enum member. If not given, the member's name will be used.
             :param _description: An optional description used to display additional information about the permission.
         """
+
+        self.description: Optional[str]
+        self.title: Optional[str]
 
         # The parameters have been set in the __new__ method. Simply set the title to the member's name if the title is
         # not given. This cannot be done in __new__ as `name` is not yet defined in there.

@@ -15,6 +15,7 @@ from flask_login import current_user
 from flask_login import fresh_login_required
 
 from app import timedelta_to_minutes
+from app.typing import ResponseType
 from app.userprofile import User
 from app.views.userprofile import bp
 from app.views.userprofile.forms import DeleteUserProfileForm
@@ -22,7 +23,7 @@ from app.views.userprofile.forms import DeleteUserProfileForm
 
 @bp.route('/delete', methods=['POST'])
 @fresh_login_required
-def delete_profile_request() -> str:
+def delete_profile_request() -> ResponseType:
     """
         Send an email to the user to confirm the account deletion request. Then redirect to the user's profile page.
 
@@ -44,7 +45,7 @@ def delete_profile_request() -> str:
 
 @bp.route('/delete/<string:token>', methods=['GET'])
 @fresh_login_required
-def delete_profile(token: str) -> str:
+def delete_profile(token: str) -> ResponseType:
     """
         Delete the account of the user given in the token. Then redirect to the home page.
 
@@ -53,6 +54,9 @@ def delete_profile(token: str) -> str:
     try:
         user = User.verify_delete_account_token(token)
     except EasyJWTError:
+        return abort(404)
+
+    if user is None:
         return abort(404)
 
     user.delete()

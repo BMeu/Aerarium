@@ -40,7 +40,7 @@ class BaseConfiguration:
 
     # General application settings.
     LANGUAGES: Iterable[str] = get_languages(TRANSLATION_DIR)
-    SYS_ADMINS: Optional[Iterable[str]] = [mail for mail in str.split(environ.get('SYS_ADMINS'), ';')] \
+    SYS_ADMINS: Optional[Iterable[str]] = [mail for mail in str.split(environ.get('SYS_ADMINS', ''), ';')] \
         if environ.get('SYS_ADMINS') else None
     SUPPORT_ADDRESS: Optional[str] = environ.get('SUPPORT_ADDRESS', None)
     ITEMS_PER_PAGE: int = max(1, int(environ.get('ITEMS_PER_PAGE', 25)))
@@ -48,7 +48,7 @@ class BaseConfiguration:
     # Security settings.
     BCRYPT_HANDLE_LONG_PASSWORDS: int = 1
     BCRYPT_LOG_ROUNDS: int = int(environ.get('BCRYPT_LOG_ROUNDS', 12))
-    SECRET_KEY: str = environ.get('SECRET_KEY')
+    SECRET_KEY: Optional[str] = environ.get('SECRET_KEY')
     SESSION_COOKIE_HTTPONLY: bool = True
     SESSION_COOKIE_SECURE: bool = True if environ.get('USE_HTTP', '0') != '1' else False
     PREFERRED_URL_SCHEME: str = 'https' if environ.get('USE_HTTP', '0') != '1' else 'http'
@@ -59,12 +59,12 @@ class BaseConfiguration:
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
 
     # Mail settings.
-    MAIL_SERVER: str = environ.get('MAIL_SERVER')
+    MAIL_SERVER: Optional[str] = environ.get('MAIL_SERVER')
     MAIL_PORT: int = int(environ.get('MAIL_PORT', 25))
     MAIL_USE_TLS: bool = environ.get('MAIL_USE_TLS', '0') == '1'
     MAIL_USE_SSL: bool = environ.get('MAIL_USE_SSL', '0') == '1'
-    MAIL_USERNAME: str = environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD: str = environ.get('MAIL_PASSWORD')
+    MAIL_USERNAME: Optional[str] = environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD: Optional[str] = environ.get('MAIL_PASSWORD')
     MAIL_FROM: Optional[str] = environ.get('MAIL_FROM',
                                            ('no-reply@' + MAIL_SERVER) if MAIL_SERVER is not None else None)
 

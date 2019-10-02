@@ -10,10 +10,11 @@ from flask_babel import gettext as _
 from werkzeug.exceptions import HTTPException
 
 from app.views.main import bp
+from app.typing import ResponseType
 
 
 @bp.app_errorhandler(400)
-def bad_request_error(_error: HTTPException):
+def bad_request_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``400 - Bad Request`` errors.
 
@@ -26,7 +27,7 @@ def bad_request_error(_error: HTTPException):
 
 
 @bp.app_errorhandler(401)
-def unauthorized_access_error(_error: HTTPException):
+def unauthorized_access_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``401 - Unauthorized Access`` errors.
 
@@ -39,7 +40,7 @@ def unauthorized_access_error(_error: HTTPException):
 
 
 @bp.app_errorhandler(403)
-def permission_denied_error(_error: HTTPException):
+def permission_denied_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``403 - Permission Denied`` errors.
 
@@ -53,7 +54,7 @@ def permission_denied_error(_error: HTTPException):
 
 
 @bp.app_errorhandler(404)
-def page_not_found_error(_error: HTTPException):
+def page_not_found_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``404 - Page Not Found`` errors.
 
@@ -67,7 +68,7 @@ def page_not_found_error(_error: HTTPException):
 
 
 @bp.app_errorhandler(405)
-def method_not_allowed_error(_error: HTTPException):
+def method_not_allowed_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``405 - Method Not Allowed`` errors.
 
@@ -80,7 +81,7 @@ def method_not_allowed_error(_error: HTTPException):
 
 
 @bp.app_errorhandler(500)
-def internal_error(_error: HTTPException):
+def internal_error(_error: HTTPException) -> ResponseType:
     """
         Return an error page for ``500 - Internal Server Error`` errors.
 

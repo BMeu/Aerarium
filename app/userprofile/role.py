@@ -17,7 +17,7 @@ from app.userprofile import Permission
 """
 
 
-class Role(db.Model):
+class Role(db.Model):  # type: ignore
     """
         The class representing a role with certain permissions.
     """
@@ -47,7 +47,7 @@ class Role(db.Model):
         A list of users (:class:`app.userprofile.User`) which have this role.
     """
 
-    invalid_names: List[str] = ['new']
+    invalid_names = ['new']
     """
         A list of names that may not be used for a role's name.
     """
@@ -62,7 +62,7 @@ class Role(db.Model):
             :return: The role's unique name.
             :raise ValueError: If an invalid name is assigned.
         """
-        return self._name
+        return self._name  # type: ignore
 
     @name.setter
     def name(self, value: str) -> None:
@@ -100,7 +100,7 @@ class Role(db.Model):
             :param role_id: The ID of the role to load.
             :return: The loaded role if it exists, ``None`` otherwise.
         """
-        return Role.query.get(role_id)
+        return Role.query.get(role_id)  # type: ignore
 
     @staticmethod
     def load_from_name(name: str) -> Optional['Role']:
@@ -110,7 +110,7 @@ class Role(db.Model):
             :param name: The name of the role to load.
             :return: The loaded role if it exists, ``None`` otherwise.
         """
-        return Role.query.filter_by(_name=name).first()
+        return Role.query.filter_by(_name=name).first()  # type: ignore
 
     @staticmethod
     def load_roles_with_permission(permission: Permission) -> List['Role']:
@@ -122,7 +122,7 @@ class Role(db.Model):
         """
 
         raw_value = permission.value
-        return Role.query.filter(Role._permissions.op('&')(raw_value) == raw_value).all()
+        return Role.query.filter(Role._permissions.op('&')(raw_value) == raw_value).all()  # type: ignore
 
     # endregion
 
@@ -150,7 +150,7 @@ class Role(db.Model):
         return Permission(self._permissions)
 
     @permissions.setter
-    def permissions(self, permission: Permission) -> None:
+    def permissions(self, permission: Optional[Permission]) -> None:
         """
             Set the given permissions for this role.
 
@@ -236,7 +236,7 @@ class Role(db.Model):
 
     # region Delete
 
-    def delete(self, new_role: Optional['Role'] = None):
+    def delete(self, new_role: Optional['Role'] = None) -> None:
         """
             Delete this role. If there are users to whom this role is assigned, their role will be set to ``new_role``.
 
@@ -325,30 +325,30 @@ class RolePagination(Pagination):
 
             # More than one result on the page.
             if self.rows_on_page >= 2:
-                return _('Displaying roles %(first_result)d to %(last_result)d of %(total_results)d matching '
-                         '“%(search)s”',
+                return _('Displaying roles %(first_result)d to %(last_result)d of %(total_results)d '  # type: ignore
+                         'matching “%(search)s”',
                          first_result=self.first_row, last_result=self.last_row, total_results=self.total_rows,
                          search=search_term)
 
             # One result on the page.
             if self.rows_on_page == 1:
-                return _('Displaying role %(result)d of %(total_results)d matching “%(search)s”',
+                return _('Displaying role %(result)d of %(total_results)d matching “%(search)s”',  # type: ignore
                          result=self.first_row, total_results=self.total_rows, search=search_term)
 
             # No results.
-            return _('No roles found matching “%(search)s”', search=search_term)
+            return _('No roles found matching “%(search)s”', search=search_term)  # type: ignore
 
         # Text without a search.
 
         # More than one result on the page.
         if self.rows_on_page >= 2:
-            return _('Displaying roles %(first_result)d to %(last_result)d of %(total_results)d',
+            return _('Displaying roles %(first_result)d to %(last_result)d of %(total_results)d',  # type: ignore
                      first_result=self.first_row, last_result=self.last_row, total_results=self.total_rows)
 
         # One result on the page.
         if self.rows_on_page == 1:
-            return _('Displaying role %(result)d of %(total_results)d',
+            return _('Displaying role %(result)d of %(total_results)d',  # type: ignore
                      result=self.first_row, total_results=self.total_rows)
 
         # No results.
-        return _('No roles')
+        return _('No roles')  # type: ignore

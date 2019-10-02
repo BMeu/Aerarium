@@ -51,8 +51,17 @@ class SecureSMTPHandler(SMTPHandler):
             :param timeout: Timeout in seconds for the SMTP connection (defaults to ``5.0`` seconds).
         """
 
+        self.mailhost: str
+        self.mailport: Optional[int]
+        self.fromaddr: str
+        self.toaddrs: List[str]
+        self.username: Optional[str]
+        self.password: Optional[str]
+        self.secure: Optional[Union[Tuple[()], Tuple[str], Tuple[str, str]]]
+        self.timeout: float
+
         self.ssl = ssl
-        super().__init__(mailhost, fromaddr, toaddrs, subject, credentials, secure, timeout)
+        super().__init__(mailhost, fromaddr, toaddrs, subject, credentials, secure, timeout)  # type: ignore
 
     def emit(self, record: LogRecord) -> None:
         """
@@ -71,6 +80,7 @@ class SecureSMTPHandler(SMTPHandler):
             if not port:
                 port = SMTP_SSL_PORT if self.ssl else SMTP_PORT
 
+            smtp: Union[SMTP_SSL, SMTP]
             if self.ssl:
                 smtp = SMTP_SSL(self.mailhost, port, timeout=self.timeout)
             else:
@@ -80,10 +90,10 @@ class SecureSMTPHandler(SMTPHandler):
             msg['From'] = self.fromaddr
             msg['To'] = ','.join(self.toaddrs)
             msg['Subject'] = self.getSubject(record)
-            msg['Date'] = email.utils.localtime()
+            msg['Date'] = email.utils.localtime()  # type: ignore
             msg.set_content(self.format(record))
 
-            if self.username:
+            if self.username and self.password:
                 if self.secure is not None:
                     smtp.ehlo()
                     smtp.starttls(*self.secure)

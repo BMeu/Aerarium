@@ -15,6 +15,7 @@ from flask_login import current_user
 from flask_login import login_required
 
 from app import db
+from app.typing import ResponseType
 from app.views.userprofile import bp
 from app.views.userprofile.forms import UserSettingsForm
 from app.views.userprofile.forms import UserSettingsResetForm
@@ -22,7 +23,7 @@ from app.views.userprofile.forms import UserSettingsResetForm
 
 @bp.route('/settings', methods=['GET', 'POST'])
 @login_required
-def user_settings() -> str:
+def user_settings() -> ResponseType:
     """
         Show and process a form to edit a user's settings.
 
@@ -50,7 +51,7 @@ def user_settings() -> str:
 
 @bp.route('/settings/reset', methods=['POST'])
 @login_required
-def user_settings_reset() -> str:
+def user_settings_reset() -> ResponseType:
     """
         Reset the user settings and redirect to the settings page.
 

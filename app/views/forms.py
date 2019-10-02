@@ -1,6 +1,7 @@
 #!venv/bin/python
 # -*- coding: utf-8 -*-
 
+from typing import Any
 from typing import Optional
 
 from flask import request
@@ -32,7 +33,7 @@ class SearchForm(FlaskForm):
         The submit button.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         """
             The search field will automatically be filled from the request.
 
@@ -51,7 +52,7 @@ class SearchForm(FlaskForm):
 
             :return: The name of the URL parameter that contains the search term.
         """
-        return self.search.name
+        return self.search.name  # type: ignore
 
     @property
     def search_term(self) -> Optional[str]:
@@ -60,7 +61,7 @@ class SearchForm(FlaskForm):
 
             :return: The string for which the user searched. ``None`` if the user did not search for anything.
         """
-        return self.search.data
+        return self.search.data  # type: ignore
 
     def _get_search_term_from_request(self) -> Optional[str]:
         """

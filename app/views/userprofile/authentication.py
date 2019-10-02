@@ -14,6 +14,7 @@ from flask_login import current_user
 from flask_login import login_required
 from flask_login import login_fresh
 
+from app.typing import ResponseType
 from app.userprofile import logout_required
 from app.userprofile import User
 from app.views.tools import get_next_page
@@ -24,7 +25,7 @@ from app.views.userprofile.forms import LoginRefreshForm
 
 @bp.route('/login', methods=['GET', 'POST'])
 @logout_required
-def login() -> str:
+def login() -> ResponseType:
     """
         Show a login form to the user. If they submitted the login form, try to log them in and redirect them to the
         homepage.
@@ -51,7 +52,7 @@ def login() -> str:
 
 @bp.route('/login/refresh', methods=['GET', 'POST'])
 @login_required
-def login_refresh() -> str:
+def login_refresh() -> ResponseType:
     """
         Show a form to refresh a user's login after their login has become stale.
 
@@ -77,7 +78,7 @@ def login_refresh() -> str:
 
 
 @bp.route('/logout')
-def logout() -> str:
+def logout() -> ResponseType:
     """
         Log the user out and redirect them to the homepage.
 

@@ -71,6 +71,14 @@ app.request module
    :undoc-members:
    :show-inheritance:
 
+app.typing module
+-----------------
+
+.. automodule:: app.typing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 
 Module contents
 ---------------

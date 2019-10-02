@@ -7,7 +7,6 @@
 
 from typing import Any
 from typing import Dict
-from typing import Optional
 
 from logging import ERROR
 from logging import Formatter as LoggingFormatter
@@ -31,6 +30,7 @@ from flask_wtf.csrf import CSRFProtect
 from app import register_after_request_handlers
 from app import register_before_request_handlers
 from app.configuration import BaseConfiguration
+from app.exceptions import NoApplicationError
 from app.localization import get_locale
 from app.logging import create_file_handler
 from app.logging import create_mail_handler
@@ -86,17 +86,19 @@ def create_app(configuration_class: Type[BaseConfiguration] = BaseConfiguration)
     return application
 
 
-def get_app() -> Optional[Flask]:
+def get_app() -> Flask:
     """
         Get the application instance object.
 
-        :return: The application object. ``None`` if it does not exist (e.g. when working outside the app context).
+        :return: The application object.
+        :raise NoApplicationError: If the application does not exist (e.g. when working outside the application
+                                   context).
     """
     try:
         # noinspection PyProtectedMember
         application = current_app._get_current_object()
     except (AttributeError, RuntimeError):
-        application = None
+        raise NoApplicationError()
 
     return application
 

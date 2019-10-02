@@ -57,11 +57,13 @@ class HandlerFactoryTest(TestCase):
         subject = 'Aerarium Test'
         server = 'smtp.example.com'
         user = 'JSB'
+        password = '1750'
         tls = True
 
-        handler = create_mail_handler(self.level, self.format, sender, recipients, subject, server, user=user, tls=tls)
+        handler = create_mail_handler(self.level, self.format, sender, recipients, subject, server, user=user,
+                                      password=password, tls=tls)
 
-        mock_handler.assert_called_with((server, 25), sender, recipients, subject, (user, None), (), False)
+        mock_handler.assert_called_with((server, 25), sender, recipients, subject, (user, password), (), False)
         instance.setFormatter.assert_called_with(self.format)
         instance.setLevel.assert_called_with(self.level)
 

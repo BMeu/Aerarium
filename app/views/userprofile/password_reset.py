@@ -15,6 +15,7 @@ from flask_easyjwt import EasyJWTError
 
 from app import db
 from app import timedelta_to_minutes
+from app.typing import ResponseType
 from app.userprofile import logout_required
 from app.userprofile import User
 from app.userprofile.tokens import ChangeEmailAddressToken
@@ -25,7 +26,7 @@ from app.views.userprofile.forms import PasswordResetForm
 
 @bp.route('/reset-password', methods=['GET', 'POST'])
 @logout_required
-def reset_password_request() -> str:
+def reset_password_request() -> ResponseType:
     """
         Show and process a form to request resetting the password.
 
@@ -36,12 +37,9 @@ def reset_password_request() -> str:
     if form.validate_on_submit():
         user = User.load_from_email(form.email.data)
         if user is not None:
-            token = user.send_password_reset_email()
-        else:
-            # Create a fake token to get the validity.
-            token = ChangeEmailAddressToken()
+            user.send_password_reset_email()
 
-        validity = timedelta_to_minutes(token.get_validity())
+        validity = timedelta_to_minutes(ChangeEmailAddressToken.get_validity())
 
         # Display a success message even if the specified address does not belong to a user account. Otherwise,
         # infiltrators could deduce if an account exists and use this information for attacks.
@@ -54,7 +52,7 @@ def reset_password_request() -> str:
 
 @bp.route('/reset-password/<string:token>', methods=['GET', 'POST'])
 @logout_required
-def reset_password(token: str) -> str:
+def reset_password(token: str) -> ResponseType:
     """
         Show and process a form to reset the password.
 
@@ -65,6 +63,9 @@ def reset_password(token: str) -> str:
     try:
         user = User.verify_password_reset_token(token)
     except EasyJWTError:
+        return abort(404)
+
+    if user is None:
         return abort(404)
 
     form = PasswordResetForm()

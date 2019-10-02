@@ -7,6 +7,7 @@ from app import create_app
 from app import db
 from app import get_app
 from app.configuration import TestConfiguration
+from app.exceptions import NoApplicationError
 
 
 class ApplicationTest(TestCase):
@@ -50,8 +51,9 @@ class ApplicationTest(TestCase):
         # Remove the application context.
         self.app_context.pop()
 
-        app = get_app()
-        self.assertIsNone(app)
+        with self.assertRaises(NoApplicationError):
+            app = get_app()
+            self.assertIsNone(app)
 
         # Re-add the application context so the tear-down method will not pop an empty list.
         self.app_context.push()

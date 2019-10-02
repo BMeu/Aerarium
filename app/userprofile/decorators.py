@@ -17,9 +17,11 @@ from werkzeug.utils import redirect
 
 from app.userprofile import Permission
 from app.userprofile import User
+from app.typing import ResponseType
+from app.typing import ViewFunctionType
 
 
-def logout_required(view_function: Callable[..., str]) -> Callable[..., str]:
+def logout_required(view_function: ViewFunctionType) -> ViewFunctionType:
     """
         A wrapper for view functions requiring the current user to be logged out. If the current user is logged in
         they will be redirected to the home page.
@@ -29,7 +31,7 @@ def logout_required(view_function: Callable[..., str]) -> Callable[..., str]:
     """
 
     @wraps(view_function)
-    def wrapped_logout_required(*args: Any, **kwargs: Any) -> str:
+    def wrapped_logout_required(*args: Any, **kwargs: Any) -> ResponseType:
         """
             If the current user is logged in, redirect to the home page. Otherwise, execute the wrapped view function.
 
@@ -45,7 +47,7 @@ def logout_required(view_function: Callable[..., str]) -> Callable[..., str]:
     return wrapped_logout_required
 
 
-def permission_required(permission: Permission) -> Callable[[Callable[..., str]], Callable[..., str]]:
+def permission_required(permission: Permission) -> Callable[[ViewFunctionType], ViewFunctionType]:
     """
         A wrapper for view functions requiring the current user to have the given permission
         (:class:`app.userprofile.Permission`). If the user does not have the permission the request will be aborted with
@@ -60,7 +62,7 @@ def permission_required(permission: Permission) -> Callable[[Callable[..., str]]
     return permission_required_all(permission)
 
 
-def permission_required_all(*permissions: Permission) -> Callable[[Callable[..., str]], Callable[..., str]]:
+def permission_required_all(*permissions: Permission) -> Callable[[ViewFunctionType], ViewFunctionType]:
     """
         A wrapper for view functions requiring the current user to have the given permissions
         (:class:`app.userprofile.Permission`). If the user does not have all of these permission the request will be
@@ -72,7 +74,7 @@ def permission_required_all(*permissions: Permission) -> Callable[[Callable[...,
         :return: The decorator for checking if the current user has the given permission.
     """
 
-    def permission_required_all_decorator(view_function: Callable[..., str]) -> Callable[..., str]:
+    def permission_required_all_decorator(view_function: ViewFunctionType) -> ViewFunctionType:
         """
             The actual decorator for the view function.
 
@@ -81,7 +83,7 @@ def permission_required_all(*permissions: Permission) -> Callable[[Callable[...,
         """
 
         @wraps(view_function)
-        def wrapped_permission_required_all(*args: Any, **kwargs: Any) -> str:
+        def wrapped_permission_required_all(*args: Any, **kwargs: Any) -> ResponseType:
             """
                 If the current user does not have all of the requested permissions, abort with error 403. Otherwise,
                 execute the wrapped view function.
@@ -100,7 +102,7 @@ def permission_required_all(*permissions: Permission) -> Callable[[Callable[...,
     return permission_required_all_decorator
 
 
-def permission_required_one_of(*permissions: Permission) -> Callable[[Callable[..., str]], Callable[..., str]]:
+def permission_required_one_of(*permissions: Permission) -> Callable[[ViewFunctionType], ViewFunctionType]:
     """
         A wrapper for view functions requiring the current user to have (at least) one of the given permissions
         (:class:`app.userprofile.Permission`). If the user does not have one of these permission the request will be
@@ -112,7 +114,7 @@ def permission_required_one_of(*permissions: Permission) -> Callable[[Callable[.
         :return: The decorator for checking if the current user has the given permission.
     """
 
-    def permission_required_one_of_decorator(view_function: Callable[..., str]) -> Callable[..., str]:
+    def permission_required_one_of_decorator(view_function: ViewFunctionType) -> ViewFunctionType:
         """
             The actual decorator for the view function.
 
@@ -121,7 +123,7 @@ def permission_required_one_of(*permissions: Permission) -> Callable[[Callable[.
         """
 
         @wraps(view_function)
-        def wrapped_permission_required_one_of(*args: Any, **kwargs: Any) -> str:
+        def wrapped_permission_required_one_of(*args: Any, **kwargs: Any) -> ResponseType:
             """
                 If the current user does not have (at least) one of the requested permissions, abort with error 403.
                 Otherwise, execute the wrapped view function.

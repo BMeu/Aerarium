@@ -1,8 +1,11 @@
 #!venv/bin/python
 # -*- coding: utf-8 -*-
 
+from typing import Any
 from typing import Dict
+from typing import List
 from typing import Optional
+from typing import Tuple
 from typing import Type
 
 from collections import OrderedDict
@@ -38,7 +41,7 @@ class UniqueRoleName(object):
         the same.
     """
 
-    def __init__(self, message=None) -> None:
+    def __init__(self, message: Optional[str] = None) -> None:
         """
             :param message: The error message shown to the user if the validation fails.
         """
@@ -160,10 +163,12 @@ class BasePermissionForm(FlaskForm):
 
         # Set the ordered fields on the form. The unbound field list does not contain the CSRF field, the bound field
         # dictionary contains this field.
+        # TODO: Move type definition to __init__()?
         # noinspection PyAttributeOutsideInit
-        self._unbound_fields = [(name, field) for (name, field) in ordered_fields if name != csrf_token]
+        self._unbound_fields: List[Tuple[str, Field]] = [(name, field) for (name, field) in ordered_fields
+                                                         if name != csrf_token]
         # noinspection PyAttributeOutsideInit
-        self._fields = OrderedDict((name, self._fields[name]) for (name, _field) in ordered_fields)
+        self._fields: Dict[str, Field] = OrderedDict((name, self._fields[name]) for (name, _field) in ordered_fields)
 
 
 class PermissionForm(BasePermissionForm):
@@ -195,7 +200,7 @@ class RoleDeleteForm(FlaskForm):
         The submit button.
     """
 
-    def __init__(self, role: Role, *args, **kwargs):
+    def __init__(self, role: Role, *args: Any, **kwargs: Any):
         """
             :param role: The role that will be deleted. Required for correctly initializing the :attr:`new_role` field.
             :param args: The arguments for initializing the form.
@@ -262,8 +267,8 @@ class RoleNewForm(RoleHeaderDataForm, PermissionForm):
 # region Factories
 
 
-def create_permission_form(form_class: Type[BasePermissionForm], preset_permissions: Permission, *args,
-                           disabled_permissions: Optional[Permission] = None, **kwargs) -> BasePermissionForm:
+def create_permission_form(form_class: Type[BasePermissionForm], preset_permissions: Permission, *args: Any,
+                           disabled_permissions: Optional[Permission] = None, **kwargs: Any) -> BasePermissionForm:
     """
         Create a form object of the given class with fields to select permissions.
 
@@ -276,7 +281,7 @@ def create_permission_form(form_class: Type[BasePermissionForm], preset_permissi
         :raise ValueError: If ``form_class`` is not a subclass of :class:`BasePermissionForm`.
     """
 
-    class ExtendedPermissionForm(form_class):
+    class ExtendedPermissionForm(form_class):  # type: ignore
         """
             A subclass of the given permission form class to which the permission fields will be added and which will
             be instantiated and returned.

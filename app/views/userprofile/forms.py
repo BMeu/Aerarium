@@ -1,6 +1,9 @@
 #!venv/bin/python
 # -*- coding: utf-8 -*-
 
+from typing import Any
+from typing import Optional
+
 from flask_babel import lazy_gettext as _l
 from flask_login import current_user
 from flask_wtf import FlaskForm
@@ -33,7 +36,7 @@ class UniqueEmail(object):
         one.
     """
 
-    def __init__(self, message=None) -> None:
+    def __init__(self, message: Optional[str] = None) -> None:
         """
             :param message: The error message shown to the user if the validation fails.
         """
@@ -207,7 +210,7 @@ class UserSettingsForm(FlaskForm):
         The submit button.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
             :param args: The arguments for initializing the form.
             :param kwargs: The keyword argument for initializing the form.

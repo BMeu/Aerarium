@@ -18,6 +18,7 @@ from flask_login import fresh_login_required
 
 from app import db
 from app import timedelta_to_minutes
+from app.typing import ResponseType
 from app.userprofile import User
 from app.views.userprofile import bp
 from app.views.userprofile.forms import DeleteUserProfileForm
@@ -26,7 +27,7 @@ from app.views.userprofile.forms import UserProfileForm
 
 @bp.route('/profile', methods=['GET', 'POST'])
 @fresh_login_required
-def user_profile() -> str:
+def user_profile() -> ResponseType:
     """
         Show and process a form to edit account details.
 
@@ -67,7 +68,7 @@ def user_profile() -> str:
 
 
 @bp.route('/change-email-address/<string:token>')
-def change_email(token: str) -> str:
+def change_email(token: str) -> ResponseType:
     """
         Change the email address of the user given in the token to the new address specified in the token. Then redirect
         to the home page.
@@ -78,6 +79,9 @@ def change_email(token: str) -> str:
     try:
         user, email = User.verify_change_email_address_token(token)
     except EasyJWTError:
+        return abort(404)
+
+    if user is None or email is None:
         return abort(404)
 
     changed_email = user.set_email(email)

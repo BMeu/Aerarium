@@ -268,9 +268,11 @@ class ProfileTest(TestCase):
         token = token_obj.create()
 
         response = self.client.get(f'/user/change-email-address/invalid-{token}', follow_redirects=True)
+        data = response.get_data(as_text=True)
         user = User.load_from_id(user_id)
 
         self.assertEqual(404, response.status_code)
+        self.assertNotIn('Your email address has successfully been changed.', data)
         self.assertEqual(email, user.get_email())
 
     def test_change_email_failure_email_in_use(self):
@@ -303,5 +305,34 @@ class ProfileTest(TestCase):
 
         self.assertIn('The email address already is in use.', data)
         self.assertEqual(email, user.get_email())
+
+    def test_change_email_failure_no_user(self):
+        """
+            Test accessing the change email page with a invalid token for a non-existing user.
+
+            Expected result: The email address is not changed and a 404 error page is shown.
+        """
+        email = 'test@example.com'
+        name = 'John Doe'
+        user = User(email, name)
+
+        db.session.add(user)
+        db.session.commit()
+
+        user_id = user.id
+        new_email = 'test2@example.com'
+        token_obj = ChangeEmailAddressToken()
+        token_obj.user_id = user_id
+        token_obj.new_email = new_email
+        token = token_obj.create()
+
+        db.session.delete(user)
+        db.session.commit()
+
+        response = self.client.get(f'/user/change-email-address/{token}', follow_redirects=True)
+        data = response.get_data(as_text=True)
+
+        self.assertEqual(404, response.status_code)
+        self.assertNotIn('Your email address has successfully been changed.', data)
 
     # endregion

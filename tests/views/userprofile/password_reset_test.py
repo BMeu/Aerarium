@@ -206,6 +206,32 @@ class PasswordResetTest(TestCase):
         self.assertEqual(404, response.status_code)
         self.assertNotIn('Your password has successfully been changed.', data)
 
+    def test_reset_password_get_failure_no_user(self):
+        """
+            Test accessing the password reset form with an anonymous user and a token for a non-existing user.
+
+            Expected result: A 404 error page is shown.
+        """
+        email = 'test@example.com'
+        name = 'John Doe'
+        user = User(email, name)
+
+        db.session.add(user)
+        db.session.commit()
+
+        token_obj = ResetPasswordToken()
+        token_obj.user_id = user.id
+        token = token_obj.create()
+
+        db.session.delete(user)
+        db.session.commit()
+
+        response = self.client.get(f'/user/reset-password/{token}', follow_redirects=True)
+        data = response.get_data(as_text=True)
+
+        self.assertEqual(404, response.status_code)
+        self.assertNotIn('Your password has successfully been changed.', data)
+
     def test_reset_password_post_logged_in(self):
         """
             Test posting to the password reset form with a user who is logged in, and a valid token.
@@ -335,6 +361,43 @@ class PasswordResetTest(TestCase):
         response = self.client.post('/user/reset-password/just-some-token', follow_redirects=True, data=dict(
             password=new_password,
             password_confirmation=new_password
+        ))
+        data = response.get_data(as_text=True)
+
+        self.assertEqual(404, response.status_code)
+        self.assertNotIn('Your password has successfully been changed.', data)
+        self.assertFalse(user.check_password(new_password))
+        self.assertTrue(user.check_password(password))
+
+    def test_reset_password_post_failure_no_user(self):
+        """
+            Test posting to the password reset form with an anonymous user, a token for a non-existing user, and a valid
+            form.
+
+            Expected result: The password is not updated and the user is shown a 404 error page.
+        """
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+        self.assertEqual(user_id, user.id)
+
+        token_obj = ResetPasswordToken()
+        token_obj.user_id = user_id
+        token = token_obj.create()
+
+        db.session.delete(user)
+        db.session.commit()
+
+        new_password = 'abcdef'
+        response = self.client.post(f'/user/reset-password/{token}', follow_redirects=True, data=dict(
+            password=new_password,
+            password_confirmation=new_password + 'ghi'
         ))
         data = response.get_data(as_text=True)
 

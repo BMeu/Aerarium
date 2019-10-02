@@ -31,7 +31,7 @@ from app.userprofile.tokens import ResetPasswordToken
 """
 
 
-class User(UserMixin, db.Model):
+class User(UserMixin, db.Model):  # type: ignore
     """
         The class representing the application's users.
     """
@@ -82,7 +82,7 @@ class User(UserMixin, db.Model):
 
             :return: ``True`` if the user account is activated.
         """
-        return self._is_activated
+        return self._is_activated  # type: ignore
 
     @is_active.setter
     def is_active(self, value: bool) -> None:
@@ -117,7 +117,7 @@ class User(UserMixin, db.Model):
             :return: The loaded user if they exist, ``None`` otherwise.
         """
 
-        return User.query.get(user_id)
+        return User.query.get(user_id)  # type: ignore
 
     @staticmethod
     def load_from_email(email: str) -> Optional['User']:
@@ -128,7 +128,7 @@ class User(UserMixin, db.Model):
             :return: The loaded user if they exist, ``None`` otherwise.
         """
 
-        return User.query.filter_by(_email=email).first()
+        return User.query.filter_by(_email=email).first()  # type: ignore
 
     # endregion
 
@@ -176,7 +176,7 @@ class User(UserMixin, db.Model):
             return None
 
         confirm_login()
-        return user
+        return user  # type: ignore
 
     @staticmethod
     def logout() -> bool:
@@ -187,7 +187,7 @@ class User(UserMixin, db.Model):
         """
 
         logged_out = logout_user()
-        return logged_out
+        return logged_out  # type: ignore
 
     # endregion
 
@@ -200,7 +200,7 @@ class User(UserMixin, db.Model):
             :return: The user's email address.
         """
         # TODO: Make property if set_email is private.
-        return self._email
+        return self._email  # type: ignore
 
     def set_email(self, email: str) -> bool:
         """
@@ -317,7 +317,7 @@ class User(UserMixin, db.Model):
         if not self.password_hash:
             return False
 
-        return bcrypt.check_password_hash(self.password_hash, password)
+        return bcrypt.check_password_hash(self.password_hash, password)  # type: ignore
 
     def send_password_reset_email(self) -> Optional[ResetPasswordToken]:
         """
@@ -355,7 +355,7 @@ class User(UserMixin, db.Model):
         """
         # TODO: Set new password.
         token_obj = ResetPasswordToken.verify(token)
-        return User.load_from_id(token_obj.user_id)
+        return User.load_from_id(token_obj.user_id)  # type: ignore
 
     # endregion
 
@@ -393,7 +393,7 @@ class User(UserMixin, db.Model):
         # TODO: Delete user.
         token_obj = DeleteAccountToken.verify(token)
         user = User.load_from_id(token_obj.user_id)
-        return user
+        return user  # type: ignore
 
     def delete(self) -> None:
         """
@@ -536,30 +536,30 @@ class UserPagination(Pagination):
 
             # More than one result on the page.
             if self.rows_on_page >= 2:
-                return _('Displaying users %(first_result)d to %(last_result)d of %(total_results)d matching '
-                         '“%(search)s”',
+                return _('Displaying users %(first_result)d to %(last_result)d of %(total_results)d '  # type: ignore
+                         'matching “%(search)s”',
                          first_result=self.first_row, last_result=self.last_row, total_results=self.total_rows,
                          search=search_term)
 
             # One result on the page.
             if self.rows_on_page == 1:
-                return _('Displaying user %(result)d of %(total_results)d matching “%(search)s”',
+                return _('Displaying user %(result)d of %(total_results)d matching “%(search)s”',  # type: ignore
                          result=self.first_row, total_results=self.total_rows, search=search_term)
 
             # No results.
-            return _('No users found matching “%(search)s”', search=search_term)
+            return _('No users found matching “%(search)s”', search=search_term)  # type: ignore
 
         # Text without a search.
 
         # More than one result on the page.
         if self.rows_on_page >= 2:
-            return _('Displaying users %(first_result)d to %(last_result)d of %(total_results)d',
+            return _('Displaying users %(first_result)d to %(last_result)d of %(total_results)d',  # type: ignore
                      first_result=self.first_row, last_result=self.last_row, total_results=self.total_rows)
 
         # One result on the page.
         if self.rows_on_page == 1:
-            return _('Displaying user %(result)d of %(total_results)d',
+            return _('Displaying user %(result)d of %(total_results)d',  # type: ignore
                      result=self.first_row, total_results=self.total_rows)
 
         # No results.
-        return _('No users')
+        return _('No users')  # type: ignore
