@@ -1,5 +1,8 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
+
+"""
+    Classes for representing the application's role model.
+"""
 
 from typing import List
 from typing import Optional
@@ -11,10 +14,6 @@ from app import db
 from app import Pagination
 from app.exceptions import DeletionPreconditionViolationError
 from app.userprofile import Permission
-
-"""
-    Classes for representing the application's role model.
-"""
 
 
 class Role(db.Model):  # type: ignore
@@ -62,6 +61,7 @@ class Role(db.Model):  # type: ignore
             :return: The role's unique name.
             :raise ValueError: If an invalid name is assigned.
         """
+
         return self._name  # type: ignore
 
     @name.setter
@@ -74,6 +74,7 @@ class Role(db.Model):  # type: ignore
             :param value: The role's new name.
             :raise ValueError: If an invalid name is given.
         """
+
         if value in self.invalid_names:
             raise ValueError('The name may not be one of ' + ', '.join(self.invalid_names))
 
@@ -90,6 +91,7 @@ class Role(db.Model):  # type: ignore
             :param name: The role's name. It must not be one of the strings listed in :attr:`invalid_names`.
             :raise ValueError: If an invalid name is given.
         """
+
         self.name = name
 
     @staticmethod
@@ -100,6 +102,7 @@ class Role(db.Model):  # type: ignore
             :param role_id: The ID of the role to load.
             :return: The loaded role if it exists, ``None`` otherwise.
         """
+
         return Role.query.get(role_id)  # type: ignore
 
     @staticmethod
@@ -110,6 +113,7 @@ class Role(db.Model):  # type: ignore
             :param name: The name of the role to load.
             :return: The loaded role if it exists, ``None`` otherwise.
         """
+
         return Role.query.filter_by(_name=name).first()  # type: ignore
 
     @staticmethod
@@ -141,6 +145,7 @@ class Role(db.Model):  # type: ignore
 
             :return: An enum member of :class:`app.userprofile.Permission` representing the role's permissions.
         """
+
         # For some reason, PyCharm thinks, self._permissions has type Permission...
         # noinspection PyTypeChecker
         if self._permissions is None or self._permissions < 0:
@@ -163,6 +168,7 @@ class Role(db.Model):  # type: ignore
             :param permission: An enum member of :class:`app.userprofile.Permission` representing the role's new
                                permissions (may be a combination of multiple enum members).
         """
+
         if permission is None:
             permission = Permission(0)
 
@@ -182,6 +188,7 @@ class Role(db.Model):  # type: ignore
             :param permission: The permission to check for.
             :return: ``True`` if the role has the requested permission, ``False`` otherwise.
         """
+
         return permission & self.permissions == permission
 
     def has_permissions_all(self, *permissions: Permission) -> bool:
@@ -193,6 +200,7 @@ class Role(db.Model):  # type: ignore
             :param permissions: The permissions to check for.
             :return: ``True`` if the role has all of the requested permissions, ``False`` otherwise.
         """
+
         for permission in permissions:
             if permission & self.permissions != permission:
                 return False
@@ -209,6 +217,7 @@ class Role(db.Model):  # type: ignore
             :param permissions: The permissions to check for.
             :return: ``True`` if the role has one of the requested permission, ``False`` otherwise.
         """
+
         for permission in permissions:
             if permission & self.permissions == permission:
                 return True
@@ -222,6 +231,7 @@ class Role(db.Model):  # type: ignore
             :return: ``True`` if it is the only role, ``False`` otherwise or if this role does not have the permission
                      to edit roles.
         """
+
         permission = Permission.EditRole
         if not self.has_permission(permission):
             return False
@@ -247,6 +257,7 @@ class Role(db.Model):  # type: ignore
             :raise DeletionPreconditionViolationError: If this role is the only one with the permission to edit roles.
             :raise ValueError: If there are users to whom this role is assigned and ``new_role`` is not valid.
         """
+
         if self.is_only_role_allowed_to_edit_roles():
             raise DeletionPreconditionViolationError('Cannot delete the only role with the permission to edit roles.')
 
@@ -281,6 +292,7 @@ class Role(db.Model):  # type: ignore
                                 be returned.
             :return: The query object.
         """
+
         if query is None:
             query = Role.query
 
@@ -301,6 +313,7 @@ class Role(db.Model):  # type: ignore
 
             :return: A string representation of the role.
         """
+
         return f'<Role [{self.id}] "{self.name}" [{self.permissions}]>'
 
     # endregion

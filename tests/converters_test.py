@@ -1,8 +1,8 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase
 from datetime import timedelta
+
+from unittest import TestCase
 
 from app import timedelta_to_minutes
 

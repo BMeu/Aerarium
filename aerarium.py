@@ -1,4 +1,4 @@
-#!venv/bin/python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -25,6 +25,7 @@ def make_shell_context() -> Dict[str, object]:
 
         :return: A dictionary of objects that will be accessible in the Flask shell via their respective key.
     """
+
     context = {
         'db': db,
         'Permission': Permission,

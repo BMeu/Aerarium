@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -22,13 +21,14 @@ def create_file_handler(level: int, formatter: Formatter, file: str, max_file_si
 
         The path of ``file`` must exist.
 
-        :param level: The minimum logging level, e.g. :attr:`logging.INFO` or :attr:`logging.ERROR`.
+        :param level: The minimum logging level, e.g. :attr    :`logging.INFO` or :attr:`logging.ERROR`.
         :param formatter: The logging formatter that is applied to the each log record.
         :param file: The path and name of the file to which log records will be written.
         :param max_file_size: The maximum file size in KiB of each file.
         :param max_num_of_files: The maximum number of log files.
         :return: The initialized rotating file handler.
     """
+
     handler = RotatingFileHandler(file, maxBytes=max_file_size * 1024, backupCount=max_num_of_files)
     handler.setFormatter(formatter)
     handler.setLevel(level)
@@ -74,6 +74,7 @@ def create_stream_handler(level: int, formatter: Formatter) -> StreamHandler:
         :param formatter: The logging formatter that is applied to the each log record.
         :return: The initialized stream handler.
     """
+
     handler = StreamHandler(stdout)
     handler.setFormatter(formatter)
     handler.setLevel(level)

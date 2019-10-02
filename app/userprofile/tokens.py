@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -17,6 +16,7 @@ class ChangeEmailAddressToken(FlaskEasyJWT):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+
         super().__init__(*args, **kwargs)
 
         self.user_id: Optional[int] = None
@@ -36,6 +36,7 @@ class DeleteAccountToken(FlaskEasyJWT):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+
         super().__init__(*args, **kwargs)
 
         self.user_id: Optional[int] = None
@@ -50,6 +51,7 @@ class ResetPasswordToken(FlaskEasyJWT):
     """
 
     def __init__(self, *args: Any, **kwargs: Any):
+
         super().__init__(*args, **kwargs)
 
         self.user_id: Optional[int] = None

@@ -1,5 +1,8 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
+
+"""
+    Classes for representing the application's user model.
+"""
 
 from typing import Optional
 from typing import Tuple
@@ -25,10 +28,6 @@ from app.userprofile import UserSettings
 from app.userprofile.tokens import ChangeEmailAddressToken
 from app.userprofile.tokens import DeleteAccountToken
 from app.userprofile.tokens import ResetPasswordToken
-
-"""
-    Classes for representing the application's user model.
-"""
 
 
 class User(UserMixin, db.Model):  # type: ignore
@@ -82,6 +81,7 @@ class User(UserMixin, db.Model):  # type: ignore
 
             :return: ``True`` if the user account is activated.
         """
+
         return self._is_activated  # type: ignore
 
     @is_active.setter
@@ -91,6 +91,7 @@ class User(UserMixin, db.Model):  # type: ignore
 
             :param value: ``True`` if the user account is activated.
         """
+
         self._is_activated = value
 
     # endregion
@@ -102,6 +103,7 @@ class User(UserMixin, db.Model):  # type: ignore
             :param email: The user's email address.
             :param name: The user's (full) name.
         """
+
         self.set_email(email)
         self.name = name
 
@@ -209,6 +211,7 @@ class User(UserMixin, db.Model):  # type: ignore
             :param email: The user's new email address. Must not be used by a different user.
             :return: ``False`` if the email address already is in use by another user, ``True`` otherwise.
         """
+
         # TODO: Make private?
 
         old_email = self.get_email()
@@ -242,6 +245,7 @@ class User(UserMixin, db.Model):  # type: ignore
                           changed upon verification.
             :return: The token send in the mail.
         """
+
         # TODO: Rename to make clear that this method must be called to change a user's email address.
 
         token_obj = ChangeEmailAddressToken()
@@ -270,6 +274,7 @@ class User(UserMixin, db.Model):  # type: ignore
             :return: The user to which the token belongs and the new email address; both are ``None`` if the token is
                      invalid.
         """
+
         # TODO: Set the user's new email address.
         token_obj = ChangeEmailAddressToken.verify(token)
         user = User.load_from_id(token_obj.user_id)
@@ -285,6 +290,7 @@ class User(UserMixin, db.Model):  # type: ignore
 
             :param password: The plaintext password.
         """
+
         # TODO: Make private?
 
         if not password:
@@ -314,6 +320,7 @@ class User(UserMixin, db.Model):  # type: ignore
             :param password: The plaintext password to verify.
             :return: ``True`` if the given password matches the user's password.
         """
+
         if not self.password_hash:
             return False
 
@@ -325,6 +332,7 @@ class User(UserMixin, db.Model):  # type: ignore
 
             :return: The token send in the mail.
         """
+
         # TODO: Rename to make clear that this method must be called to change a user's password.
 
         if self.get_email() is None:
@@ -353,6 +361,7 @@ class User(UserMixin, db.Model):  # type: ignore
             :return: The user for whom the token is valid. ``None`` if the token is invalid or if outside the
                      application context.
         """
+
         # TODO: Set new password.
         token_obj = ResetPasswordToken.verify(token)
         return User.load_from_id(token_obj.user_id)  # type: ignore
@@ -367,6 +376,7 @@ class User(UserMixin, db.Model):  # type: ignore
 
             :return: The token sent in the mail.
         """
+
         # TODO: Rename to make clear that this method must be called to delete a user.
         token_obj = DeleteAccountToken()
         token_obj.user_id = self.id
@@ -390,6 +400,7 @@ class User(UserMixin, db.Model):  # type: ignore
             :param token: The delete-account token.
             :return: The user to which the token belongs; ``None`` if the token is invalid.
         """
+
         # TODO: Delete user.
         token_obj = DeleteAccountToken.verify(token)
         user = User.load_from_id(token_obj.user_id)
@@ -401,6 +412,7 @@ class User(UserMixin, db.Model):  # type: ignore
 
             This action will directly be committed to the database.
         """
+
         # TODO: Make private.
         if self == current_user:
             self.logout()
@@ -428,6 +440,7 @@ class User(UserMixin, db.Model):  # type: ignore
             :param permission: The permission to check for.
             :return: ``True`` if the current user has the permission, ``False`` otherwise.
         """
+
         # TODO: Don't make this an alias of current_user_has_permissions_all.
 
         return cls.current_user_has_permissions_all(permission)
@@ -492,6 +505,7 @@ class User(UserMixin, db.Model):  # type: ignore
                                 be returned.
             :return: The query object.
         """
+
         if query is None:
             query = User.query
 
@@ -512,6 +526,7 @@ class User(UserMixin, db.Model):  # type: ignore
 
             :return: A string representation of the user.
         """
+
         return f'<User [{self.id}] {self.get_email()}>'
 
     # endregion

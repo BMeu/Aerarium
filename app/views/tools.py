@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -19,6 +18,7 @@ def get_next_page(url_param: str = 'next', fallback_url: str = '/') -> str:
                                   given URL is invalid. Defaults to the home page ``'/'``.
         :return: The URL for the next page.
     """
+
     next_page = request.args.get(url_param)
     if not next_page or url_parse(next_page).netloc != '':
         next_page = fallback_url

@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -17,6 +16,7 @@ class ChangeEmailAddressTokenTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -28,6 +28,7 @@ class ChangeEmailAddressTokenTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -39,6 +40,7 @@ class ChangeEmailAddressTokenTest(TestCase):
 
             Expected result: The token is initialized with emtpy values.
         """
+
         token = ChangeEmailAddressToken()
         self.assertIsNotNone(token)
         self.assertIsNone(token.user_id)
@@ -51,6 +53,7 @@ class DeleteAccountTokenTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -62,6 +65,7 @@ class DeleteAccountTokenTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -73,6 +77,7 @@ class DeleteAccountTokenTest(TestCase):
 
             Expected result: The token is initialized with emtpy values.
         """
+
         token = DeleteAccountToken()
         self.assertIsNotNone(token)
         self.assertIsNone(token.user_id)
@@ -84,6 +89,7 @@ class ResetPasswordTokenTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -95,6 +101,7 @@ class ResetPasswordTokenTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -106,6 +113,7 @@ class ResetPasswordTokenTest(TestCase):
 
             Expected result: The token is initialized with emtpy values.
         """
+
         token = ResetPasswordToken()
         self.assertIsNotNone(token)
         self.assertIsNone(token.user_id)

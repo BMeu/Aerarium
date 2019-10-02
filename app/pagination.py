@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -53,6 +52,7 @@ class Pagination(object):
 
             :return: The number of the first row on the current page.
         """
+
         rows_on_previous_page = (self.current_page - 1) * self.rows_per_page
         return rows_on_previous_page + 1
 
@@ -63,6 +63,7 @@ class Pagination(object):
 
             :return: The number of the last row on the current page.
         """
+
         return self.first_row + self.rows_on_page - 1
 
     @property
@@ -72,6 +73,7 @@ class Pagination(object):
 
             :return: The SQLAlchemy models shown on the current page.
         """
+
         return self._rows.items  # type: ignore
 
     @property
@@ -81,6 +83,7 @@ class Pagination(object):
 
             :return: The number of rows in the page.
         """
+
         return len(self.rows)
 
     @property
@@ -90,6 +93,7 @@ class Pagination(object):
 
             :return: The number of pages needed to display all rows.
         """
+
         return self._rows.pages  # type: ignore
 
     @property
@@ -99,6 +103,7 @@ class Pagination(object):
 
             :return: The number of total rows across all pages.
         """
+
         return self._rows.total  # type: ignore
 
     def get_info_text(self, search_term: Optional[str] = None) -> str:

@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -17,6 +16,7 @@ class PasswordResetTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
@@ -29,6 +29,7 @@ class PasswordResetTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -42,6 +43,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: The user is redirected to the home page.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -70,6 +72,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: The password reset request form is displayed.
         """
+
         response = self.client.get('/user/reset-password', follow_redirects=True)
         data = response.get_data(as_text=True)
 
@@ -81,6 +84,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: The password reset mail is sent to the user and a message is displayed.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -110,6 +114,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: No password reset mail is sent, but a message is displayed that it has.
         """
+
         email = 'test@example.com'
 
         with mail.record_messages() as outgoing:
@@ -133,6 +138,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: The user is redirected to the home page.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -167,6 +173,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: The user password reset form is displayed.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -193,6 +200,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: A 404 error page is shown.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -212,6 +220,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: A 404 error page is shown.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -238,6 +247,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: The user is redirected to the home page without changing the password.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -277,6 +287,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: The password is set to the new one and the user is redirected to the login page.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -312,6 +323,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: The password is not updated and the user is shown the reset password form.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -346,6 +358,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: The password is not updated and the user is shown a 404 error page.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -376,6 +389,7 @@ class PasswordResetTest(TestCase):
 
             Expected result: The password is not updated and the user is shown a 404 error page.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'

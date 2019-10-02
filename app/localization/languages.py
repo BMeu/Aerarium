@@ -1,5 +1,8 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
+
+"""
+    Helpers regarding language functionality.
+"""
 
 from typing import Iterable
 from typing import Optional
@@ -14,10 +17,6 @@ from flask_babel import get_locale as get_current_locale
 from flask_babel import Locale
 from flask_login import current_user
 
-"""
-    Helpers regarding language functionality.
-"""
-
 
 def get_default_language() -> str:
     """
@@ -25,6 +24,7 @@ def get_default_language() -> str:
 
         :return: The language code of the default language.
     """
+
     return 'en'
 
 
@@ -38,6 +38,7 @@ def get_language_names(translation_dir: str, with_native_names: bool = True) -> 
         :return: A list of tuples, with the first element being the language code and the second one being the
                  language's name.
     """
+
     # The language in which the application is currently running.
     current_locale = get_current_locale()
     current_language = current_locale.language
@@ -98,6 +99,7 @@ def get_languages(translation_dir: str, default_language: Optional[str] = None) 
         :param translation_dir: The directory within which the translation folders can be found.
         :return: A list of language codes supported by the application.
     """
+
     if not default_language:
         default_language = get_default_language()
 

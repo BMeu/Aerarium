@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -45,6 +44,7 @@ def register(application: Flask) -> None:
             :param verbose: Show the duration for all tried number of rounds.
             :param max_time: The maximum time allowed for password hashing in milliseconds.
         """
+
         max_duration = float(max_time)
         password = 'Aerarium'
 
@@ -93,6 +93,7 @@ def register(application: Flask) -> None:
         """
             Translation and localization commands.
         """
+
         pass
 
     # noinspection PyShadowingBuiltins

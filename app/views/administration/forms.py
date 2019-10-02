@@ -1,5 +1,8 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
+
+"""
+    Forms and form related functionality for the administration.
+"""
 
 from typing import Any
 from typing import Dict
@@ -26,10 +29,6 @@ from wtforms.validators import Length
 from app.userprofile import Permission
 from app.userprofile import Role
 
-"""
-    Forms and form related functionality for the administration.
-"""
-
 # region Validators
 
 
@@ -45,6 +44,7 @@ class UniqueRoleName(object):
         """
             :param message: The error message shown to the user if the validation fails.
         """
+
         if not message:
             message = _l('The role name already is in use.')
 
@@ -58,6 +58,7 @@ class UniqueRoleName(object):
             :param field: The field to which this validator is assigned.
             :raise ValidationError: In case the validation fails.
         """
+
         name = field.data
         if not name:
             return

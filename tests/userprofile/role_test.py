@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -19,6 +18,7 @@ class RoleTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -28,6 +28,7 @@ class RoleTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
@@ -40,6 +41,7 @@ class RoleTest(TestCase):
 
             Expected result: The role's name is returned.
         """
+
         role = Role('Administrator')
         self.assertEqual(role._name, role.name)
 
@@ -49,6 +51,7 @@ class RoleTest(TestCase):
 
             Expected result: An error is raised.
         """
+
         role = Role('Administrator')
         with self.assertRaises(ValueError) as exception_cm:
             role.name = role.invalid_names[0]
@@ -65,6 +68,7 @@ class RoleTest(TestCase):
 
             Expected result: The name is set.
         """
+
         old_name = 'Guest'
         new_name = 'Administrator'
         role = Role(old_name)
@@ -85,6 +89,7 @@ class RoleTest(TestCase):
 
             Expected result: An error is raised.
         """
+
         name = Role.invalid_names[0]
         with self.assertRaises(ValueError) as exception_cm:
             Role(name)
@@ -100,6 +105,7 @@ class RoleTest(TestCase):
 
             Expected result: The role is initialized with the given name.
         """
+
         name = 'Administrator'
         role = Role(name)
 
@@ -113,6 +119,7 @@ class RoleTest(TestCase):
 
             Expected result: The role with the given ID is returned.
         """
+
         name = 'Administrator'
         role_id = 1
         role = Role(name=name)
@@ -133,6 +140,7 @@ class RoleTest(TestCase):
 
             Expected result: No role is returned.
         """
+
         loaded_role = Role.load_from_id(1)
         self.assertIsNone(loaded_role)
 
@@ -142,6 +150,7 @@ class RoleTest(TestCase):
 
             Expected result: The role is returned.
         """
+
         name = 'Administrator'
         role = Role(name=name)
         role_id = 1
@@ -162,6 +171,7 @@ class RoleTest(TestCase):
 
             Expected result: Nothing is returned.
         """
+
         loaded_role = Role.load_from_name('Administrator')
         self.assertIsNone(loaded_role)
 
@@ -171,6 +181,7 @@ class RoleTest(TestCase):
 
             Expected result: All roles that have the requested permission are returned.
         """
+
         requested_permission = Permission.EditRole
         other_permission = Permission.EditUser
 
@@ -201,6 +212,7 @@ class RoleTest(TestCase):
 
             Expected result: The empty permission.
         """
+
         role = Role('Administrator')
 
         self.assertIsNone(role._permissions)
@@ -212,6 +224,7 @@ class RoleTest(TestCase):
 
             Expected result: The empty permission.
         """
+
         role = Role('Administrator')
         role._permissions = -1
 
@@ -223,6 +236,7 @@ class RoleTest(TestCase):
 
             Expected result: The empty permission.
         """
+
         role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
@@ -237,6 +251,7 @@ class RoleTest(TestCase):
 
             Expected result: The corresponding enum member is returned.
         """
+
         role = Role('Administrator')
 
         role._permissions = Permission.EditRole.value
@@ -252,6 +267,7 @@ class RoleTest(TestCase):
 
             Expected result: The corresponding enum member is returned.
         """
+
         role = Role('Administrator')
 
         # Choose a value that is high enough to be very unlikely to exist as a permission.
@@ -267,6 +283,7 @@ class RoleTest(TestCase):
 
             Expected result: The corresponding enum member is returned.
         """
+
         role = Role('Administrator')
 
         role._permissions = (Permission.EditRole | Permission.EditUser).value
@@ -279,6 +296,7 @@ class RoleTest(TestCase):
 
             Expected result: The corresponding enum member is returned.
         """
+
         role = Role('Administrator')
 
         # Choose a value that is high enough to be very unlikely to exist as a permission.
@@ -293,6 +311,7 @@ class RoleTest(TestCase):
 
             Expected result: The empty permission is set.
         """
+
         role = Role('Administrator')
         role._permissions = Permission.EditRole.value
         self.assertEqual(Permission.EditRole, role.permissions)
@@ -306,6 +325,7 @@ class RoleTest(TestCase):
 
             Expected result: The permission is set, overwriting previous values.
         """
+
         role = Role('Administrator')
         role._permissions = Permission.EditRole.value
         self.assertEqual(Permission.EditRole, role.permissions)
@@ -320,6 +340,7 @@ class RoleTest(TestCase):
 
             Expected result: The permission to edit roles is set automatically.
         """
+
         role = Role('Administrator')
         role.permissions = Permission.EditRole
         db.session.add(role)
@@ -337,6 +358,7 @@ class RoleTest(TestCase):
 
             Expected result: The permission to edit roles is not set.
         """
+
         other_role = Role('Guest')
         other_role.permissions = Permission.EditRole
         db.session.add(other_role)
@@ -358,6 +380,7 @@ class RoleTest(TestCase):
 
             Expected result: `False`.
         """
+
         role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
@@ -373,6 +396,7 @@ class RoleTest(TestCase):
 
             Expected result: `True`.
         """
+
         role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
@@ -390,6 +414,7 @@ class RoleTest(TestCase):
 
             Expected result: `True` when requesting this permission, `False` otherwise.
         """
+
         role = Role('Administrator')
 
         role._permissions = Permission.EditRole.value
@@ -412,6 +437,7 @@ class RoleTest(TestCase):
 
             Expected result: `False`.
         """
+
         role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
@@ -427,6 +453,7 @@ class RoleTest(TestCase):
 
             Expected result: `False`.
         """
+
         role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
@@ -443,6 +470,7 @@ class RoleTest(TestCase):
 
             Expected result: `True` when requesting this permission, `False` otherwise.
         """
+
         role = Role('Administrator')
 
         role.permissions = Permission.EditRole
@@ -465,6 +493,7 @@ class RoleTest(TestCase):
 
             Expected result: `True` when requesting the set permissions.
         """
+
         role = Role('Administrator')
 
         role._permissions = (Permission.EditRole | Permission.EditUser).value
@@ -478,6 +507,7 @@ class RoleTest(TestCase):
 
             Expected result: `False`.
         """
+
         role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
@@ -493,6 +523,7 @@ class RoleTest(TestCase):
 
             Expected result: `False`.
         """
+
         role = Role('Administrator')
         db.session.add(role)
         db.session.commit()
@@ -509,6 +540,7 @@ class RoleTest(TestCase):
 
             Expected result: `True` when requesting this permission, `False` otherwise.
         """
+
         role = Role('Administrator')
 
         role.permissions = Permission.EditRole
@@ -531,6 +563,7 @@ class RoleTest(TestCase):
 
             Expected result: `True` when requesting the set permissions.
         """
+
         role = Role('Administrator')
 
         role.permissions = Permission.EditRole | Permission.EditUser
@@ -544,6 +577,7 @@ class RoleTest(TestCase):
 
             Expected result: `True` if it is, `False` otherwise.
         """
+
         # First check if the role is not allowed to edit roles.
         name = 'Administrator'
         permission = Permission.EditRole
@@ -575,6 +609,7 @@ class RoleTest(TestCase):
 
             Expected result: An error is raised.
         """
+
         name = 'Administrator'
         permission = Permission.EditRole
         role = Role(name=name)
@@ -603,6 +638,7 @@ class RoleTest(TestCase):
 
             Expected result: An error is raised.
         """
+
         name = 'Administrator'
         role = Role(name=name)
         user = User('test@example.com', 'Jane Doe')
@@ -626,6 +662,7 @@ class RoleTest(TestCase):
 
             Expected result: An error is raised.
         """
+
         name = 'Administrator'
         role = Role(name=name)
         user = User('test@example.com', 'Jane Doe')
@@ -649,6 +686,7 @@ class RoleTest(TestCase):
 
             Expected result: The role is deleted.
         """
+
         name = 'Administrator'
         role = Role(name=name)
         db.session.add(role)
@@ -665,6 +703,7 @@ class RoleTest(TestCase):
             Expected result: The role is deleted. The role is assigned to all users who had the old role (but not to
                              others).
         """
+
         # The role that will be deleted.
         name = 'Administrator'
         role = Role(name=name)
@@ -702,6 +741,7 @@ class RoleTest(TestCase):
 
             :return: A query is returned that does not filter.
         """
+
         role_1 = Role(name='Administrator')
         role_2 = Role(name='Guest')
         role_3 = Role(name='User')
@@ -731,6 +771,7 @@ class RoleTest(TestCase):
 
             :return: A query is returned that filters exactly by the search term.
         """
+
         role_1 = Role(name='Administrator')
         role_2 = Role(name='Guest')
         role_3 = Role(name='User')
@@ -765,6 +806,7 @@ class RoleTest(TestCase):
 
             :return: A query is returned that filters by the search term allowing for partial matches.
         """
+
         role_1 = Role(name='Administrator')
         role_2 = Role(name='Guest')
         role_3 = Role(name='User')
@@ -825,6 +867,7 @@ class RoleTest(TestCase):
 
             :return: A query is returned that filters exactly by the search term.
         """
+
         role_1 = Role(name='Administrator')
         role_2 = Role(name='Guest')
         role_3 = Role(name='User')
@@ -859,6 +902,7 @@ class RoleTest(TestCase):
 
             Expected result: The representation contains details on the role.
         """
+
         name = 'Administrator'
         permissions = Permission.EditRole | Permission.EditUser
         role = Role(name=name)
@@ -880,6 +924,7 @@ class RolePaginationTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
@@ -909,6 +954,7 @@ class RolePaginationTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()

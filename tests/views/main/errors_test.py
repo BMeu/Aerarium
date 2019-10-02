@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -15,6 +14,7 @@ class ErrorsTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app.add_url_rule('/abort/<code>', 'abort', _aborting_route)
         self.client = self.app.test_client()
@@ -25,6 +25,7 @@ class ErrorsTest(TestCase):
         """
             Reset the test cases.
         """
+
         self.app_context.pop()
 
     def test_error_400(self):
@@ -33,6 +34,7 @@ class ErrorsTest(TestCase):
 
             Expected result: The status code is 400 and the page contains information that the request mas malformed.
         """
+
         code = 400
         response = self.client.get('/abort/' + str(code))
         data = response.get_data(as_text=True)
@@ -46,6 +48,7 @@ class ErrorsTest(TestCase):
 
             Expected result: The status code is 401 and the page contains information that the user is not logged in.
         """
+
         code = 401
         response = self.client.get('/abort/' + str(code))
         data = response.get_data(as_text=True)
@@ -61,6 +64,7 @@ class ErrorsTest(TestCase):
 
             Expected result: The status code is 403 and the page contains information that the permission was denied.
         """
+
         code = 403
         response = self.client.get('/abort/' + str(code))
         data = response.get_data(as_text=True)
@@ -77,6 +81,7 @@ class ErrorsTest(TestCase):
             Expected result: The status code is 404 and the page contains information that the requested page was not
                              found.
         """
+
         code = 404
         response = self.client.get('/abort/' + str(code))
         data = response.get_data(as_text=True)
@@ -91,6 +96,7 @@ class ErrorsTest(TestCase):
             Expected result: The status code is 405 and the page contains information that the HTTP method is not
                              allowed.
         """
+
         code = 405
         response = self.client.get('/abort/' + str(code))
         data = response.get_data(as_text=True)
@@ -105,6 +111,7 @@ class ErrorsTest(TestCase):
             Expected result: The status code is 500 and the page contains information that the server encountered an
                              internal error.
         """
+
         code = 500
         response = self.client.get('/abort/' + str(code))
         data = response.get_data(as_text=True)
@@ -117,4 +124,5 @@ def _aborting_route(code):
     """
         A simple view function aborting with the given ``code``.
     """
+
     abort(int(code))

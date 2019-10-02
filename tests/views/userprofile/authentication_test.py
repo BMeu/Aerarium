@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -17,6 +16,7 @@ class AuthenticationTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
@@ -29,6 +29,7 @@ class AuthenticationTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -42,6 +43,7 @@ class AuthenticationTest(TestCase):
 
             Expected result: The user is displayed the login form.
         """
+
         response = self.client.get('/user/login', follow_redirects=True)
         data = response.get_data(as_text=True)
 
@@ -54,6 +56,7 @@ class AuthenticationTest(TestCase):
 
             Expected result: The user is redirected to the homepage.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -82,6 +85,7 @@ class AuthenticationTest(TestCase):
 
             Expected result: The login succeeds, the user is redirected to the home page and greeted.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -109,6 +113,7 @@ class AuthenticationTest(TestCase):
 
             Expected result: The login succeeds, the user is redirected to the given next page and greeted.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -136,6 +141,7 @@ class AuthenticationTest(TestCase):
 
             Expected result: The login fails and the user stays on the login page.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -167,6 +173,7 @@ class AuthenticationTest(TestCase):
 
             Expected result: The user is redirected to the home page.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -196,6 +203,7 @@ class AuthenticationTest(TestCase):
 
             Expected result: The refresh login page is shown.
         """
+
         mock_login_fresh.return_value = False
 
         email = 'test@example.com'
@@ -227,6 +235,7 @@ class AuthenticationTest(TestCase):
 
             Expected result: The refresh login page is shown, the login is not refreshed.
         """
+
         mock_login_fresh.return_value = False
 
         email = 'test@example.com'
@@ -261,6 +270,7 @@ class AuthenticationTest(TestCase):
 
             Expected result: The refresh home page is shown, the login is refreshed.
         """
+
         mock_login_fresh.return_value = False
 
         email = 'test@example.com'
@@ -300,6 +310,7 @@ class AuthenticationTest(TestCase):
             Expected result: The user is logged out, redirected to the home page (and from there to the login page),
                              and shown a success message.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -329,6 +340,7 @@ class AuthenticationTest(TestCase):
             Expected result: The user is redirected to the home page (and from there to the login page),
                              but not shown a success message.
         """
+
         response = self.client.get('/user/logout', follow_redirects=True)
         data = response.get_data(as_text=True)
 

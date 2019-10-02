@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -57,6 +56,7 @@ def user_settings_reset() -> ResponseType:
 
         :return: The HTML response.
     """
+
     settings = current_user.settings
     reset_form = UserSettingsResetForm()
     if reset_form.validate_on_submit():

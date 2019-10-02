@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -37,6 +36,7 @@ class Email(object):
             :raise NoMailSenderError: If no sender is given and none is configured in the app configuration.
             :raise RuntimeError: If no application is available (i.e. outside the application context).
         """
+
         application = get_app()
         title = application.config['TITLE_SHORT']
 
@@ -59,6 +59,7 @@ class Email(object):
 
             :param template_parameters: Parameters that will be passed down to the templates while rendering.
         """
+
         self._body_plain = render_template(self._body_template_base_path + '.txt', **template_parameters)
         self._body_html = render_template(self._body_template_base_path + '.html', **template_parameters)
 
@@ -70,6 +71,7 @@ class Email(object):
             :param template_parameters: Parameters that will be passed down to the templates while rendering.
             :raise TypeError: If the recipients argument is not a string or a list of strings.
         """
+
         self.prepare(**template_parameters)
         self.send(recipients)
 
@@ -80,6 +82,7 @@ class Email(object):
             :param recipient: A single recipient or a list of recipients to which the mail will be send.
             :raise TypeError: If the recipients argument is not a string or a list of strings.
         """
+
         if isinstance(recipient, str):
             recipients = [recipient]
         elif isinstance(recipient, list):
@@ -103,5 +106,6 @@ class Email(object):
             :param message: The email message to send.
             :param application: A Flask instance.
         """
+
         with application.app_context():
             mail.send(message)

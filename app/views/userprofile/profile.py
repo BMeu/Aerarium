@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -76,6 +75,7 @@ def change_email(token: str) -> ResponseType:
         :param token: The change-email token.
         :return: The HTML response.
     """
+
     try:
         user, email = User.verify_change_email_address_token(token)
     except EasyJWTError:

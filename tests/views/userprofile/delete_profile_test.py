@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -19,6 +18,7 @@ class DeleteProfileTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
@@ -31,6 +31,7 @@ class DeleteProfileTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -53,6 +54,7 @@ class DeleteProfileTest(TestCase):
 
             Expected result: An email with a link to delete the account is sent.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'

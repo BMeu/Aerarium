@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -16,6 +15,7 @@ class ApplicationTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -27,6 +27,7 @@ class ApplicationTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -38,6 +39,7 @@ class ApplicationTest(TestCase):
 
             Expected result: The application object is successfully returned.
         """
+
         app = get_app()
         self.assertIsNotNone(app)
 

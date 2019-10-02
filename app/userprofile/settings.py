@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -35,6 +34,7 @@ class UserSettings(db.Model):  # type: ignore
             :return: The code of the user's language.
             :raise ValueError: If the assigned language is not supported by the application.
         """
+
         return self._language  # type: ignore
 
     @language.setter
@@ -45,6 +45,7 @@ class UserSettings(db.Model):  # type: ignore
             :param value: The new language.
             :raise ValueError: If the new language is not supported by the application.
         """
+
         languages = get_languages(BaseConfiguration.TRANSLATION_DIR, get_default_language())
         if value not in languages:
             raise ValueError(f'Invalid language "{value}".')

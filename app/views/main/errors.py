@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -21,6 +20,7 @@ def bad_request_error(_error: HTTPException) -> ResponseType:
         :param _error: The exception causing this error.
         :return: The rendered error page.
     """
+
     title = _('Bad Request')
     message = _('Your request was malformed and could therefore not be handled by the server.')
     return render_template('error.html', title=title, message=message), 400
@@ -34,6 +34,7 @@ def unauthorized_access_error(_error: HTTPException) -> ResponseType:
         :param _error: The exception causing this error.
         :return: The rendered error page.
     """
+
     title = _('Unauthorized Access')
     message = _('The page you want to access requires you to login.')
     return render_template('error.html', title=title, message=message, show_login_link=True), 401
@@ -47,6 +48,7 @@ def permission_denied_error(_error: HTTPException) -> ResponseType:
         :param _error: The exception causing this error.
         :return: The rendered error page.
     """
+
     title = _('Permission Denied')
     message = _('''You do not have sufficient permissions to access this page. You can try logging in. If you are logged
                 in and you still get this message, ask your administrator to raise your permissions.''')
@@ -61,6 +63,7 @@ def page_not_found_error(_error: HTTPException) -> ResponseType:
         :param _error: The exception causing this error.
         :return: The rendered error page.
     """
+
     title = _('Page Not Found')
     message = _('''The page you requested was not found on the server. If you are positive the link you clicked is
                 correct contact your administrator.''')
@@ -75,6 +78,7 @@ def method_not_allowed_error(_error: HTTPException) -> ResponseType:
         :param _error: The exception causing this error.
         :return: The rendered error page.
     """
+
     title = _('Method Not Allowed')
     message = _('The HTTP method you used is not allowed to access this page.')
     return render_template('error.html', title=title, message=message), 405
@@ -88,6 +92,7 @@ def internal_error(_error: HTTPException) -> ResponseType:
         :param _error: The exception causing this error.
         :return: The rendered error page.
     """
+
     title = _('Internal Error')
     message = _('''The server encountered an internal error while processing your request. Please try again later.
                 The administrator has been notified.''')

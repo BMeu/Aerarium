@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -14,6 +13,7 @@ class SearchFormTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -24,6 +24,7 @@ class SearchFormTest(TestCase):
         """
             Reset the test cases.
         """
+
         self.request_context.pop()
         self.app_context.pop()
 
@@ -33,6 +34,7 @@ class SearchFormTest(TestCase):
 
             Expected result: The search term is set on the search field.
         """
+
         search_term = 'Test Search'
         self.request_context.request.args = {'search': search_term}
 
@@ -45,6 +47,7 @@ class SearchFormTest(TestCase):
 
             Expected result: The name of the search field including the form's prefix is returned.
         """
+
         prefix = 'text_'
         form = SearchForm(prefix=prefix)
         self.assertEqual(f'{prefix}search', form.search_param)
@@ -55,6 +58,7 @@ class SearchFormTest(TestCase):
 
             Expected result: The data of the search field is returned.
         """
+
         search_term = 'Test SearchÄ'
         form = SearchForm()
         form.search.data = search_term
@@ -67,6 +71,7 @@ class SearchFormTest(TestCase):
 
             Expected result: `None` is returned.
         """
+
         form = SearchForm()
 
         search_term = form._get_search_term_from_request()
@@ -78,6 +83,7 @@ class SearchFormTest(TestCase):
 
             Expected result: The search term is returned.
         """
+
         search_term = 'Test Search'
         form = SearchForm()
 

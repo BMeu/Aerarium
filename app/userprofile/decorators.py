@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -39,6 +38,7 @@ def logout_required(view_function: ViewFunctionType) -> ViewFunctionType:
             :param kwargs: The keyword arguments of the view function.
             :return: The response of either the home page view function or the wrapped view function.
         """
+
         if current_user is not None and current_user.is_authenticated:
             return redirect(url_for('main.index'))
 
@@ -58,6 +58,7 @@ def permission_required(permission: Permission) -> Callable[[ViewFunctionType], 
         :param permission: The permission required to access the wrapped view.
         :return: The decorator for checking if the current user has the given permission.
     """
+
     # TODO: This should not be an alias of permission_required_all.
     return permission_required_all(permission)
 
@@ -92,6 +93,7 @@ def permission_required_all(*permissions: Permission) -> Callable[[ViewFunctionT
                 :param kwargs: The keyword arguments of the view function.
                 :return: The response of either an 403 error or the wrapped view function.
             """
+
             if not User.current_user_has_permissions_all(*permissions):
                 return abort(403)
 
@@ -132,6 +134,7 @@ def permission_required_one_of(*permissions: Permission) -> Callable[[ViewFuncti
                 :param kwargs: The keyword arguments of the view function.
                 :return: The response of either an 403 error or the wrapped view function.
             """
+
             if not User.current_user_has_permissions_one_of(*permissions):
                 return abort(403)
 

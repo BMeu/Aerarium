@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -17,6 +16,7 @@ class UserSettingsTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -28,6 +28,7 @@ class UserSettingsTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -79,6 +80,7 @@ class UserSettingsTest(TestCase):
 
             Expected result: The language is returned.
         """
+
         language = 'de'
         settings = UserSettings(_language=language)
         self.assertEqual(language, settings._language)
@@ -123,6 +125,7 @@ class UserSettingsTest(TestCase):
 
             Expected result: All values (except the primary key) are reset to their default values.
         """
+
         user_id = 1
 
         settings = UserSettings()

@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -17,6 +16,7 @@ class UserSettingsTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
@@ -29,6 +29,7 @@ class UserSettingsTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -49,6 +50,7 @@ class UserSettingsTest(TestCase):
 
             Expected result: The form is shown with prepopulated data.
         """
+
         email = 'test@example.com'
         name = 'Jane Doe'
         password = '123456'
@@ -77,6 +79,7 @@ class UserSettingsTest(TestCase):
 
             Expected result: The form is shown with the new data, the language is updated.
         """
+
         email = 'test@example.com'
         name = 'Jane Doe'
         password = '123456'

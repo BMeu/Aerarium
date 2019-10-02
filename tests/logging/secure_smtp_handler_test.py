@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from logging import DEBUG
@@ -17,6 +16,7 @@ class SecureSMTPHandlerTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.settings = {
             'mailhost': ('smtp.example.com', 465),
             'fromaddr': 'no-reply@example.com',

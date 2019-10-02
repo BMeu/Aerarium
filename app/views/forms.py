@@ -1,5 +1,8 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
+
+"""
+    Forms and form related functionality for all blueprints.
+"""
 
 from typing import Any
 from typing import Optional
@@ -10,10 +13,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms import SubmitField
 
-"""
-    Forms and form related functionality for all blueprints.
-"""
-
 # region Forms
 
 
@@ -23,6 +22,7 @@ class SearchForm(FlaskForm):
 
         This form is intended to be used for GET requests without further validation.
     """
+
     search = StringField(_l('Search:'))
     """
         The search field.
@@ -40,6 +40,7 @@ class SearchForm(FlaskForm):
             :param args: The arguments for initializing the form.
             :param kwargs: The keyworded arguments for initializing the form.
         """
+
         super().__init__(*args, **kwargs)
 
         search_term = self._get_search_term_from_request()
@@ -52,6 +53,7 @@ class SearchForm(FlaskForm):
 
             :return: The name of the URL parameter that contains the search term.
         """
+
         return self.search.name  # type: ignore
 
     @property
@@ -61,6 +63,7 @@ class SearchForm(FlaskForm):
 
             :return: The string for which the user searched. ``None`` if the user did not search for anything.
         """
+
         return self.search.data  # type: ignore
 
     def _get_search_term_from_request(self) -> Optional[str]:
@@ -69,6 +72,7 @@ class SearchForm(FlaskForm):
 
             :return: The string for which the user searched. ``None`` if the user did not search for anything.
         """
+
         term = request.args.get(self.search_param, None)
         return term
 

@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -24,6 +23,7 @@ class RequestTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -32,6 +32,7 @@ class RequestTest(TestCase):
         """
             Reset the test cases.
         """
+
         self.app_context.pop()
 
     @patch('app.request.Flask')
@@ -41,6 +42,7 @@ class RequestTest(TestCase):
 
             Expected result: The handlers are registered against the application
         """
+
         app_instance = mock_app.return_value
         app_instance.after_request = MagicMock()
 
@@ -54,6 +56,7 @@ class RequestTest(TestCase):
 
             Expected result: The response header is extended with the X-Clacks-Overhead field, but otherwise unchanged.
         """
+
         response = Response()
         response.headers = MagicMock()
         response.headers.add = MagicMock()
@@ -70,6 +73,7 @@ class RequestTest(TestCase):
 
             Expected result: The handlers are registered against the application
         """
+
         app_instance = mock_app.return_value
         app_instance.before_request = MagicMock()
 
@@ -84,6 +88,7 @@ class RequestTest(TestCase):
 
             Expected result: The response header is extended with the X-Clacks-Overhead field, but otherwise unchanged.
         """
+
         mock_get_locale.return_value = 'en-DE'
 
         _extend_global_variable()

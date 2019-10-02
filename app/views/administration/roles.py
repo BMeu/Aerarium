@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -39,6 +38,7 @@ def roles_list() -> str:
 
          :return: The HTML response.
     """
+
     # Get a search term and the resulting query. If no search term is given, all roles will by returned.
     search_form = SearchForm()
     role_query = Role.get_search_query(search_term=search_form.search_term)
@@ -82,6 +82,7 @@ def role_edit(name: str) -> ResponseType:
         :param name: The name of the role.
         :return: The HTML response.
     """
+
     role = Role.load_from_name(name)
     if role is None:
         abort(404)
@@ -108,6 +109,7 @@ def role_permissions(name: str) -> ResponseType:
         :param name: The name of the role.
         :return: The HTML response.
     """
+
     role = Role.load_from_name(name)
     if role is None:
         abort(404)
@@ -138,6 +140,7 @@ def role_users(name: str) -> str:
         :param name: The name of the role.
         :return: The HTML response.
     """
+
     role = Role.load_from_name(name)
     if role is None:
         abort(404)
@@ -162,6 +165,7 @@ def role_delete(name: str) -> ResponseType:
         :param name: The name of the role.
         :return: The HTML response.
     """
+
     role = Role.load_from_name(name)
     if role is None:
         abort(404)

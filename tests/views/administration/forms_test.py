@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -31,6 +30,7 @@ class UniqueRoleNameTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -42,6 +42,7 @@ class UniqueRoleNameTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -53,6 +54,7 @@ class UniqueRoleNameTest(TestCase):
 
             Expected result: The default error message is used.
         """
+
         validator = UniqueRoleName()
         self.assertEqual('The role name already is in use.', validator.message)
 
@@ -62,6 +64,7 @@ class UniqueRoleNameTest(TestCase):
 
             Expected result: The custom error message is used.
         """
+
         message = 'Another role already uses this name.'
         validator = UniqueRoleName(message=message)
         self.assertEqual(message, validator.message)
@@ -163,6 +166,7 @@ class BasePermissionFormTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -174,6 +178,7 @@ class BasePermissionFormTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -185,6 +190,7 @@ class BasePermissionFormTest(TestCase):
 
             Expected result: The values are empty.
         """
+
         self.assertIsNone(BasePermissionForm.permission_fields_after)
         self.assertEqual(OrderedDict(), BasePermissionForm.permission_fields)
 
@@ -194,6 +200,7 @@ class BasePermissionFormTest(TestCase):
 
             Expected result: The empty permission is returned without any errors.
         """
+
         form = BasePermissionForm()
         self.assertEqual(Permission(0), form.permissions)
 
@@ -204,6 +211,7 @@ class BasePermissionFormTest(TestCase):
 
             Expected result: The empty permission is returned without any errors.
         """
+
         form = BasePermissionForm()
         permission = Permission.EditGlobalSettings
         form.permission_fields = OrderedDict([(permission.name, permission)])
@@ -216,6 +224,7 @@ class BasePermissionFormTest(TestCase):
 
             Expected result: No errors are raised.
         """
+
         form = BasePermissionForm()
 
         form.order_fields()
@@ -229,6 +238,7 @@ class BasePermissionFormTest(TestCase):
 
             Expected result: No errors are raised.
         """
+
         form = BasePermissionForm()
         form.permission_fields_after = 'name'
 
@@ -243,6 +253,7 @@ class PermissionFormTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -254,6 +265,7 @@ class PermissionFormTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -265,6 +277,7 @@ class PermissionFormTest(TestCase):
 
             Expected result: The attribute to define the order is `None`.
         """
+
         self.assertIsNone(PermissionForm.permission_fields_after)
 
 
@@ -274,6 +287,7 @@ class RoleDeleteFormTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -285,6 +299,7 @@ class RoleDeleteFormTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -296,6 +311,7 @@ class RoleDeleteFormTest(TestCase):
 
             Expected result: The new_role field is deleted.
         """
+
         role = Role(name='Administrator')
         db.session.add(role)
         db.session.commit()
@@ -311,6 +327,7 @@ class RoleDeleteFormTest(TestCase):
 
             Expected result: The new_role field exists and is initialized with all other roles.
         """
+
         role = Role(name='Administrator')
         user = User('test@example.com', 'Jane Doe')
         user.role = role
@@ -350,6 +367,7 @@ class PermissionFormFactoryTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -363,6 +381,7 @@ class PermissionFormFactoryTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -379,6 +398,7 @@ class PermissionFormFactoryTest(TestCase):
             """
                 A form not inheriting from BasePermissionForm.
             """
+
             pass
 
         with self.assertRaises(ValueError) as exception_cm:
@@ -451,6 +471,7 @@ class PermissionFormFactoryTest(TestCase):
             """
                 A simple form to which permission fields will be added.
             """
+
             pass
 
         # The preselected permissions.

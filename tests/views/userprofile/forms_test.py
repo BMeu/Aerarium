@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -23,6 +22,7 @@ class UniqueEmailTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -34,6 +34,7 @@ class UniqueEmailTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -45,6 +46,7 @@ class UniqueEmailTest(TestCase):
 
             Expected result: The default error message is used.
         """
+
         validator = UniqueEmail()
         self.assertEqual('The email address already is in use.', validator.message)
 
@@ -54,6 +56,7 @@ class UniqueEmailTest(TestCase):
 
             Expected result: The custom error message is used.
         """
+
         message = 'Another user already claims this email address.'
         validator = UniqueEmail(message=message)
         self.assertEqual(message, validator.message)
@@ -66,6 +69,7 @@ class UniqueEmailTest(TestCase):
         """
 
         class UniqueEmailForm(FlaskForm):
+
             email = StringField('Email')
 
         form = UniqueEmailForm()
@@ -83,6 +87,7 @@ class UniqueEmailTest(TestCase):
         """
 
         class UniqueEmailForm(FlaskForm):
+
             email = StringField('Email')
 
         form = UniqueEmailForm()
@@ -101,6 +106,7 @@ class UniqueEmailTest(TestCase):
         """
 
         class UniqueEmailForm(FlaskForm):
+
             email = StringField('Email')
 
         # Create a test user.
@@ -129,6 +135,7 @@ class UniqueEmailTest(TestCase):
         """
 
         class UniqueEmailForm(FlaskForm):
+
             email = StringField('Email')
 
         # Create a test user.
@@ -156,6 +163,7 @@ class UserSettingsFormTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -167,6 +175,7 @@ class UserSettingsFormTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()

@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from logging import Formatter
@@ -17,6 +16,7 @@ class HandlerFactoryTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.level = 42
         self.format = Formatter('%(message)s')
 
@@ -27,6 +27,7 @@ class HandlerFactoryTest(TestCase):
 
             Expected result: The file handler emits to the file on the correct level and with the correct formatter.
         """
+
         instance = mock_handler.return_value
         instance.setFormatter = MagicMock()
         instance.setLevel = MagicMock()
@@ -48,6 +49,7 @@ class HandlerFactoryTest(TestCase):
 
             Expected result: The mail handler sends via mail on the correct level and with the correct formatter.
         """
+
         instance = mock_handler.return_value
         instance.setFormatter = MagicMock()
         instance.setLevel = MagicMock()
@@ -76,6 +78,7 @@ class HandlerFactoryTest(TestCase):
 
             Expected result: The stream handler prints to STDOUT on the correct level and with the correct formatter.
         """
+
         instance = mock_handler.return_value
         instance.setFormatter = MagicMock()
         instance.setLevel = MagicMock()

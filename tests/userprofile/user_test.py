@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -30,6 +29,7 @@ class UserTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -41,6 +41,7 @@ class UserTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -54,6 +55,7 @@ class UserTest(TestCase):
 
             Expected result: The ``is_active`` property returns the value of the ``is_activated`` field.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -72,6 +74,7 @@ class UserTest(TestCase):
 
             Expected result: The ``is_active`` property sets the value of the ``is_activated`` field.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -102,6 +105,7 @@ class UserTest(TestCase):
 
             Expected result: The role is returned.
         """
+
         role = Role(name='Administrator')
 
         name = 'Jane Doe'
@@ -130,6 +134,7 @@ class UserTest(TestCase):
 
             Expected result: The user is correctly initialized.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
 
@@ -160,6 +165,7 @@ class UserTest(TestCase):
 
             Expected result: The user with the given ID is returned.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user_id = 1
@@ -182,6 +188,7 @@ class UserTest(TestCase):
 
             Expected result: No user is returned.
         """
+
         loaded_user = User.load_from_id(1)
         self.assertIsNone(loaded_user)
 
@@ -191,6 +198,7 @@ class UserTest(TestCase):
 
             Expected result: The user with the given email address is returned.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user_id = 1
@@ -213,6 +221,7 @@ class UserTest(TestCase):
 
             Expected result: No user is returned.
         """
+
         loaded_user = User.load_from_email('test@example.com')
         self.assertIsNone(loaded_user)
 
@@ -226,6 +235,7 @@ class UserTest(TestCase):
 
             Expected result: The user is successfully logged in and returned.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -251,6 +261,7 @@ class UserTest(TestCase):
 
             Expected result: The user is not logged in.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -275,6 +286,7 @@ class UserTest(TestCase):
 
             Expected result: The user is not logged in.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -299,6 +311,7 @@ class UserTest(TestCase):
 
             Expected result: The user is not logged in.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -324,6 +337,7 @@ class UserTest(TestCase):
 
             Expected result: Nothing happens.
         """
+
         password = '123456'
         user = User.refresh_login(password)
 
@@ -335,6 +349,7 @@ class UserTest(TestCase):
 
             Expected result: The user is not logged in.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -355,6 +370,7 @@ class UserTest(TestCase):
 
             Expected result: The user is not logged in.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -377,6 +393,7 @@ class UserTest(TestCase):
 
             Expected result: The user is no longer logged in.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
@@ -407,6 +424,7 @@ class UserTest(TestCase):
 
             Expected result: The user's email address is returned.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -418,6 +436,7 @@ class UserTest(TestCase):
 
             Expected result: The email address is set successfully.
         """
+
         old_email = 'test@example.com'
         new_email = 'test2@example.com'
         name = 'John Doe'
@@ -443,6 +462,7 @@ class UserTest(TestCase):
 
             Expected result: The email address is set successfully.
         """
+
         old_email = 'test@example.com'
         name = 'John Doe'
         user = User(old_email, name)
@@ -462,6 +482,7 @@ class UserTest(TestCase):
 
             Expected result: The email address is set successfully, but no email is sent.
         """
+
         name = 'John Doe'
         # noinspection PyTypeChecker
         user = User(None, name)
@@ -482,6 +503,7 @@ class UserTest(TestCase):
 
             Expected result: The email address is not changed.
         """
+
         existing_email = 'test2@example.com'
         existing_name = 'Jane Doe'
         existing_user = User(existing_email, existing_name)
@@ -508,6 +530,7 @@ class UserTest(TestCase):
 
             Expected result: An email with a link containing the token would be sent to the user.
         """
+
         # Fake a known token to be able to check for it in the mail.
         token_bytes = b'AFakeTokenForCheckingIfItIsIncludedInTheMail'
         token = token_bytes.decode('utf-8')
@@ -547,6 +570,7 @@ class UserTest(TestCase):
 
             Expected result: The token is generated and returns the correct user and new email address when verifying.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -571,6 +595,7 @@ class UserTest(TestCase):
 
             Expected result: The token is generated and returns the correct user and new email address when verifying.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -600,6 +625,7 @@ class UserTest(TestCase):
 
             Expected result: The password is set on the user, but not in plaintext.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         password = 'Aerarium123!'
@@ -624,6 +650,7 @@ class UserTest(TestCase):
 
             Expected result: The password is set on the user, but no mail is sent.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         password = 'Aerarium123!'
@@ -644,6 +671,7 @@ class UserTest(TestCase):
 
             Expected result: The password is set on the user, but not in plaintext.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         password = 'Aerarium123!'
@@ -665,6 +693,7 @@ class UserTest(TestCase):
 
             Expected result: The password is not set on the user.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         password = None
@@ -685,6 +714,7 @@ class UserTest(TestCase):
 
             Expected result: The given password is correct and the result is True.
         """
+
         password = 'Aerarium123!'
         user = User('test@example.com', 'John Doe')
         user.set_password(password)
@@ -698,6 +728,7 @@ class UserTest(TestCase):
 
             Expected result: The given password is incorrect and the result is False.
         """
+
         user = User('test@example.com', 'John Doe')
         user.set_password('Aerarium123!')
 
@@ -710,6 +741,7 @@ class UserTest(TestCase):
 
             Expected result: The result is False.
         """
+
         user = User('test@example.com', 'John Doe')
         is_correct = user.check_password('123456')
         self.assertFalse(is_correct)
@@ -720,6 +752,7 @@ class UserTest(TestCase):
 
             Expected result: The result is False.
         """
+
         user = User('test@example.com', 'John Doe')
         # noinspection PyTypeChecker
         is_correct = user.check_password(None)
@@ -732,6 +765,7 @@ class UserTest(TestCase):
 
             Expected result: An email with a link containing the token would be sent to the user.
         """
+
         # Fake a known token to be able to check for it in the mail.
         token_bytes = b'AFakeTokenForCheckingIfItIsIncludedInTheMail'
         token = token_bytes.decode('utf-8')
@@ -767,6 +801,7 @@ class UserTest(TestCase):
 
             Expected result: No email would be sent.
         """
+
         name = 'John Doe'
         # noinspection PyTypeChecker
         user = User(None, name)
@@ -782,6 +817,7 @@ class UserTest(TestCase):
 
             Expected result: The token is generated and returns the correct user when verifying.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user_id = 1
@@ -806,6 +842,7 @@ class UserTest(TestCase):
 
             Expected result: The token is generated, but does not return a user when verifying.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user_id = 1
@@ -836,6 +873,7 @@ class UserTest(TestCase):
 
             Expected result: An email with a link containing the token would be sent to the user.
         """
+
         # Fake a known token to be able to check for it in the mail.
         token_bytes = b'AFakeTokenForCheckingIfItIsIncludedInTheMail'
         token = token_bytes.decode('utf-8')
@@ -871,6 +909,7 @@ class UserTest(TestCase):
 
             Expected result: The token returns the correct user when verifying.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -892,6 +931,7 @@ class UserTest(TestCase):
 
             Expected result: The token does not return a user when verifying.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -914,6 +954,7 @@ class UserTest(TestCase):
 
             Expected result: The user is logged out, informed via mail, and deleted. Other users are not deleted.
         """
+
         other_email = 'info@example.com'
         other_name = 'Jane Doe'
         other_user = User(other_email, other_name)
@@ -963,6 +1004,7 @@ class UserTest(TestCase):
 
             Expected result: The user is informed via mail and deleted. Other users are not deleted.
         """
+
         other_email = 'info@example.com'
         other_name = 'Jane Doe'
         other_password = 'Aerarium123!'
@@ -1268,6 +1310,7 @@ class UserTest(TestCase):
 
             :return: A query is returned that does not filter.
         """
+
         user_1 = User('jane@example.com', 'Jane Doe')
         user_2 = User('john@example.com', 'John Doe')
         user_3 = User('max@beispiel.de', 'Max Mustermann')
@@ -1297,6 +1340,7 @@ class UserTest(TestCase):
 
             :return: A query is returned that filters exactly by the search term.
         """
+
         user_1 = User('jane@example.com', 'Jane Doe')
         user_2 = User('john@example.com', 'John Doe')
         user_3 = User('max@beispiel.de', 'Max Mustermann')
@@ -1337,6 +1381,7 @@ class UserTest(TestCase):
 
             :return: A query is returned that filters by the search term allowing for partial matches.
         """
+
         user_1 = User('jane@example.com', 'Jane Doe')
         user_2 = User('john@example.com', 'John Doe')
         user_3 = User('max@beispiel.de', 'Max Mustermann')
@@ -1401,6 +1446,7 @@ class UserTest(TestCase):
 
             :return: A query is returned that filters exactly by the search term.
         """
+
         user_1 = User('jane@example.com', 'Jane Doe')
         user_2 = User('john@example.com', 'John Doe')
         user_3 = User('max@beispiel.de', 'Max Mustermann')
@@ -1435,6 +1481,7 @@ class UserTest(TestCase):
 
             Expected result: The representation contains details on the user.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -1455,6 +1502,7 @@ class UserPaginationTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
@@ -1484,6 +1532,7 @@ class UserPaginationTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()

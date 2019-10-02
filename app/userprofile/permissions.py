@@ -1,5 +1,8 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
+
+"""
+    The permissions used within the application.
+"""
 
 from typing import cast
 from typing import Optional
@@ -8,10 +11,6 @@ from enum import Flag
 from enum import unique
 
 from flask_babel import lazy_gettext as _l
-
-"""
-    The permissions used within the application.
-"""
 
 
 @unique
@@ -51,6 +50,7 @@ class Permission(Flag):
             :param description: An optional description used to display additional information about the permission.
             :return: The created enum member.
         """
+
         member = object.__new__(cls)
 
         member.description = description

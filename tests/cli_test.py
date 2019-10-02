@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from time import sleep
@@ -19,6 +18,7 @@ class CLITest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         cli.register(self.app)
 
@@ -31,10 +31,12 @@ class CLITest(TestCase):
 
             Expected result: The output suggests the value 4 and informs the user that the minimum value must be used.
         """
+
         def _hasher_side_effect(_password, rounds):
             """
                 Sleep slightly longer than the number of rounds in milliseconds.
             """
+
             sleep((rounds + 1) / 1000.0)
 
         mock_hasher.side_effect = _hasher_side_effect
@@ -57,10 +59,12 @@ class CLITest(TestCase):
             Expected result: The output suggests the value 4 and informs the user that the minimum value is fitting the
                              requirements.
         """
+
         def _hasher_side_effect(_password, rounds):
             """
                 Sleep slightly shorter than the number of rounds in milliseconds.
             """
+
             sleep((rounds - 1) / 1000.0)
 
         mock_hasher.side_effect = _hasher_side_effect
@@ -86,10 +90,12 @@ class CLITest(TestCase):
 
             Expected result: The output suggests the value 12 and displays verbose information.
         """
+
         def _hasher_side_effect(_password, rounds):
             """
                 Sleep slightly shorter than the number of rounds in milliseconds.
             """
+
             sleep((rounds - 1) / 1000.0)
 
         mock_hasher.side_effect = _hasher_side_effect
@@ -123,10 +129,12 @@ class CLITest(TestCase):
 
             Expected result: The output suggests the value 31.
         """
+
         def _hasher_side_effect(_password, rounds):
             """
                 Sleep slightly shorter than the number of rounds in milliseconds.
             """
+
             sleep((rounds - 1) / 1000.0)
 
         mock_hasher.side_effect = _hasher_side_effect
@@ -179,10 +187,12 @@ class CLITest(TestCase):
             Expected result: The output suggests the value 31 and informs the user about the maximum number, since
                              verbose output is enabled.
         """
+
         def _hasher_side_effect(_password, rounds):
             """
                 Sleep slightly shorter than the number of rounds in milliseconds.
             """
+
             sleep((rounds - 1) / 1000.0)
 
         mock_hasher.side_effect = _hasher_side_effect
@@ -234,6 +244,7 @@ class CLITest(TestCase):
 
             Expected result: Babel is instructed to compile the translations.
         """
+
         mock_system.return_value = 0
 
         response = self.cli.invoke(args=['translate', 'compile'])
@@ -249,6 +260,7 @@ class CLITest(TestCase):
 
             Expected result: Babel is instructed to compile the translations, but fails.
         """
+
         mock_system.return_value = 1
 
         response = self.cli.invoke(args=['translate', 'compile'])
@@ -268,10 +280,12 @@ class CLITest(TestCase):
 
             Expected result: Babel is instructed to extract the translations, but fails.
         """
+
         def _system_return_value(value):
             """
                 Only fail the extract command.
             """
+
             if 'extract' in value:
                 return 1
             return 0
@@ -294,6 +308,7 @@ class CLITest(TestCase):
 
             Expected result: Babel is instructed to extract and initialize the translations.
         """
+
         mock_system.return_value = 0
 
         response = self.cli.invoke(args=['translate', 'init', 'de'])
@@ -314,10 +329,12 @@ class CLITest(TestCase):
 
             Expected result: Babel is instructed to update the translations, but fails.
         """
+
         def _system_return_value(value):
             """
                 Don't fail the extract command.
             """
+
             if 'extract' in value:
                 return 0
             return 1
@@ -342,6 +359,7 @@ class CLITest(TestCase):
 
             Expected result: Babel is instructed to extract and update the translations.
         """
+
         mock_system.return_value = 0
 
         response = self.cli.invoke(args=['translate', 'update'])
@@ -361,10 +379,12 @@ class CLITest(TestCase):
 
             Expected result: Babel is instructed to update the translations, but fails.
         """
+
         def _system_return_value(value):
             """
                 Don't fail the extract command.
             """
+
             if 'extract' in value:
                 return 0
             return 1

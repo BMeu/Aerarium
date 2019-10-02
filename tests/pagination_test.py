@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -15,6 +14,7 @@ class TestModel(db.Model):
     """
         A simple DB model used just for testing the pagination.
     """
+
     id = db.Column(db.Integer, primary_key=True)
 
 
@@ -24,6 +24,7 @@ class PaginationTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -52,6 +53,7 @@ class PaginationTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -63,6 +65,7 @@ class PaginationTest(TestCase):
 
             Expected result: All members are initialized.
         """
+
         current_page = 1
         self.request_context.request.args = {'page': current_page, 'p': current_page + 1}
         pagination = Pagination(TestModel.query)
@@ -77,6 +80,7 @@ class PaginationTest(TestCase):
 
             Expected result: All members are initialized.
         """
+
         current_page = 1
         self.request_context.request.args = {'page': current_page + 1, 'p': current_page}
         pagination = Pagination(TestModel.query, page_param='p')
@@ -91,6 +95,7 @@ class PaginationTest(TestCase):
 
             Expected result: An error is raised.
         """
+
         current_page = 4
         self.request_context.request.args = {'page': current_page}
         with self.assertRaises(NotFound):
@@ -102,6 +107,7 @@ class PaginationTest(TestCase):
 
             Expected result: The corresponding first row is returned.
         """
+
         self.request_context.request.args = {'page': 1}
         pagination = Pagination(TestModel.query)
         self.assertEqual(1, pagination.first_row)
@@ -120,6 +126,7 @@ class PaginationTest(TestCase):
 
             Expected result: The corresponding last row is returned.
         """
+
         self.request_context.request.args = {'page': 1}
         pagination = Pagination(TestModel.query,)
         self.assertEqual(3, pagination.last_row)
@@ -138,6 +145,7 @@ class PaginationTest(TestCase):
 
             Expected results: The actual model objects for the requested page are returned.
         """
+
         self.request_context.request.args = {'page': 1}
         pagination = Pagination(TestModel.query)
         self.assertListEqual([self.model_1, self.model_2, self.model_3], pagination.rows)
@@ -156,6 +164,7 @@ class PaginationTest(TestCase):
 
             Expected result: The correct number is returned.
         """
+
         self.request_context.request.args = {'page': 1}
         pagination = Pagination(TestModel.query)
         self.assertEqual(3, pagination.rows_on_page)
@@ -174,6 +183,7 @@ class PaginationTest(TestCase):
 
             Expected result: The return value is always the same.
         """
+
         self.request_context.request.args = {'page': 1}
         pagination = Pagination(TestModel.query)
         self.assertEqual(3, pagination.total_pages)
@@ -192,6 +202,7 @@ class PaginationTest(TestCase):
 
             Expected result: The return value is always the same.
         """
+
         self.request_context.request.args = {'page': 1}
         pagination = Pagination(TestModel.query)
         self.assertEqual(7, pagination.total_rows)

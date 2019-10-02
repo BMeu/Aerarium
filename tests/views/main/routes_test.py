@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -15,6 +14,7 @@ class RoutesTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
@@ -27,6 +27,7 @@ class RoutesTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.push()
@@ -38,6 +39,7 @@ class RoutesTest(TestCase):
 
             Expected result: The user is redirected to the login page.
         """
+
         response = self.client.get('/', follow_redirects=True)
         data = response.get_data(as_text=True)
 
@@ -50,6 +52,7 @@ class RoutesTest(TestCase):
 
             Expected result: The user is shown the dashboard.
         """
+
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'

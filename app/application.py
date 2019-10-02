@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -94,6 +93,7 @@ def get_app() -> Flask:
         :raise NoApplicationError: If the application does not exist (e.g. when working outside the application
                                    context).
     """
+
     try:
         # noinspection PyProtectedMember
         application = current_app._get_current_object()
@@ -109,6 +109,7 @@ def _initialize_blueprints(application: Flask) -> None:
 
         :param application: The application instance for which the blueprints will be registered.
     """
+
     from app.views.administration import bp as administration_bp
     from app.views.main import bp as main_bp
     from app.views.userprofile import bp as userprofile_bp
@@ -124,6 +125,7 @@ def _initialize_context_processors(application: Flask) -> None:
 
         :param application: The application instance for which the context processors will be registered.
     """
+
     def inject_processors() -> Dict[str, Any]:
         """
             Inject methods and variables into the template context.
@@ -151,6 +153,7 @@ def _initialize_extensions(application: Flask) -> None:
 
         :param application: The application instance for which the extensions will be registered.
     """
+
     babel.init_app(application)
     babel.locale_selector_func = get_locale
 

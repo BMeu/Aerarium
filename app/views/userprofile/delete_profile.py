@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 """
@@ -29,6 +28,7 @@ def delete_profile_request() -> ResponseType:
 
         :return: The HTML response.
     """
+
     form = DeleteUserProfileForm()
     if form.validate_on_submit():
         token = current_user.send_delete_account_email()
@@ -51,6 +51,7 @@ def delete_profile(token: str) -> ResponseType:
 
         :return: The HTML response.
     """
+
     try:
         user = User.verify_delete_account_token(token)
     except EasyJWTError:

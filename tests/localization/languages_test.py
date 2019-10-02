@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -23,6 +22,7 @@ class LanguagesTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -53,6 +53,7 @@ class LanguagesTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -64,6 +65,7 @@ class LanguagesTest(TestCase):
 
             Expected result: 'en' is always returned.
         """
+
         self.assertEqual(self.default_language, get_default_language())
 
     @patch('app.localization.languages.listdir')
@@ -148,6 +150,7 @@ class LanguagesTest(TestCase):
 
             Expected result: A list containing the default `'en'` plus the valid languages from `listdir()`.
         """
+
         mock_listdir.return_value = self.listdir_return_value
 
         languages = get_languages(self.path)
@@ -162,6 +165,7 @@ class LanguagesTest(TestCase):
 
             Expected result: A list containing the non-default language plus the valid languages from `listdir()`.
         """
+
         mock_listdir.return_value = self.listdir_return_value
 
         languages = get_languages(self.path, 'fr')
@@ -176,6 +180,7 @@ class LanguagesTest(TestCase):
 
             Expected result: A list simply containing the default language, no errors.
         """
+
         mock_listdir.side_effect = OSError
 
         languages = get_languages(self.path)
@@ -216,6 +221,7 @@ class LanguagesTest(TestCase):
 
             Expected result: 'de'.
         """
+
         mock_request.accept_languages = MagicMock()
         mock_request.accept_languages.best_match = MagicMock(return_value='de')
 

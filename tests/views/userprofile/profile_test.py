@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -17,6 +16,7 @@ class ProfileTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
@@ -29,6 +29,7 @@ class ProfileTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -42,6 +43,7 @@ class ProfileTest(TestCase):
 
             Expected result: The form is shown with prepopulated data.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         password = '123456'
@@ -77,6 +79,7 @@ class ProfileTest(TestCase):
 
             Expected result: The form is shown with the new data. The user's name is changed, everything else is not.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         password = '123456'
@@ -120,6 +123,7 @@ class ProfileTest(TestCase):
             Expected result: The form is shown with the new data. The user's name and password are changed, everything
                              else is not.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         password = '123456'
@@ -170,6 +174,7 @@ class ProfileTest(TestCase):
             Expected result: The form is shown with the new data. The user's name and password are changed, the email
                              is not, but a mail has been sent to the new address.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         password = '123456'
@@ -226,6 +231,7 @@ class ProfileTest(TestCase):
 
             Expected result: The email address is changed.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -253,6 +259,7 @@ class ProfileTest(TestCase):
 
             Expected result: The email address is not changed and a 404 error page is shown.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)
@@ -281,6 +288,7 @@ class ProfileTest(TestCase):
 
             Expected result: The email address is not changed.
         """
+
         existing_email = 'test2@example.com'
         existing_name = 'Jane Doe'
         existing_user = User(existing_email, existing_name)
@@ -312,6 +320,7 @@ class ProfileTest(TestCase):
 
             Expected result: The email address is not changed and a 404 error page is shown.
         """
+
         email = 'test@example.com'
         name = 'John Doe'
         user = User(email, name)

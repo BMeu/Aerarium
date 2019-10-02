@@ -1,4 +1,3 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
 
 from unittest import TestCase
@@ -27,6 +26,7 @@ class DecoratorsTest(TestCase):
         """
             Initialize the test cases.
         """
+
         self.app = create_app(TestConfiguration)
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -38,6 +38,7 @@ class DecoratorsTest(TestCase):
         """
             Reset the test cases.
         """
+
         db.session.remove()
         db.drop_all()
         self.request_context.pop()
@@ -50,6 +51,7 @@ class DecoratorsTest(TestCase):
 
             :return: 'Decorated View'.
         """
+
         return 'Decorated View'
 
     def test_logout_required_logged_out(self):

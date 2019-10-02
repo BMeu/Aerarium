@@ -1,5 +1,8 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
+
+"""
+    Functions modifying the request on application level.
+"""
 
 from flask import Flask
 from flask import g
@@ -9,10 +12,6 @@ from flask_login import current_user
 
 from app.configuration import BaseConfiguration
 
-"""
-    Functions modifying the request on application level.
-"""
-
 
 def register_after_request_handlers(application: Flask) -> None:
     """
@@ -20,6 +19,7 @@ def register_after_request_handlers(application: Flask) -> None:
 
         :param application: The application instance for which the handlers will be registered.
     """
+
     application.after_request(_header_x_clacks_overhead)
 
 
@@ -29,6 +29,7 @@ def register_before_request_handlers(application: Flask) -> None:
 
         :param application: The application instance for which the handlers will be registered.
     """
+
     application.before_request(_extend_global_variable)
 
 
@@ -40,6 +41,7 @@ def _extend_global_variable() -> None:
          * ``g.title``: The app title.
          * ``g.user``: The user object.
     """
+
     g.locale = get_locale()
     g.title = BaseConfiguration.TITLE_SHORT
     g.user = current_user
@@ -56,5 +58,6 @@ def _header_x_clacks_overhead(response: Response) -> Response:
         :param response: The response to which the header field will be added.
         :return: The extended response.
     """
+
     response.headers.add('X-Clacks-Overhead', 'GNU Terry Pratchett')
     return response

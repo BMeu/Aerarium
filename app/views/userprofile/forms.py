@@ -1,5 +1,8 @@
-#!venv/bin/python
 # -*- coding: utf-8 -*-
+
+"""
+    Forms and form related functionality for the user profile.
+"""
 
 from typing import Any
 from typing import Optional
@@ -22,10 +25,6 @@ from wtforms.validators import EqualTo
 from app.configuration import BaseConfiguration
 from app.localization import get_language_names
 from app.userprofile import User
-
-"""
-    Forms and form related functionality for the user profile.
-"""
 
 # region Validators
 
@@ -54,6 +53,7 @@ class UniqueEmail(object):
             :param field: The field to which this validator is attached.
             :raise ValidationError: In case the validation fails.
         """
+
         email = field.data
         if not email:
             return
@@ -215,6 +215,7 @@ class UserSettingsForm(FlaskForm):
             :param args: The arguments for initializing the form.
             :param kwargs: The keyword argument for initializing the form.
         """
+
         super().__init__(*args, **kwargs)
 
         self.language.choices = get_language_names(BaseConfiguration.TRANSLATION_DIR)
