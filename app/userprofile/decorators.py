@@ -59,8 +59,33 @@ def permission_required(permission: Permission) -> Callable[[ViewFunctionType], 
         :return: The decorator for checking if the current user has the given permission.
     """
 
-    # TODO: This should not be an alias of permission_required_all.
-    return permission_required_all(permission)
+    def permission_required_decorator(view_function: ViewFunctionType) -> ViewFunctionType:
+        """
+            The actual decorator for the view function.
+
+            :param view_function: The Flask view being wrapped.
+            :return: The wrapped view function.
+        """
+
+        @wraps(view_function)
+        def wrapped_permission_required(*args: Any, **kwargs: Any) -> ResponseType:
+            """
+                If the current user does not have the requested permission, abort with error 403. Otherwise, execute the
+                wrapped view function.
+
+                :param args: The arguments of the view function.
+                :param kwargs: The keyword arguments of the view function.
+                :return: The response of either a 403 error or the wrapped view function.
+            """
+
+            if not User.current_user_has_permission(permission):
+                return abort(403)
+
+            return view_function(*args, **kwargs)
+
+        return wrapped_permission_required
+
+    return permission_required_decorator
 
 
 def permission_required_all(*permissions: Permission) -> Callable[[ViewFunctionType], ViewFunctionType]:
@@ -91,7 +116,7 @@ def permission_required_all(*permissions: Permission) -> Callable[[ViewFunctionT
 
                 :param args: The arguments of the view function.
                 :param kwargs: The keyword arguments of the view function.
-                :return: The response of either an 403 error or the wrapped view function.
+                :return: The response of either a 403 error or the wrapped view function.
             """
 
             if not User.current_user_has_permissions_all(*permissions):
