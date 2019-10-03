@@ -264,7 +264,6 @@ class User(UserMixin, db.Model):  # type: ignore
 
         return token_obj
 
-    # TODO: Shouldn't the return type be Optional[Tuple['User', str]]?
     @staticmethod
     def verify_change_email_address_token(token: str) -> Tuple[Optional['User'], Optional[str]]:
         """
@@ -275,7 +274,6 @@ class User(UserMixin, db.Model):  # type: ignore
                      invalid.
         """
 
-        # TODO: Set the user's new email address.
         token_obj = ChangeEmailAddressToken.verify(token)
         user = User.load_from_id(token_obj.user_id)
         return user, token_obj.new_email

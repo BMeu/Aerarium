@@ -84,6 +84,7 @@ def change_email(token: str) -> ResponseType:
     if user is None or email is None:
         return abort(404)
 
+    # TODO: Move this to User.verify_change_email_address_token().
     changed_email = user.set_email(email)
     if changed_email:
         db.session.commit()
