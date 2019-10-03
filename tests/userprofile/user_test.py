@@ -156,7 +156,7 @@ class UserTest(TestCase):
             self.assertEqual(0, len(outgoing))
 
             self.assertIsNone(user.id)
-            self.assertIsNone(user.password_hash)
+            self.assertIsNone(user._password_hash)
             self.assertEqual(email, user.email)
             self.assertEqual(name, user.name)
             self.assertIsNone(user._is_activated)
@@ -688,8 +688,8 @@ class UserTest(TestCase):
             self.assertListEqual([email], outgoing[0].recipients)
             self.assertIn('Your password has been updated.', outgoing[0].body)
             self.assertIn('Your password has been updated.', outgoing[0].html)
-            self.assertIsNotNone(user.password_hash)
-            self.assertNotEqual(password, user.password_hash)
+            self.assertIsNotNone(user._password_hash)
+            self.assertNotEqual(password, user._password_hash)
             self.assertTrue(user.check_password(password))
 
     def test_set_password_success_first_password(self):
@@ -704,13 +704,13 @@ class UserTest(TestCase):
         password = 'Aerarium123!'
         user = User(email, name)
 
-        self.assertIsNone(user.password_hash)
+        self.assertIsNone(user._password_hash)
 
         with mail.record_messages() as outgoing:
             user.set_password(password)
 
             self.assertEqual(0, len(outgoing))
-            self.assertIsNotNone(user.password_hash)
+            self.assertIsNotNone(user._password_hash)
             self.assertTrue(user.check_password(password))
 
     def test_set_password_success_unchanged_password(self):
@@ -732,7 +732,7 @@ class UserTest(TestCase):
             user.set_password(password)
 
             self.assertEqual(0, len(outgoing))
-            self.assertIsNotNone(user.password_hash)
+            self.assertIsNotNone(user._password_hash)
             self.assertTrue(user.check_password(password))
 
     def test_set_password_failure_no_password(self):
@@ -752,7 +752,7 @@ class UserTest(TestCase):
             user.set_password(password)
 
             self.assertEqual(0, len(outgoing))
-            self.assertIsNone(user.password_hash)
+            self.assertIsNone(user._password_hash)
             # noinspection PyTypeChecker
             self.assertFalse(user.check_password(password))
 

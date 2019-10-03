@@ -50,8 +50,7 @@ class User(UserMixin, db.Model):  # type: ignore
         The user's email address.
     """
 
-    # TODO: Make private.
-    password_hash = db.Column(db.String(128))
+    _password_hash = db.Column('password_hash', db.String(128))
     """
         The user's password, salted and hashed.
     """
@@ -322,7 +321,7 @@ class User(UserMixin, db.Model):  # type: ignore
 
         # If the user does not have a password at the moment, their account has been newly created. Do not send an email
         # in this case.
-        if self.password_hash is not None and self.email is not None:
+        if self._password_hash is not None and self.email is not None:
             application = get_app()
 
             support_address = application.config.get('SUPPORT_ADDRESS', None)
@@ -331,7 +330,7 @@ class User(UserMixin, db.Model):  # type: ignore
             email.prepare(name=self.name, support_email=support_address)
             email.send(self.email)
 
-        self.password_hash = bcrypt.generate_password_hash(password)
+        self._password_hash = bcrypt.generate_password_hash(password)
 
     def check_password(self, password: str) -> bool:
         """
@@ -341,10 +340,10 @@ class User(UserMixin, db.Model):  # type: ignore
             :return: `True` if the given password matches the user's password.
         """
 
-        if not self.password_hash:
+        if not self._password_hash:
             return False
 
-        return bcrypt.check_password_hash(self.password_hash, password)  # type: ignore
+        return bcrypt.check_password_hash(self._password_hash, password)  # type: ignore
 
     def send_password_reset_email(self) -> Optional[ResetPasswordToken]:
         """
