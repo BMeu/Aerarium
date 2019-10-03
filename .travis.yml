@@ -36,7 +36,7 @@ install:
 
 script:
   - flake8
-  - mypy --config-file=.mypy.ini flask_easyjwt
+  - mypy --config-file=.mypy.ini app
   - flask translate compile
   - flask db upgrade
   - coverage run -m unittest discover -v -s tests -p "*_test.py" -t .
