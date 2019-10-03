@@ -47,7 +47,7 @@ class ApplicationTest(TestCase):
         """
             Test getting the current application object outside the application context.
 
-            Expected result: ``None`` is returned without an exception.
+            Expected result: `None` is returned without an exception.
         """
 
         # Remove the application context.

@@ -22,7 +22,7 @@ class PermissionBase(Flag):
         represented as an integer using bitwise operations. Enumeration members must not (and cannot) have a value
         that is not a power of two. Furthermore, values must be unique.
 
-        The permission with the value ``0``, ``Permission(0)``, is called the *empty permission*.
+        The permission with the value `0`, `Permission(0)`, is called the *empty permission*.
     """
 
     def __new__(cls, value: int, _title: Optional[str] = None, _description: Optional[str] = None) -> 'PermissionBase':

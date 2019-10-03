@@ -39,7 +39,7 @@ def register(application: Flask) -> None:
                   help='Show the duration for all tried number of rounds.')
     def pw_hash_rounds(max_time: str, verbose: Optional[bool] = False) -> None:
         """
-            Determine the number of bcrypt log rounds that can be handled within the given maximum time ``max_time``.
+            Determine the number of bcrypt log rounds that can be handled within the given maximum time `max_time`.
 
             :param verbose: Show the duration for all tried number of rounds.
             :param max_time: The maximum time allowed for password hashing in milliseconds.

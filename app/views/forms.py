@@ -61,7 +61,7 @@ class SearchForm(FlaskForm):
         """
             Get the term for which the user searched.
 
-            :return: The string for which the user searched. ``None`` if the user did not search for anything.
+            :return: The string for which the user searched. `None` if the user did not search for anything.
         """
 
         return self.search.data  # type: ignore
@@ -70,7 +70,7 @@ class SearchForm(FlaskForm):
         """
             Get the search term from the URL.
 
-            :return: The string for which the user searched. ``None`` if the user did not search for anything.
+            :return: The string for which the user searched. `None` if the user did not search for anything.
         """
 
         term = request.args.get(self.search_param, None)

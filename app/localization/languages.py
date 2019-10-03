@@ -33,8 +33,8 @@ def get_language_names(translation_dir: str, with_native_names: bool = True) -> 
         Get a list of languages supported by the application, each with their name in the current language
 
         :param translation_dir: The directory within which the GetText translation folders can be found.
-        :param with_native_names: If set to ``True``, the languages' names will not only be given in the current
-                                  language, but also in their native language.
+        :param with_native_names: If set to `True`, the languages' names will not only be given in the current language,
+                                  but also in their native language.
         :return: A list of tuples, with the first element being the language code and the second one being the
                  language's name.
     """
@@ -71,7 +71,7 @@ def get_languages(translation_dir: str, default_language: Optional[str] = None) 
         Get a list of available languages.
 
         The default language is (generic) English and will always be included. All other languages will be read from
-        the folder ``translation_dir``. A folder within that directory is considered to contain a language for the
+        the folder `translation_dir`. A folder within that directory is considered to contain a language for the
         application if its name is either two lowercase letters, or two lowercase letters, a dash, and two uppercase
         letters.
 

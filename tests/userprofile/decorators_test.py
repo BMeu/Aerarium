@@ -56,7 +56,7 @@ class DecoratorsTest(TestCase):
 
     def test_logout_required_logged_out(self):
         """
-            Test the ``logout_required`` decorator with an anonymous user.
+            Test the `logout_required` decorator with an anonymous user.
 
             Expected result: The decorated view function is returned.
         """
@@ -67,7 +67,7 @@ class DecoratorsTest(TestCase):
 
     def test_logout_required_logged_in(self):
         """
-            Test the ``logout_required`` decorator with a logged-in user.
+            Test the `logout_required` decorator with a logged-in user.
 
             Expected result: The redirect response to the home page is returned.
         """

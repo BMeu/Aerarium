@@ -53,7 +53,7 @@ class UserTest(TestCase):
         """
             Test getting the account's activation status.
 
-            Expected result: The ``is_active`` property returns the value of the ``is_activated`` field.
+            Expected result: The `is_active` property returns the value of the `is_activated` field.
         """
 
         email = 'test@example.com'
@@ -72,7 +72,7 @@ class UserTest(TestCase):
         """
             Test setting the account's activation status.
 
-            Expected result: The ``is_active`` property sets the value of the ``is_activated`` field.
+            Expected result: The `is_active` property sets the value of the `is_activated` field.
         """
 
         email = 'test@example.com'

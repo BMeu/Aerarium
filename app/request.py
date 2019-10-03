@@ -35,11 +35,11 @@ def register_before_request_handlers(application: Flask) -> None:
 
 def _extend_global_variable() -> None:
     """
-        Extend the global variable ``g`` with further information:
+        Extend the global variable `g` with further information:
 
-         * ``g.locale``: The current locale (e.g. ``en-US`` or ``de``).
-         * ``g.title``: The app title.
-         * ``g.user``: The user object.
+         * `g.locale`: The current locale (e.g. ``en-US`` or ``de``).
+         * `g.title`: The app title.
+         * `g.user`: The user object.
     """
 
     g.locale = get_locale()
@@ -49,7 +49,7 @@ def _extend_global_variable() -> None:
 
 def _header_x_clacks_overhead(response: Response) -> Response:
     """
-        Add an X-Clacks-Overhead field to the ``response``'s header.
+        Add an X-Clacks-Overhead field to the `response`'s header.
 
         In memoriam Terry Pratchett.
 

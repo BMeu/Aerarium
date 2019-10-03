@@ -38,16 +38,16 @@ class SecureSMTPHandler(SMTPHandler):
                  timeout: float = 5.0
                  ) -> None:
         """
-            :param mailhost: The SMTP server. To specify a non-standard SMTP port, a tuple ``(host, port)`` can be used.
+            :param mailhost: The SMTP server. To specify a non-standard SMTP port, a tuple `(host, port)` can be used.
             :param fromaddr: Address from which the mails will be sent.
             :param toaddrs: Addresses to which the mails will be sent.
             :param subject: Subject of the mails to send.
-            :param credentials: Authentication credentials in the form ``(username, password)`` (defaults to ``None``).
+            :param credentials: Authentication credentials in the form `(username, password)` (defaults to `None`).
             :param secure: If set to a tuple, a TLS connection will be used. The tuple can either be empty, a
                 singe-valued tuple with the name of a key file, or a 2-tuple with the names of the key file and
-                certificate file (defaults to ``None``).
-            :param ssl: If set to ``True``, an SSL connection the SMTP server will be used (defaults to ``False``).
-            :param timeout: Timeout in seconds for the SMTP connection (defaults to ``5.0`` seconds).
+                certificate file (defaults to `None`).
+            :param ssl: If set to `True`, an SSL connection the SMTP server will be used (defaults to `False`).
+            :param timeout: Timeout in seconds for the SMTP connection (defaults to `5.0` seconds).
         """
 
         self.mailhost: str

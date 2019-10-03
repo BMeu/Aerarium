@@ -19,7 +19,7 @@ def create_file_handler(level: int, formatter: Formatter, file: str, max_file_si
     """
         Initialize a rotating file handler that will insert all events into the specified file.
 
-        The path of ``file`` must exist.
+        The path of `file` must exist.
 
         :param level: The minimum logging level, e.g. :attr    :`logging.INFO` or :attr:`logging.ERROR`.
         :param formatter: The logging formatter that is applied to the each log record.
@@ -47,11 +47,11 @@ def create_mail_handler(level: int, formatter: Formatter, sender: str, recipient
         :param recipients: List of email address to which logs will be sent.
         :param subject: The subject of each log mail.
         :param server: The name of the SMTP server.
-        :param port: The port under which the server is reachable (defaults to ``25``).
-        :param user: The username for authentication against the server (defaults to ``None``).
-        :param password: The corresponding password (defaults to ``None``).
-        :param tls: Whether to connect to the server via TLS (defaults to ``False``).
-        :param ssl: Whether to connect to the server via SSL (defaults to ``False``).
+        :param port: The port under which the server is reachable (defaults to `25`).
+        :param user: The username for authentication against the server (defaults to `None`).
+        :param password: The corresponding password (defaults to `None`).
+        :param tls: Whether to connect to the server via TLS (defaults to `False`).
+        :param ssl: Whether to connect to the server via SSL (defaults to `False`).
         :return: The initialized SMTP handler.
     """
 

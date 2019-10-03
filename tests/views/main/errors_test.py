@@ -122,7 +122,7 @@ class ErrorsTest(TestCase):
 
 def _aborting_route(code):
     """
-        A simple view function aborting with the given ``code``.
+        A simple view function aborting with the given `code`.
     """
 
     abort(int(code))

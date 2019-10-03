@@ -79,7 +79,7 @@ class User(UserMixin, db.Model):  # type: ignore
         """
             The activation status of the user's account.
 
-            :return: ``True`` if the user account is activated.
+            :return: `True` if the user account is activated.
         """
 
         return self._is_activated  # type: ignore
@@ -89,7 +89,7 @@ class User(UserMixin, db.Model):  # type: ignore
         """
             Set the activation status of this user account.
 
-            :param value: ``True`` if the user account is activated.
+            :param value: `True` if the user account is activated.
         """
 
         self._is_activated = value
@@ -116,7 +116,7 @@ class User(UserMixin, db.Model):  # type: ignore
             Load the user with the given ID from the database.
 
             :param user_id: The ID of the user to load.
-            :return: The loaded user if they exist, ``None`` otherwise.
+            :return: The loaded user if they exist, `None` otherwise.
         """
 
         return User.query.get(user_id)  # type: ignore
@@ -127,7 +127,7 @@ class User(UserMixin, db.Model):  # type: ignore
             Load the user with the given email address from the database.
 
             :param email: The email address of the user to load.
-            :return: The loaded user if they exist, ``None`` otherwise.
+            :return: The loaded user if they exist, `None` otherwise.
         """
 
         return User.query.filter_by(_email=email).first()  # type: ignore
@@ -143,8 +143,8 @@ class User(UserMixin, db.Model):  # type: ignore
 
             :param email: The user's email address.
             :param password: The user's (plaintext) password.
-            :param remember_me: ``True`` if the user wishes to stay logged in across sessions.
-            :return: The user if the email/password combination is valid and the user is logged in, ``None`` otherwise.
+            :param remember_me: `True` if the user wishes to stay logged in across sessions.
+            :return: The user if the email/password combination is valid and the user is logged in, `None` otherwise.
         """
 
         user = User.load_from_email(email)
@@ -166,7 +166,7 @@ class User(UserMixin, db.Model):  # type: ignore
             Try to refresh the current user's login.
 
             :param password: The user's (plaintext) password.
-            :return: The user if the password is valid for the given user; ``None`` otherwise.
+            :return: The user if the password is valid for the given user; `None` otherwise.
         """
 
         user_id = current_user.get_id()
@@ -185,7 +185,7 @@ class User(UserMixin, db.Model):  # type: ignore
         """
             Log out the user.
 
-            :return: ``True`` on successful logout.
+            :return: `True` on successful logout.
         """
 
         logged_out = logout_user()
@@ -209,7 +209,7 @@ class User(UserMixin, db.Model):  # type: ignore
             Change the user's email address to the new given one.
 
             :param email: The user's new email address. Must not be used by a different user.
-            :return: ``False`` if the email address already is in use by another user, ``True`` otherwise.
+            :return: `False` if the email address already is in use by another user, `True` otherwise.
         """
 
         # TODO: Make private?
@@ -271,7 +271,7 @@ class User(UserMixin, db.Model):  # type: ignore
             Verify the token to change a user's email address.
 
             :param token: The change-email token.
-            :return: The user to which the token belongs and the new email address; both are ``None`` if the token is
+            :return: The user to which the token belongs and the new email address; both are `None` if the token is
                      invalid.
         """
 
@@ -318,7 +318,7 @@ class User(UserMixin, db.Model):  # type: ignore
             Check if the given password matches the user's password.
 
             :param password: The plaintext password to verify.
-            :return: ``True`` if the given password matches the user's password.
+            :return: `True` if the given password matches the user's password.
         """
 
         if not self.password_hash:
@@ -358,7 +358,7 @@ class User(UserMixin, db.Model):  # type: ignore
             Verify a given token for resetting a password.
 
             :param token: The password-reset JWT.
-            :return: The user for whom the token is valid. ``None`` if the token is invalid or if outside the
+            :return: The user for whom the token is valid. `None` if the token is invalid or if outside the
                      application context.
         """
 
@@ -398,7 +398,7 @@ class User(UserMixin, db.Model):  # type: ignore
             Verify the JWT to delete a user's account.
 
             :param token: The delete-account token.
-            :return: The user to which the token belongs; ``None`` if the token is invalid.
+            :return: The user to which the token belongs; `None` if the token is invalid.
         """
 
         # TODO: Delete user.
@@ -438,7 +438,7 @@ class User(UserMixin, db.Model):  # type: ignore
             Check if the current user (:attr:`flask_login.current_user`) has the given permission.
 
             :param permission: The permission to check for.
-            :return: ``True`` if the current user has the permission, ``False`` otherwise.
+            :return: `True` if the current user has the permission, `False` otherwise.
         """
 
         # TODO: Don't make this an alias of current_user_has_permissions_all.
@@ -453,7 +453,7 @@ class User(UserMixin, db.Model):  # type: ignore
             This does not check if the current user is logged in.
 
             :param permissions: The permission enumeration members to check for.
-            :return: ``True`` if the current user has the permissions, ``False`` otherwise.
+            :return: `True` if the current user has the permissions, `False` otherwise.
         """
 
         # If the current user does not have a role, the user cannot have the permissions.
@@ -475,7 +475,7 @@ class User(UserMixin, db.Model):  # type: ignore
             This does not check if the current user is logged in.
 
             :param permissions: The permission enumeration members to check for.
-            :return: ``True`` if the current user the permissions, ``False`` otherwise.
+            :return: `True` if the current user the permissions, `False` otherwise.
         """
 
         # If the current user does not have a role, the user cannot have the permissions.
@@ -501,7 +501,7 @@ class User(UserMixin, db.Model):  # type: ignore
             The search term may contain wildcards (``*``).
 
             :param query: A base query object. If not given, the :attr:`User.query` will be used.
-            :param search_term: The term for which the users will be searched. If ``None``, a non-filtering query will
+            :param search_term: The term for which the users will be searched. If `None`, a non-filtering query will
                                 be returned.
             :return: The query object.
         """

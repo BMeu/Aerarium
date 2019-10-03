@@ -89,7 +89,7 @@ class BasePermissionForm(FlaskForm):
 
     permission_fields_after: Optional[str] = None
     """
-        The name of the field after which the permission fields will be inserted. If ``None``, the permission fields
+        The name of the field after which the permission fields will be inserted. If `None`, the permission fields
         will be inserted before all other fields.
     """
 
@@ -279,7 +279,7 @@ def create_permission_form(form_class: Type[BasePermissionForm], preset_permissi
         :param args: Further arguments that will be passed into the form constructor.
         :param kwargs: Further keyword arguments that will be passed into the form constructor.
         :return: An object of the given form class, extended with the fields for setting permissions.
-        :raise ValueError: If ``form_class`` is not a subclass of :class:`BasePermissionForm`.
+        :raise ValueError: If `form_class` is not a subclass of :class:`BasePermissionForm`.
     """
 
     class ExtendedPermissionForm(form_class):  # type: ignore
