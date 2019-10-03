@@ -107,7 +107,7 @@ class User(UserMixin, db.Model):  # type: ignore
             :param name: The user's (full) name.
         """
 
-        self.set_email(email)
+        self._set_email(email)
         self.name = name
 
         self.settings = UserSettings()
@@ -207,15 +207,15 @@ class User(UserMixin, db.Model):  # type: ignore
         # TODO: Make property if set_email is private.
         return self._email  # type: ignore
 
-    def set_email(self, email: str) -> bool:
+    def _set_email(self, email: str) -> bool:
         """
             Change the user's email address to the new given one.
 
-            :param email: The user's new email address. Must not be used by a different user.
-            :return: `False` if the email address already is in use by another user, `True` otherwise.
-        """
+            An email will be sent to the user's old email address informing them about this change.
 
-        # TODO: Make private?
+            :param email: The user's new email address. Must not be used by a different user.
+            :return: `False` if the email address is already in use by another user, `True` otherwise.
+        """
 
         old_email = self.get_email()
         if old_email == email:
@@ -291,7 +291,7 @@ class User(UserMixin, db.Model):  # type: ignore
             raise ValueError(f'User {token_obj.user_id} does not exist')
 
         # Set the email address and commit the change to the DB on success.
-        changed = user.set_email(token_obj.new_email)
+        changed = user._set_email(token_obj.new_email)
         if not changed:
             return False
 

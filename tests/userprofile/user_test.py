@@ -445,7 +445,7 @@ class UserTest(TestCase):
         db.session.commit()
 
         with mail.record_messages() as outgoing:
-            changed_email = user.set_email(new_email)
+            changed_email = user._set_email(new_email)
 
             self.assertEqual(1, len(outgoing))
             self.assertListEqual([old_email], outgoing[0].recipients)
@@ -470,7 +470,7 @@ class UserTest(TestCase):
         db.session.commit()
 
         with mail.record_messages() as outgoing:
-            changed_email = user.set_email(old_email)
+            changed_email = user._set_email(old_email)
 
             self.assertEqual(0, len(outgoing))
             self.assertTrue(changed_email)
@@ -491,7 +491,7 @@ class UserTest(TestCase):
 
         email = 'test@example.com'
         with mail.record_messages() as outgoing:
-            changed_email = user.set_email(email)
+            changed_email = user._set_email(email)
 
             self.assertEqual(0, len(outgoing))
             self.assertTrue(changed_email)
@@ -517,7 +517,7 @@ class UserTest(TestCase):
         db.session.commit()
 
         with mail.record_messages() as outgoing:
-            changed_email = user.set_email(existing_email)
+            changed_email = user._set_email(existing_email)
 
             self.assertEqual(0, len(outgoing))
             self.assertFalse(changed_email)
