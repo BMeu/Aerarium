@@ -113,7 +113,7 @@ class ProfileTest(TestCase):
 
             user = User.load_from_id(user_id)
             self.assertEqual(new_name, user.name)
-            self.assertEqual(email, user.get_email())
+            self.assertEqual(email, user.email)
             self.assertTrue(user.check_password(password))
 
     def test_user_profile_post_name_and_password(self):
@@ -164,7 +164,7 @@ class ProfileTest(TestCase):
 
             user = User.load_from_id(user_id)
             self.assertEqual(new_name, user.name)
-            self.assertEqual(email, user.get_email())
+            self.assertEqual(email, user.email)
             self.assertTrue(user.check_password(new_password))
 
     def test_user_profile_post_name_and_password_and_email(self):
@@ -218,7 +218,7 @@ class ProfileTest(TestCase):
 
             user = User.load_from_id(user_id)
             self.assertEqual(new_name, user.name)
-            self.assertEqual(email, user.get_email())
+            self.assertEqual(email, user.email)
             self.assertTrue(user.check_password(new_password))
 
     # endregion
@@ -251,7 +251,7 @@ class ProfileTest(TestCase):
         user = User.load_from_id(user_id)
 
         self.assertIn('Your email address has successfully been changed.', data)
-        self.assertEqual(new_email, user.get_email())
+        self.assertEqual(new_email, user.email)
 
     def test_change_email_failure_invalid_token(self):
         """
@@ -280,7 +280,7 @@ class ProfileTest(TestCase):
 
         self.assertEqual(404, response.status_code)
         self.assertNotIn('Your email address has successfully been changed.', data)
-        self.assertEqual(email, user.get_email())
+        self.assertEqual(email, user.email)
 
     def test_change_email_failure_email_in_use(self):
         """
@@ -312,7 +312,7 @@ class ProfileTest(TestCase):
         user = User.load_from_id(user_id)
 
         self.assertIn('The email address already is in use.', data)
-        self.assertEqual(email, user.get_email())
+        self.assertEqual(email, user.email)
 
     def test_change_email_failure_no_user(self):
         """

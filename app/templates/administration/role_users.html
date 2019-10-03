@@ -24,7 +24,7 @@
     {% for user in pagination.rows %}
         <li class="list-group-item list-group-item-action">
             {# TODO: Add link to edit a user. #}
-            <a href="#" title="{{ _('Edit user “%(user)s”', user=user.name) }}">{{ user.name }} &lt;{{ user.get_email() }}&gt;</a>
+            <a href="#" title="{{ _('Edit user “%(user)s”', user=user.name) }}">{{ user.name }} &lt;{{ user.email }}&gt;</a>
         </li>
     {% endfor %}
     </ul>

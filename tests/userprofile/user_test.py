@@ -49,6 +49,18 @@ class UserTest(TestCase):
 
     # region Fields and Properties
 
+    def test_email(self):
+        """
+            Test getting the email.
+
+            Expected result: The user's email address is returned.
+        """
+
+        email = 'test@example.com'
+        name = 'John Doe'
+        user = User(email, name)
+        self.assertEqual(email, user.email)
+
     def test_is_active_get(self):
         """
             Test getting the account's activation status.
@@ -145,7 +157,7 @@ class UserTest(TestCase):
 
             self.assertIsNone(user.id)
             self.assertIsNone(user.password_hash)
-            self.assertEqual(email, user.get_email())
+            self.assertEqual(email, user.email)
             self.assertEqual(name, user.name)
             self.assertIsNone(user._is_activated)
 
@@ -179,7 +191,7 @@ class UserTest(TestCase):
         loaded_user = User.load_from_id(user_id)
         self.assertIsNotNone(loaded_user)
         self.assertEqual(user_id, loaded_user.id)
-        self.assertEqual(email, loaded_user.get_email())
+        self.assertEqual(email, loaded_user.email)
         self.assertEqual(name, loaded_user.name)
 
     def test_load_from_id_failure(self):
@@ -212,7 +224,7 @@ class UserTest(TestCase):
         loaded_user = User.load_from_email(email)
         self.assertIsNotNone(loaded_user)
         self.assertEqual(user_id, loaded_user.id)
-        self.assertEqual(email, loaded_user.get_email())
+        self.assertEqual(email, loaded_user.email)
         self.assertEqual(name, loaded_user.name)
 
     def test_load_from_email_failure(self):
@@ -418,18 +430,6 @@ class UserTest(TestCase):
 
     # region Email
 
-    def test_get_email(self):
-        """
-            Test getting the email.
-
-            Expected result: The user's email address is returned.
-        """
-
-        email = 'test@example.com'
-        name = 'John Doe'
-        user = User(email, name)
-        self.assertEqual(email, user.get_email())
-
     def test_set_email_success(self):
         """
             Test setting the user's email address to a new one that is not yet in use.
@@ -454,7 +454,7 @@ class UserTest(TestCase):
             self.assertIn(f'Your email address has been changed to ', outgoing[0].html)
 
             self.assertTrue(changed_email)
-            self.assertEqual(new_email, user.get_email())
+            self.assertEqual(new_email, user.email)
 
     def test_set_email_success_unchanged(self):
         """
@@ -474,7 +474,7 @@ class UserTest(TestCase):
 
             self.assertEqual(0, len(outgoing))
             self.assertTrue(changed_email)
-            self.assertEqual(old_email, user.get_email())
+            self.assertEqual(old_email, user.email)
 
     def test_set_email_success_no_old_email(self):
         """
@@ -495,7 +495,7 @@ class UserTest(TestCase):
 
             self.assertEqual(0, len(outgoing))
             self.assertTrue(changed_email)
-            self.assertEqual(email, user.get_email())
+            self.assertEqual(email, user.email)
 
     def test_set_email_failure(self):
         """
@@ -521,7 +521,7 @@ class UserTest(TestCase):
 
             self.assertEqual(0, len(outgoing))
             self.assertFalse(changed_email)
-            self.assertEqual(old_email, user.get_email())
+            self.assertEqual(old_email, user.email)
 
     @patch('easyjwt.easyjwt.jwt_encode')
     def test_request_email_address_change(self, mock_encode: MagicMock):
@@ -836,7 +836,7 @@ class UserTest(TestCase):
 
             self.assertIsNotNone(token_obj)
             self.assertEqual(1, len(outgoing))
-            self.assertEqual([user.get_email()], outgoing[0].recipients)
+            self.assertEqual([user.email], outgoing[0].recipients)
             self.assertIn('Reset Your Password', outgoing[0].subject)
             self.assertIn(token_link, outgoing[0].body)
             self.assertIn(token_link, outgoing[0].html)

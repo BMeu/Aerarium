@@ -33,7 +33,7 @@ def user_profile() -> ResponseType:
         :return: The response for this view.
     """
 
-    profile_form = UserProfileForm(obj=current_user, email=current_user.get_email())
+    profile_form = UserProfileForm(obj=current_user, email=current_user.email)
     if profile_form.validate_on_submit():
 
         # Always change the name.
@@ -48,7 +48,7 @@ def user_profile() -> ResponseType:
         db.session.commit()
 
         # If the email address changed send a confirmation mail to the new address.
-        if user.get_email() != profile_form.email.data:
+        if user.email != profile_form.email.data:
             token_validity = user.request_email_address_change(profile_form.email.data)
 
             validity = timedelta_to_minutes(token_validity)

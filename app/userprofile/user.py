@@ -78,6 +78,17 @@ class User(UserMixin, db.Model):  # type: ignore
     """
 
     @property
+    def email(self) -> Optional[str]:
+        """
+            Get the user's email address.
+
+            :return: The user's email address. `None` if the user is currently being created and the email address has
+                     not yet been set.
+        """
+
+        return self._email  # type: ignore
+
+    @property
     def is_active(self) -> bool:
         """
             The activation status of the user's account.
@@ -198,15 +209,6 @@ class User(UserMixin, db.Model):  # type: ignore
 
     # region Email
 
-    def get_email(self) -> str:
-        """
-            Get the user's email address.
-
-            :return: The user's email address.
-        """
-        # TODO: Make property if set_email is private.
-        return self._email  # type: ignore
-
     def _set_email(self, email: str) -> bool:
         """
             Change the user's email address to the new given one.
@@ -217,7 +219,7 @@ class User(UserMixin, db.Model):  # type: ignore
             :return: `False` if the email address is already in use by another user, `True` otherwise.
         """
 
-        old_email = self.get_email()
+        old_email = self.email
         if old_email == email:
             return True
 
@@ -263,7 +265,7 @@ class User(UserMixin, db.Model):  # type: ignore
         validity: timedelta = token_obj.get_validity()
 
         link = url_for('userprofile.change_email', token=token, _external=True)
-        email_old = self.get_email()
+        email_old = self.email
 
         email_obj = Email(_('Change Your Email Address'), 'userprofile/emails/change_email_address_request')
         email_obj.prepare(name=self.name, link=link, validity=timedelta_to_minutes(validity), email_old=email_old,
@@ -320,14 +322,14 @@ class User(UserMixin, db.Model):  # type: ignore
 
         # If the user does not have a password at the moment, their account has been newly created. Do not send an email
         # in this case.
-        if self.password_hash is not None:
+        if self.password_hash is not None and self.email is not None:
             application = get_app()
 
             support_address = application.config.get('SUPPORT_ADDRESS', None)
 
             email = Email(_('Your Password Has Been Changed'), 'userprofile/emails/reset_password_confirmation')
             email.prepare(name=self.name, support_email=support_address)
-            email.send(self.get_email())
+            email.send(self.email)
 
         self.password_hash = bcrypt.generate_password_hash(password)
 
@@ -353,7 +355,7 @@ class User(UserMixin, db.Model):  # type: ignore
 
         # TODO: Rename to make clear that this method must be called to change a user's password.
 
-        if self.get_email() is None:
+        if self.email is None:
             return None
 
         token_obj = ResetPasswordToken()
@@ -366,7 +368,7 @@ class User(UserMixin, db.Model):  # type: ignore
 
         email = Email(_('Reset Your Password'), 'userprofile/emails/reset_password_request')
         email.prepare(name=self.name, link=link, validity=validity)
-        email.send(self.get_email())
+        email.send(self.email)
 
         return token_obj
 
@@ -404,9 +406,11 @@ class User(UserMixin, db.Model):  # type: ignore
 
         link = url_for('userprofile.delete_profile', token=token, _external=True)
 
-        email = Email(_('Delete Your User Profile'), 'userprofile/emails/delete_account_request')
-        email.prepare(name=self.name, link=link, validity=validity)
-        email.send(self.get_email())
+        # TODO: What to do if self.email is None?
+        if self.email is not None:
+            email = Email(_('Delete Your User Profile'), 'userprofile/emails/delete_account_request')
+            email.prepare(name=self.name, link=link, validity=validity)
+            email.send(self.email)
 
         return token_obj
 
@@ -439,9 +443,11 @@ class User(UserMixin, db.Model):  # type: ignore
         application = get_app()
         support_address = application.config.get('SUPPORT_ADDRESS', None)
 
-        email = Email(_('Your User Profile Has Been Deleted'), 'userprofile/emails/delete_account_confirmation')
-        email.prepare(name=self.name, new_email=self.get_email(), support_email=support_address)
-        email.send(self.get_email())
+        # TODO: Do not delete the user if the mail could not be sent.
+        if self.email is not None:
+            email = Email(_('Your User Profile Has Been Deleted'), 'userprofile/emails/delete_account_confirmation')
+            email.prepare(name=self.name, new_email=self.email, support_email=support_address)
+            email.send(self.email)
 
         db.session.delete(self)
         db.session.commit()
@@ -553,7 +559,7 @@ class User(UserMixin, db.Model):  # type: ignore
             :return: A string representation of the user.
         """
 
-        return f'<User [{self.id}] {self.get_email()}>'
+        return f'<User [{self.id}] {self.email}>'
 
     # endregion
 
