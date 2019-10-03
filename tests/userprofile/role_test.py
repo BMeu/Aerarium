@@ -45,6 +45,26 @@ class RoleTest(TestCase):
         role = Role('Administrator')
         self.assertEqual(role._name, role.name)
 
+    def test_name_set_duplicate(self):
+        """
+            Try setting the name to the name of another role.
+
+            Expected result: No error is raised.
+        """
+
+        name = 'Administrator'
+        role_1 = Role(name)
+
+        # Write the role to the DB so that the uniqueness check will find it.
+        db.session.add(role_1)
+        db.session.commit()
+
+        with self.assertRaises(ValueError) as exception_cm:
+            role_2 = Role('Guest')
+            role_2.name = name
+
+        self.assertEqual('The name \'Administrator\' is already in use by another role', str(exception_cm.exception))
+
     def test_name_set_invalid(self):
         """
             Try setting an invalid name.
@@ -61,6 +81,23 @@ class RoleTest(TestCase):
             self.assertIn('The name may not be one of', error)
             for name in role.invalid_names:
                 self.assertIn(name, error)
+
+    def test_name_set_unchanged(self):
+        """
+            Try setting the name that the role already has.
+
+            Expected result: No error is raised.
+        """
+
+        name = 'Administrator'
+        role = Role(name)
+
+        # Write the role to the DB so that the uniqueness check will find it.
+        db.session.add(role)
+        db.session.commit()
+
+        role.name = name
+        self.assertEqual(name, role._name)
 
     def test_name_set_valid(self):
         """

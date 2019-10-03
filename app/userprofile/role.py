@@ -59,7 +59,7 @@ class Role(db.Model):  # type: ignore
             The name may not be one of the strings listed in :attr:`invalid_names`.
 
             :return: The role's unique name.
-            :raise ValueError: If an invalid name is assigned.
+            :raise ValueError: If an invalid or duplicate name is assigned.
         """
 
         return self._name  # type: ignore
@@ -72,13 +72,16 @@ class Role(db.Model):  # type: ignore
             The name may not be one of the strings listed in :attr:`invalid_names`.
 
             :param value: The role's new name.
-            :raise ValueError: If an invalid name is given.
+            :raise ValueError: If an invalid or duplicate name is given.
         """
 
         if value in self.invalid_names:
             raise ValueError('The name may not be one of ' + ', '.join(self.invalid_names))
 
-        # TODO: Check for unique name?
+        # Check if the new name is unique.
+        role = Role.load_from_name(value)
+        if role is not None and role != self:
+            raise ValueError(f'The name \'{value}\' is already in use by another role')
 
         self._name = value
 
@@ -88,10 +91,12 @@ class Role(db.Model):  # type: ignore
 
     def __init__(self, name: str) -> None:
         """
-            :param name: The role's name. It must not be one of the strings listed in :attr:`invalid_names`.
+            :param name: The role's name. It must be unique and must not be one of the strings listed in
+                         :attr:`invalid_names`.
             :raise ValueError: If an invalid name is given.
         """
 
+        # Assign the name to th property so that the value checks will be performed.
         self.name = name
 
     @staticmethod
