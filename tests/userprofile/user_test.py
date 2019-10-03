@@ -524,7 +524,7 @@ class UserTest(TestCase):
             self.assertEqual(old_email, user.get_email())
 
     @patch('easyjwt.easyjwt.jwt_encode')
-    def test_send_change_email_address_email(self, mock_encode: MagicMock):
+    def test_request_email_address_change(self, mock_encode: MagicMock):
         """
             Test sending a email address change email to the user.
 
@@ -549,10 +549,10 @@ class UserTest(TestCase):
 
         new_email = 'test2@example.com'
         with mail.record_messages() as outgoing:
-            token_obj = user.send_change_email_address_email(new_email)
-            validity_in_minutes = timedelta_to_minutes(token_obj.get_validity())
+            validity = user.request_email_address_change(new_email)
+            validity_in_minutes = timedelta_to_minutes(validity)
 
-            self.assertIsNotNone(token_obj)
+            self.assertIsNotNone(validity)
             self.assertEqual(1, len(outgoing))
             self.assertEqual([new_email], outgoing[0].recipients)
             self.assertIn('Change Your Email Address', outgoing[0].subject)

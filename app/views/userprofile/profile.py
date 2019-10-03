@@ -49,9 +49,9 @@ def user_profile() -> ResponseType:
 
         # If the email address changed send a confirmation mail to the new address.
         if user.get_email() != profile_form.email.data:
-            token = user.send_change_email_address_email(profile_form.email.data)
+            token_validity = user.request_email_address_change(profile_form.email.data)
 
-            validity = timedelta_to_minutes(token.get_validity())
+            validity = timedelta_to_minutes(token_validity)
             flash(Markup(_('An email has been sent to the new address %(email)s. Please open the link included in the \
                             mail within the next %(validity)d minutes to confirm your new email address. Otherwise, \
                             your email address will not be changed.',

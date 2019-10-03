@@ -7,6 +7,8 @@
 from typing import cast
 from typing import Optional
 
+from datetime import timedelta
+
 from flask import url_for
 from flask_babel import gettext as _
 from flask_login import confirm_login
@@ -238,33 +240,37 @@ class User(UserMixin, db.Model):  # type: ignore
 
         return True
 
-    def send_change_email_address_email(self, email: str) -> ChangeEmailAddressToken:
+    def request_email_address_change(self, new_email_address: str) -> timedelta:
         """
-            Send a token to the user to change their email address.
+            Request to change the user's email address to the given new email address.
 
-            :param email: The email address to which the token will be sent and to which the user's email will be
-                          changed upon verification.
-            :return: The token send in the mail.
+            This method will only create a JWT and send it in an email to the user's new email address. The user will
+            then have to verify this token within the token's validity to actually change the email address to the new
+            one. Until this verification has taken place, the email address will not have been changed.
+
+            To verify the token and actually set the new email address, execute :meth:`set_email_from_token`.
+
+            :param new_email_address: The email address to which the token will be sent and to which the user's email
+                                      will be changed upon verification.
+            :return: The validity of the token.
         """
-
-        # TODO: Rename to `request_email_address_change` to make clear that this method must be called to change a
-        #       user's email address.
 
         token_obj = ChangeEmailAddressToken()
         token_obj.user_id = self.id
-        token_obj.new_email = email
+        token_obj.new_email = new_email_address
 
         token = token_obj.create()
-        validity = timedelta_to_minutes(token_obj.get_validity())
+        validity: timedelta = token_obj.get_validity()
 
         link = url_for('userprofile.change_email', token=token, _external=True)
         email_old = self.get_email()
 
         email_obj = Email(_('Change Your Email Address'), 'userprofile/emails/change_email_address_request')
-        email_obj.prepare(name=self.name, link=link, validity=validity, email_old=email_old, email_new=email)
-        email_obj.send(email)
+        email_obj.prepare(name=self.name, link=link, validity=timedelta_to_minutes(validity), email_old=email_old,
+                          email_new=new_email_address)
+        email_obj.send(new_email_address)
 
-        return token_obj
+        return validity
 
     @staticmethod
     def set_email_from_token(token: str) -> bool:
