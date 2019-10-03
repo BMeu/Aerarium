@@ -26,7 +26,7 @@ def user_settings() -> ResponseType:
     """
         Show and process a form to edit a user's settings.
 
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     settings = current_user.settings
@@ -54,7 +54,7 @@ def user_settings_reset() -> ResponseType:
     """
         Reset the user settings and redirect to the settings page.
 
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     settings = current_user.settings

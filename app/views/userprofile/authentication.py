@@ -29,7 +29,7 @@ def login() -> ResponseType:
         Show a login form to the user. If they submitted the login form, try to log them in and redirect them to the
         homepage.
 
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     form = LoginForm()
@@ -55,7 +55,7 @@ def login_refresh() -> ResponseType:
     """
         Show a form to refresh a user's login after their login has become stale.
 
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     if login_fresh():
@@ -81,7 +81,7 @@ def logout() -> ResponseType:
     """
         Log the user out and redirect them to the homepage.
 
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     if current_user.is_authenticated:

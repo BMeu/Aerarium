@@ -36,7 +36,7 @@ def roles_list() -> str:
     """
          Show a list of all roles.
 
-         :return: The HTML response.
+         :return: The response for this view.
     """
 
     # Get a search term and the resulting query. If no search term is given, all roles will by returned.
@@ -56,7 +56,7 @@ def role_new() -> ResponseType:
     """
         Show and process a form to create a new role.
 
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     new_role_form = create_permission_form(RoleNewForm, Permission(0))
@@ -80,7 +80,7 @@ def role_edit(name: str) -> ResponseType:
         Show and process a form to edit an existing role.
 
         :param name: The name of the role.
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     role = Role.load_from_name(name)
@@ -107,7 +107,7 @@ def role_permissions(name: str) -> ResponseType:
         Show and process a form to change a role's permissions.
 
         :param name: The name of the role.
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     role = Role.load_from_name(name)
@@ -138,7 +138,7 @@ def role_users(name: str) -> str:
         Show a list of all users to whom the given role is assigned.
 
         :param name: The name of the role.
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     role = Role.load_from_name(name)
@@ -163,7 +163,7 @@ def role_delete(name: str) -> ResponseType:
         Show and process a form to delete the given role.
 
         :param name: The name of the role.
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     role = Role.load_from_name(name)

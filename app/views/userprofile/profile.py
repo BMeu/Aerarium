@@ -30,7 +30,7 @@ def user_profile() -> ResponseType:
     """
         Show and process a form to edit account details.
 
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     profile_form = UserProfileForm(obj=current_user, email=current_user.get_email())
@@ -73,7 +73,7 @@ def change_email(token: str) -> ResponseType:
         to the home page.
 
         :param token: The change-email token.
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     try:

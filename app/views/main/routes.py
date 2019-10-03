@@ -19,7 +19,7 @@ def index() -> ResponseType:
     """
         Show the dashboard.
 
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     # If the user is not yet logged in, direct them to the login form.

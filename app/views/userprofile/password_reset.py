@@ -29,7 +29,7 @@ def reset_password_request() -> ResponseType:
     """
         Show and process a form to request resetting the password.
 
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     form = EmailForm()
@@ -56,7 +56,7 @@ def reset_password(token: str) -> ResponseType:
         Show and process a form to reset the password.
 
         :param token: The token the user has been sent confirming that the password reset is valid.
-        :return: The HTML response.
+        :return: The response for this view.
     """
 
     try:
