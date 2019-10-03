@@ -5,6 +5,7 @@
 """
 
 from typing import Any
+from typing import ClassVar
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -59,15 +60,16 @@ class UniqueRoleName(object):
             :raise ValidationError: In case the validation fails.
         """
 
+        # This validator does not require data. If there is no data everything is fine.
         name = field.data
         if not name:
             return
 
-        # If
+        # If the field's data has not changed no further check is needed.
         if field.object_data == name:
             return
 
-        # If there already is a role with that name and that role is not
+        # If there already is a role with that name raise an error.
         role = Role.load_from_name(name)
         if role:
             raise ValidationError(self.message)
@@ -87,13 +89,13 @@ class BasePermissionForm(FlaskForm):
         inserted within the form, see :attr:`permission_fields_after`.
     """
 
-    permission_fields_after: Optional[str] = None
+    permission_fields_after: ClassVar[Optional[str]] = None
     """
         The name of the field after which the permission fields will be inserted. If `None`, the permission fields
         will be inserted before all other fields.
     """
 
-    permission_fields: Dict[str, Permission] = OrderedDict()
+    permission_fields: ClassVar[Dict[str, Permission]] = OrderedDict()
     """
         A dictionary associating a permission field in this form (via its attribute name) to the permission which it
         sets.
@@ -119,6 +121,17 @@ class BasePermissionForm(FlaskForm):
                 permissions |= permission
 
         return permissions
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """
+            :param args: The arguments for initializing the form.
+            :param kwargs: The keyword arguments for initializing the form.
+        """
+
+        super().__init__(*args, **kwargs)
+
+        self._unbound_fields: List[Tuple[str, Field]] = self._unbound_fields
+        self._fields: Dict[str, Field] = self._fields
 
     def order_fields(self) -> None:
         """
@@ -164,12 +177,8 @@ class BasePermissionForm(FlaskForm):
 
         # Set the ordered fields on the form. The unbound field list does not contain the CSRF field, the bound field
         # dictionary contains this field.
-        # TODO: Move type definition to __init__()?
-        # noinspection PyAttributeOutsideInit
-        self._unbound_fields: List[Tuple[str, Field]] = [(name, field) for (name, field) in ordered_fields
-                                                         if name != csrf_token]
-        # noinspection PyAttributeOutsideInit
-        self._fields: Dict[str, Field] = OrderedDict((name, self._fields[name]) for (name, _field) in ordered_fields)
+        self._unbound_fields = [(name, field) for (name, field) in ordered_fields if name != csrf_token]
+        self._fields = OrderedDict((name, self._fields[name]) for (name, _field) in ordered_fields)
 
 
 class PermissionForm(BasePermissionForm):
@@ -287,6 +296,7 @@ def create_permission_form(form_class: Type[BasePermissionForm], preset_permissi
             A subclass of the given permission form class to which the permission fields will be added and which will
             be instantiated and returned.
         """
+
         pass
 
     # Ensure we have all required functionality.
