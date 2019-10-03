@@ -9,6 +9,7 @@ Subpackages
    app.configuration
    app.localization
    app.logging
+   app.tools
    app.userprofile
    app.views
 
