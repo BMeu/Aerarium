@@ -3,6 +3,7 @@
 from unittest import TestCase
 
 from flask import abort
+from flask import url_for
 
 from app import create_app
 from app.configuration import TestConfiguration
@@ -20,12 +21,15 @@ class ErrorsTest(TestCase):
         self.client = self.app.test_client()
         self.app_context = self.app.app_context()
         self.app_context.push()
+        self.request_context = self.app.test_request_context()
+        self.request_context.push()
 
     def tearDown(self):
         """
             Reset the test cases.
         """
 
+        self.request_context.pop()
         self.app_context.pop()
 
     def test_error_400(self):
@@ -56,7 +60,8 @@ class ErrorsTest(TestCase):
         self.assertEqual(code, response.status_code)
         self.assertIn('Unauthorized Access', data)
 
-        # TODO: Check for login link in page.
+        # Ensure that the login page is linked.
+        self.assertIn(url_for('userprofile.login'), data)
 
     def test_error_403(self):
         """
@@ -72,7 +77,8 @@ class ErrorsTest(TestCase):
         self.assertEqual(code, response.status_code)
         self.assertIn('Permission Denied', data)
 
-        # TODO: Check for login link in page.
+        # Ensure that the login page is linked.
+        self.assertIn(url_for('userprofile.login'), data)
 
     def test_error_404(self):
         """
