@@ -6,7 +6,6 @@
 
 from typing import cast
 from typing import Optional
-from typing import Tuple
 
 from flask import url_for
 from flask_babel import gettext as _
@@ -248,7 +247,8 @@ class User(UserMixin, db.Model):  # type: ignore
             :return: The token send in the mail.
         """
 
-        # TODO: Rename to make clear that this method must be called to change a user's email address.
+        # TODO: Rename to `request_email_address_change` to make clear that this method must be called to change a
+        #       user's email address.
 
         token_obj = ChangeEmailAddressToken()
         token_obj.user_id = self.id
@@ -267,18 +267,30 @@ class User(UserMixin, db.Model):  # type: ignore
         return token_obj
 
     @staticmethod
-    def verify_change_email_address_token(token: str) -> Tuple[Optional['User'], Optional[str]]:
+    def set_email_from_token(token: str) -> bool:
         """
-            Verify the token to change a user's email address.
+            Verify the token to change a user's email address. If it is valid, change the email address of the user
+            given in the token to the email address given in the token.
+
+            To get a token, execute :meth:`request_email_address_change`.
 
             :param token: The change-email token.
-            :return: The user to which the token belongs and the new email address; both are `None` if the token is
-                     invalid.
+            :return: `True` if the email address has been set, `False` if the email address could not be set.
+            :raise EasyJWTError: If the given token is invalid.
         """
 
         token_obj = ChangeEmailAddressToken.verify(token)
         user = User.load_from_id(token_obj.user_id)
-        return user, token_obj.new_email
+        if user is None:
+            raise ValueError(f'User {token_obj.user_id} does not exist')
+
+        # Set the email address and commit the change to the DB on success.
+        changed = user.set_email(token_obj.new_email)
+        if not changed:
+            return False
+
+        db.session.commit()
+        return True
 
     # endregion
 

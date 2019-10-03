@@ -316,7 +316,7 @@ class ProfileTest(TestCase):
 
     def test_change_email_failure_no_user(self):
         """
-            Test accessing the change email page with a invalid token for a non-existing user.
+            Test accessing the change email page with a valid token for a non-existing user.
 
             Expected result: The email address is not changed and a 404 error page is shown.
         """
