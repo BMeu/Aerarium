@@ -1052,6 +1052,26 @@ class UserTest(TestCase):
 
     # region Permissions
 
+    def test_current_user_has_permission_no_role(self):
+        """
+            Test the `current_user_has_permission` method if the user does not have a role.
+
+            Expected result: `False`
+        """
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        self.assertFalse(User.current_user_has_permission(Permission.EditRole))
+
     def test_current_user_has_permission_no_permission(self):
         """
             Test the `current_user_has_permission` method if the user does not have the requested permission.
@@ -1072,8 +1092,6 @@ class UserTest(TestCase):
         user.login(email, password)
 
         permission = Permission.EditRole
-        self.assertFalse(user.role.has_permissions_all(permission))
-
         self.assertFalse(User.current_user_has_permission(permission))
 
     def test_current_user_has_permission_with_permission(self):
@@ -1099,7 +1117,6 @@ class UserTest(TestCase):
         user.role.permissions = permission
 
         self.assertTrue(user.role.has_permission(permission))
-
         self.assertTrue(User.current_user_has_permission(permission))
 
     def test_current_user_has_permissions_all_no_role(self):
@@ -1109,8 +1126,16 @@ class UserTest(TestCase):
             Expected result: `False`
         """
 
-        # Ensure the user has no role.
-        self.assertFalse(hasattr(current_user, 'role'))
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
 
         self.assertFalse(User.current_user_has_permissions_all(Permission.EditRole))
 
@@ -1134,8 +1159,8 @@ class UserTest(TestCase):
         user.login(email, password)
 
         permission = Permission.EditRole
-        self.assertFalse(user.role.has_permissions_all(permission))
 
+        self.assertFalse(user.role.has_permissions_all(permission))
         self.assertFalse(User.current_user_has_permissions_all(permission))
 
     def test_current_user_has_permissions_all_with_permission(self):
@@ -1161,7 +1186,6 @@ class UserTest(TestCase):
         user.role.permissions = permission
 
         self.assertTrue(user.role.has_permission(permission))
-
         self.assertTrue(User.current_user_has_permissions_all(permission))
 
     def test_current_user_has_permissions_all_with_multiple_permissions(self):
@@ -1186,20 +1210,7 @@ class UserTest(TestCase):
         user.role.permissions = Permission.EditRole | Permission.EditUser
 
         self.assertTrue(user.role.has_permissions_all(Permission.EditRole, Permission.EditUser))
-
         self.assertTrue(User.current_user_has_permissions_all(Permission.EditRole, Permission.EditUser))
-
-    def test_current_user_has_permissions_one_of_no_role_attribute(self):
-        """
-            Test the `current_user_has_permissions_one_of` method if the user does not have a role attribute.
-
-            Expected result: `False`
-        """
-
-        # Ensure the user has no role.
-        self.assertFalse(hasattr(current_user, 'role'))
-
-        self.assertFalse(User.current_user_has_permissions_one_of(Permission.EditRole))
 
     def test_current_user_has_permissions_one_of_no_role(self):
         """
@@ -1242,8 +1253,8 @@ class UserTest(TestCase):
         user.login(email, password)
 
         permission = Permission.EditRole
-        self.assertFalse(user.role.has_permissions_all(permission))
 
+        self.assertFalse(user.role.has_permissions_all(permission))
         self.assertFalse(User.current_user_has_permissions_one_of(permission))
 
     def test_current_user_has_permissions_one_of_with_permission(self):
@@ -1269,13 +1280,12 @@ class UserTest(TestCase):
         user.role.permissions = permission
 
         self.assertTrue(user.role.has_permissions_all(permission))
-
         self.assertTrue(User.current_user_has_permissions_one_of(permission))
         self.assertFalse(User.current_user_has_permissions_one_of(Permission.EditGlobalSettings))
 
     def test_current_user_has_permissions_one_of_with_multiple_permissions(self):
         """
-            Test the `current_user_has_permissions_one_of` method if the user has on of the requested permission.
+            Test the `current_user_has_permissions_one_of` method if the user has one of the requested permission.
 
             Expected result: `True`
         """
@@ -1296,9 +1306,42 @@ class UserTest(TestCase):
         user.role.permissions = permission
 
         self.assertTrue(user.role.has_permission(permission))
-
         self.assertTrue(User.current_user_has_permissions_one_of(Permission.EditRole, Permission.EditUser))
         self.assertFalse(User.current_user_has_permissions_one_of(Permission.EditGlobalSettings, Permission.EditUser))
+
+    def test_get_role_of_current_user_no_role(self):
+        """
+            Test the `get_role_of_current_user` method if the user does not have a role.
+
+            Expected result: `None`
+        """
+
+        self.assertFalse(hasattr(current_user, 'role'))
+        self.assertIsNone(User.get_role_of_current_user())
+
+    def test_get_role_of_current_user_success(self):
+        """
+            Test the `get_role_of_current_user` method if the user has a role.
+
+            Expected result: The role of the user is returned.
+        """
+
+        role = Role('Administrator')
+        db.session.add(role)
+
+        email = 'test@example.com'
+        name = 'Jane Doe'
+        password = '123456'
+        user = User(email, name)
+        user.set_password(password)
+        user.role = role
+
+        db.session.add(user)
+        db.session.commit()
+
+        user.login(email, password)
+
+        self.assertEqual(role, User.get_role_of_current_user())
 
     # endregion
 

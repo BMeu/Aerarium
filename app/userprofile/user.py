@@ -4,6 +4,7 @@
     Classes for representing the application's user model.
 """
 
+from typing import cast
 from typing import Optional
 from typing import Tuple
 
@@ -24,6 +25,7 @@ from app import login as app_login
 from app import Pagination
 from app import timedelta_to_minutes
 from app.userprofile import Permission
+from app.userprofile import Role
 from app.userprofile import UserSettings
 from app.userprofile.tokens import ChangeEmailAddressToken
 from app.userprofile.tokens import DeleteAccountToken
@@ -430,8 +432,8 @@ class User(UserMixin, db.Model):  # type: ignore
 
     # region Permissions
 
-    @classmethod
-    def current_user_has_permission(cls, permission: Permission) -> bool:
+    @staticmethod
+    def current_user_has_permission(permission: Permission) -> bool:
         """
             Check if the current user (:attr:`flask_login.current_user`) has the given permission.
 
@@ -439,9 +441,12 @@ class User(UserMixin, db.Model):  # type: ignore
             :return: `True` if the current user has the permission, `False` otherwise.
         """
 
-        # TODO: Don't make this an alias of current_user_has_permissions_all.
+        # If the current user does not have a role, the user cannot have the permissions.
+        role = User.get_role_of_current_user()
+        if role is None or not role.has_permission(permission):
+            return False
 
-        return cls.current_user_has_permissions_all(permission)
+        return True
 
     @staticmethod
     def current_user_has_permissions_all(*permissions: Permission) -> bool:
@@ -455,11 +460,7 @@ class User(UserMixin, db.Model):  # type: ignore
         """
 
         # If the current user does not have a role, the user cannot have the permissions.
-        try:
-            role = current_user.role
-        except AttributeError:
-            return False
-
+        role = User.get_role_of_current_user()
         if role is None or not role.has_permissions_all(*permissions):
             return False
 
@@ -477,15 +478,24 @@ class User(UserMixin, db.Model):  # type: ignore
         """
 
         # If the current user does not have a role, the user cannot have the permissions.
-        try:
-            role = current_user.role
-        except AttributeError:
-            return False
-
+        role = User.get_role_of_current_user()
         if role is None or not role.has_permissions_one_of(*permissions):
             return False
 
         return True
+
+    @staticmethod
+    def get_role_of_current_user() -> Optional[Role]:
+        """
+            Get the role of the currently logged in user.
+
+            :return: The role of the user who is currently logged in. `None` if the user is not logged in.
+        """
+
+        try:
+            return cast(Role, current_user.role)
+        except AttributeError:
+            return None
 
     # endregion
 
