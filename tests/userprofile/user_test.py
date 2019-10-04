@@ -564,7 +564,7 @@ class UserTest(TestCase):
             self.assertIn(f'to {new_email}', outgoing[0].body)
             self.assertIn(f'{email}', outgoing[0].html)
 
-    def test_set_email_from_token_failure_duplicate_email_address(self):
+    def test_set_email_address_from_token_failure_duplicate_email_address(self):
         """
             Test setting a duplicate email address from a token.
 
@@ -588,12 +588,12 @@ class UserTest(TestCase):
         token_obj.new_email = email_user2
         token = token_obj.create()
 
-        changed = User.set_email_from_token(token)
+        changed = User.set_email_address_from_token(token)
         self.assertFalse(changed)
         self.assertEqual(user1, User.load_from_email(email_user1))
         self.assertEqual(user2, User.load_from_email(email_user2))
 
-    def test_set_email_from_token_failure_invalid_token(self):
+    def test_set_email_address_from_token_failure_invalid_token(self):
         """
             Test setting the email address from a token with an invalid token.
 
@@ -615,11 +615,11 @@ class UserTest(TestCase):
         token = token_obj.create()
 
         with self.assertRaises(EasyJWTError):
-            User.set_email_from_token(token)
+            User.set_email_address_from_token(token)
 
         self.assertIsNone(User.load_from_email(new_email))
 
-    def test_set_email_from_token_failure_invalid_user(self):
+    def test_set_email_address_from_token_failure_invalid_user(self):
         """
             Test setting the email address from a token for an unknown user.
 
@@ -634,12 +634,12 @@ class UserTest(TestCase):
         token = token_obj.create()
 
         with self.assertRaises(ValueError) as exception_cm:
-            User.set_email_from_token(token)
+            User.set_email_address_from_token(token)
 
         self.assertIsNone(User.load_from_email(new_email))
         self.assertEqual('User 42 does not exist', str(exception_cm.exception))
 
-    def test_set_email_from_token_success(self):
+    def test_set_email_address_from_token_success(self):
         """
             Test setting the email address from a token without any failure.
 
@@ -659,7 +659,7 @@ class UserTest(TestCase):
         token_obj.new_email = new_email
         token = token_obj.create()
 
-        changed = User.set_email_from_token(token)
+        changed = User.set_email_address_from_token(token)
         self.assertTrue(changed)
         self.assertEqual(user, User.load_from_email(new_email))
 

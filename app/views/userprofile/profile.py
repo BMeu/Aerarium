@@ -77,7 +77,7 @@ def change_email(token: str) -> ResponseType:
     """
 
     try:
-        changed_email = User.set_email_from_token(token)
+        changed_email = User.set_email_address_from_token(token)
     except (EasyJWTError, ValueError):
         return abort(404)
 

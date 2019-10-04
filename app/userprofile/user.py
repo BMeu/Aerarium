@@ -274,7 +274,7 @@ class User(UserMixin, db.Model):  # type: ignore
         return validity
 
     @staticmethod
-    def set_email_from_token(token: str) -> bool:
+    def set_email_address_from_token(token: str) -> bool:
         """
             Verify the token to change a user's email address. If it is valid, change the email address of the user
             given in the token to the email address given in the token.
