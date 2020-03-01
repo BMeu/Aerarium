@@ -807,7 +807,7 @@ class UserTest(TestCase):
         self.assertFalse(is_correct)
 
     @patch('easyjwt.easyjwt.jwt_encode')
-    def test_send_password_reset_email_success(self, mock_encode: MagicMock):
+    def test_request_password_reset_success(self, mock_encode: MagicMock):
         """
             Test sending a password reset email to the user.
 
@@ -831,7 +831,7 @@ class UserTest(TestCase):
         self.assertEqual(user_id, user.id)
 
         with mail.record_messages() as outgoing:
-            token_obj = user.send_password_reset_email()
+            token_obj = user.request_password_reset()
             validity_in_minutes = timedelta_to_minutes(token_obj.get_validity())
 
             self.assertIsNotNone(token_obj)
@@ -843,7 +843,7 @@ class UserTest(TestCase):
             self.assertIn(f'{validity_in_minutes} minutes', outgoing[0].body)
             self.assertIn(f'{validity_in_minutes} minutes', outgoing[0].html)
 
-    def test_send_password_reset_email_failure_no_email(self):
+    def test_request_password_reset_failure_no_email(self):
         """
             Test sending a password reset email to the user if the user has no email address.
 
@@ -855,7 +855,7 @@ class UserTest(TestCase):
         user = User(None, name)
 
         with mail.record_messages() as outgoing:
-            user.send_password_reset_email()
+            user.request_password_reset()
 
             self.assertEqual(0, len(outgoing))
 
@@ -906,9 +906,8 @@ class UserTest(TestCase):
         token_obj.part_of_the_payload = True
         token = token_obj.create()
 
-        with self.assertRaises(EasyJWTError):
-            loaded_user = User.verify_password_reset_token(token)
-            self.assertIsNone(loaded_user)
+        loaded_user = User.verify_password_reset_token(token)
+        self.assertIsNone(loaded_user)
 
     # endregion
 

@@ -10,7 +10,6 @@ from flask import redirect
 from flask import render_template
 from flask import url_for
 from flask_babel import gettext as _
-from flask_easyjwt import EasyJWTError
 
 from app import db
 from app import timedelta_to_minutes
@@ -36,7 +35,7 @@ def reset_password_request() -> ResponseType:
     if form.validate_on_submit():
         user = User.load_from_email(form.email.data)
         if user is not None:
-            user.send_password_reset_email()
+            user.request_password_reset()
 
         validity = timedelta_to_minutes(ChangeEmailAddressToken.get_validity())
 
@@ -59,11 +58,7 @@ def reset_password(token: str) -> ResponseType:
         :return: The response for this view.
     """
 
-    try:
-        user = User.verify_password_reset_token(token)
-    except EasyJWTError:
-        return abort(404)
-
+    user = User.verify_password_reset_token(token)
     if user is None:
         return abort(404)
 

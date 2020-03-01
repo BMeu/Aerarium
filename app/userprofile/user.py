@@ -287,6 +287,7 @@ class User(UserMixin, db.Model):  # type: ignore
             :raise EasyJWTError: If the given token is invalid.
         """
 
+        # TODO: Catch errors.
         token_obj = ChangeEmailAddressToken.verify(token)
         user = User.load_from_id(token_obj.user_id)
         if user is None:
@@ -310,8 +311,6 @@ class User(UserMixin, db.Model):  # type: ignore
 
             :param password: The plaintext password.
         """
-
-        # TODO: Make private?
 
         if not password:
             return
@@ -346,14 +345,12 @@ class User(UserMixin, db.Model):  # type: ignore
 
         return bcrypt.check_password_hash(self._password_hash, password)  # type: ignore
 
-    def send_password_reset_email(self) -> Optional[ResetPasswordToken]:
+    def request_password_reset(self) -> Optional[ResetPasswordToken]:
         """
             Send a mail for resetting the user's password to their email address.
 
             :return: The token send in the mail.
         """
-
-        # TODO: Rename to make clear that this method must be called to change a user's password.
 
         if self.email is None:
             return None
@@ -382,8 +379,11 @@ class User(UserMixin, db.Model):  # type: ignore
                      application context.
         """
 
-        # TODO: Set new password.
-        token_obj = ResetPasswordToken.verify(token)
+        try:
+            token_obj = ResetPasswordToken.verify(token)
+        except EasyJWTError:
+            return None
+
         return User.load_from_id(token_obj.user_id)  # type: ignore
 
     # endregion
