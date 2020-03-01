@@ -125,8 +125,6 @@ def get_locale() -> str:
     if current_user and not current_user.is_anonymous and current_user.settings.language:
         return current_user.settings.language  # type: ignore
 
-    # TODO: Set from user settings, accept header, global settings.
-
     # Choose the best matching language from the request headers.
     locale = request.accept_languages.best_match(current_app.config['LANGUAGES'])
     return locale  # type: ignore
