@@ -9,7 +9,6 @@ from flask import flash
 from flask import redirect
 from flask import url_for
 from flask_babel import gettext as _
-from flask_easyjwt import EasyJWTError
 from flask_login import current_user
 from flask_login import fresh_login_required
 
@@ -31,14 +30,17 @@ def delete_profile_request() -> ResponseType:
 
     form = DeleteUserProfileForm()
     if form.validate_on_submit():
-        token = current_user.send_delete_account_email()
-
-        validity = timedelta_to_minutes(token.get_validity())
-        flash(_('An email has been sent to your email address. Please open the link included in the mail within the \
-                 next %(validity)d minutes to delete your user profile. Otherwise, your user profile will not be \
-                 deleted.',
-                validity=validity),
-              category='warning')
+        token = current_user.request_account_deletion()
+        if token is None:
+            flash(_('We were not able to send you an email to confirm that you actually want to delete your account. \
+                     Please ensure that the email address in your profile is valid.'), category='warning')
+        else:
+            validity = timedelta_to_minutes(token.get_validity())
+            flash(_('An email has been sent to your email address. Please open the link included in the mail within \
+                     the next %(validity)d minutes to delete your user profile. Otherwise, your user profile will not \
+                     be deleted.',
+                    validity=validity),
+                  category='warning')
 
     return redirect(url_for('userprofile.user_profile'))
 

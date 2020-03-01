@@ -83,9 +83,10 @@ class DeleteProfileTest(TestCase):
             self.assertIn('<h1>User Profile</h1>', data)
 
     @patch.object(DeleteUserProfileForm, 'validate_on_submit', validate_on_submit)
-    def test_delete_profile_request_failure(self):
+    def test_delete_profile_request_failure_invalid_form(self):
         """
             Test requesting the deletion of the user's account with an invalid form.
+
             Expected result: No email is sent.
         """
 
@@ -113,6 +114,41 @@ class DeleteProfileTest(TestCase):
 
             self.assertNotIn('An email has been sent to your email address.', data)
             self.assertNotIn('to delete your user profile.', data)
+            self.assertIn('<h1>User Profile</h1>', data)
+
+    def test_delete_profile_request_failure_no_email(self):
+        """
+            Test requesting the deletion of the user's account with an invalid form.
+
+            Expected result: No email is sent.
+        """
+
+        email = 'test@example.com'
+        password = '123456'
+        name = 'John Doe'
+        user_id = 1
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+        self.assertEqual(user_id, user.id)
+
+        self.client.post('/user/login', follow_redirects=True, data=dict(
+            email=email,
+            password=password
+        ))
+
+        user._email = None
+
+        with mail.record_messages() as outgoing:
+            response = self.client.post('/user/delete', follow_redirects=True, data=dict())
+            data = response.get_data(as_text=True)
+
+            self.assertEqual(0, len(outgoing))
+
+            self.assertIn('We were not able to send you an email', data)
+            self.assertIn('email address in your profile is valid.', data)
             self.assertIn('<h1>User Profile</h1>', data)
 
     # endregion

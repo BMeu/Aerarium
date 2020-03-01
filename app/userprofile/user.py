@@ -390,14 +390,13 @@ class User(UserMixin, db.Model):  # type: ignore
 
     # region Delete
 
-    def send_delete_account_email(self) -> DeleteAccountToken:
+    def request_account_deletion(self) -> Optional[DeleteAccountToken]:
         """
-            Send a token to the user to confirm their intention to delete their account.
+            Send a token via email to the user to confirm their intention to delete their account.
 
-            :return: The token sent in the mail.
+            :return: The token sent in the mail. `None` if the user has no email.
         """
 
-        # TODO: Rename to make clear that this method must be called to delete a user.
         token_obj = DeleteAccountToken()
         token_obj.user_id = self.id
 
@@ -406,11 +405,12 @@ class User(UserMixin, db.Model):  # type: ignore
 
         link = url_for('userprofile.delete_profile', token=token, _external=True)
 
-        # TODO: What to do if self.email is None?
-        if self.email is not None:
-            email = Email(_('Delete Your User Profile'), 'userprofile/emails/delete_account_request')
-            email.prepare(name=self.name, link=link, validity=validity)
-            email.send(self.email)
+        if self.email is None:
+            return None
+
+        email = Email(_('Delete Your User Profile'), 'userprofile/emails/delete_account_request')
+        email.prepare(name=self.name, link=link, validity=validity)
+        email.send(self.email)
 
         return token_obj
 
