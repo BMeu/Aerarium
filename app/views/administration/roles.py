@@ -32,7 +32,7 @@ from app.views.forms import SearchForm
 @bp.route('/roles')
 @login_required  # type: ignore
 @permission_required(Permission.EditRole)
-def roles_list() -> str:
+def roles_list() -> ResponseType:
     """
          Show a list of all roles.
 
