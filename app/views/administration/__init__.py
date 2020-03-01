@@ -10,3 +10,4 @@ bp = Blueprint('administration', __name__)
 
 # noinspection PyPep8
 from app.views.administration import roles  # noqa: E402,F401
+from app.views.administration import users  # noqa: E402,F401

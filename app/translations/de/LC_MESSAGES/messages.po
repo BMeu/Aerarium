@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2020-03-01 14:49+0100\n"
-"PO-Revision-Date: 2020-03-01 14:53+0100\n"
+"POT-Creation-Date: 2020-03-01 16:21+0100\n"
+"PO-Revision-Date: 2020-03-01 16:22+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -99,6 +99,7 @@ msgid "Global Settings"
 msgstr "Globale Einstellungen"
 
 #: app/templates/_header.html:40 app/templates/administration/_tabs_role.html:9
+#: app/views/administration/users.py:35
 msgid "Users"
 msgstr "Benutzer"
 
@@ -235,11 +236,13 @@ msgid "Search assigned users..."
 msgstr "Zugewiesene Benutzer durchsuchen..."
 
 #: app/templates/administration/role_users.html:27
+#: app/templates/administration/users.html:29
 #, python-format
 msgid "Edit user “%(user)s”"
 msgstr "Benutzer „%(user)s“ bearbeiten"
 
 #: app/templates/administration/role_users.html:32
+#: app/templates/administration/users.html:34
 msgid "Click on the name of a user to edit them."
 msgstr "Klicke auf den Namen eines Benutzers, um ihn zu bearbeiten."
 
@@ -278,6 +281,22 @@ msgstr "Rolle „%(role)s“ bearbeiten"
 #: app/templates/administration/roles.html:32
 msgid "Click on the name of a role to edit it."
 msgstr "Klicke auf den Namen einer Rolle, um sie zu bearbeiten."
+
+#: app/templates/administration/users.html:7
+msgid "User profiles allow users to use Aeararium. "
+msgstr "Benutzerprofile ermöglichen es Benutzern, Aerarium zu nutzen."
+
+#: app/templates/administration/users.html:12
+msgid "Create a new user"
+msgstr "Einen neuen Benutzer anlegen"
+
+#: app/templates/administration/users.html:12
+msgid "New User"
+msgstr "Neuer Benutzer"
+
+#: app/templates/administration/users.html:24
+msgid "Search users..."
+msgstr "Benutzer durchsuchen..."
 
 #: app/templates/macros/form.html:60
 msgid "Cancel"
@@ -344,7 +363,7 @@ msgstr ""
 "beliebige Zeichen an dieser Position zuzulassen."
 
 #: app/templates/userprofile/login.html:5
-#: app/views/userprofile/password_reset.py:49
+#: app/views/userprofile/password_reset.py:48
 msgid "Forgot Your Password?"
 msgstr "Passwort vergessen?"
 
@@ -485,7 +504,7 @@ msgstr ""
 "Passwort zurückzusetzen:"
 
 #: app/templates/userprofile/emails/reset_password_request.html:7
-#: app/userprofile/user.py:369 app/views/userprofile/password_reset.py:78
+#: app/userprofile/user.py:366 app/views/userprofile/password_reset.py:73
 msgid "Reset Your Password"
 msgstr "Passwort zurücksetzen"
 
@@ -568,7 +587,7 @@ msgstr "Deine E-Mail-Adresse wurde geändert"
 msgid "Change Your Email Address"
 msgstr "E-Mail-Adresse ändern"
 
-#: app/userprofile/user.py:330
+#: app/userprofile/user.py:329
 msgid "Your Password Has Been Changed"
 msgstr "Dein Passwort wurde geändert"
 
@@ -860,7 +879,7 @@ msgstr "Die Sprache, in der Du die Anwendung benutzen möchtest."
 msgid "Reset these settings to their default values."
 msgstr "Setze Deine Einstellungen auf die Standardwerte zurück."
 
-#: app/views/userprofile/password_reset.py:45
+#: app/views/userprofile/password_reset.py:44
 #, python-format
 msgid ""
 "An email has been sent to the specified address. Please be aware that the "
@@ -871,7 +890,7 @@ msgstr ""
 "enthaltene Link zum Zurücksetzen des Passworts nur %(validity)d Minuten lang "
 "gültig ist."
 
-#: app/views/userprofile/password_reset.py:75
+#: app/views/userprofile/password_reset.py:70
 msgid "Your password has successfully been changed."
 msgstr "Dein Passwort wurde erfolgreich geändert."
 
@@ -898,21 +917,3 @@ msgstr "Deine E-Mail-Adresse wurde erfolgreich geändert."
 #: app/views/userprofile/user_settings.py:71
 msgid "The settings have been set to their default values."
 msgstr "Deine Einstellungen wurden auf die Standardwerte zurückgesetzt."
-
-#~ msgid "Search users..."
-#~ msgstr "Benutzer durchsuchen..."
-
-#~ msgid "The permission to create, read, update, or delete a role."
-#~ msgstr ""
-#~ "Die Berechtigung, Rollen anzulegen, zu lesen, zu aktualisieren oder zu "
-#~ "löschen."
-
-#~ msgid ""
-#~ "An email has been sent to your email address. Please open the link included "
-#~ "in the mail within the                  next %(validity)d minutes to delete "
-#~ "your user profile. Otherwise, your user profile will not be                  "
-#~ "deleted."
-#~ msgstr ""
-#~ "Eine E-Mail wurde an Deine Adresse geschickt. Bitte öffne den enthaltenen "
-#~ "Link innerhalb der nächsten %(validity)d Minuten, um Dein Benutzerprofil zu "
-#~ "löschen. Ansonsten wird dein Benutzerprofil nicht gelöscht."
