@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2020-03-01 16:21+0100\n"
-"PO-Revision-Date: 2020-03-01 16:22+0100\n"
+"POT-Creation-Date: 2020-03-01 18:09+0100\n"
+"PO-Revision-Date: 2020-03-01 18:12+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -99,7 +99,7 @@ msgid "Global Settings"
 msgstr "Globale Einstellungen"
 
 #: app/templates/_header.html:40 app/templates/administration/_tabs_role.html:9
-#: app/views/administration/users.py:35
+#: app/views/administration/users.py:36
 msgid "Users"
 msgstr "Benutzer"
 
@@ -115,7 +115,8 @@ msgstr "Dein Profil"
 msgid "User Profile"
 msgstr "Benutzerprofil"
 
-#: app/templates/_header.html:63 app/views/userprofile/user_settings.py:47
+#: app/templates/_header.html:63 app/templates/administration/_tabs_user.html:9
+#: app/views/userprofile/user_settings.py:47
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -167,6 +168,7 @@ msgid "Permissions"
 msgstr "Berechtigungen"
 
 #: app/templates/administration/_tabs_role.html:10
+#: app/templates/administration/_tabs_user.html:10
 #: app/views/administration/forms.py:208
 msgid "Delete"
 msgstr "Löschen"
@@ -189,6 +191,36 @@ msgid ""
 msgstr ""
 "Bearbeite die Rolle „%(role)s“ und verwalte die ihr zugewiesenen Berechtigungen "
 "und Benutzer."
+
+#: app/templates/administration/_tabs_user.html:3
+#, python-format
+msgid "Edit User “%(user)s”"
+msgstr "Benutzer „%(user)s“ bearbeiten"
+
+#: app/templates/administration/_tabs_user.html:7
+msgid "User"
+msgstr "Benutzer"
+
+#: app/templates/administration/_tabs_user.html:8
+msgid "Security"
+msgstr "Sicherheit"
+
+#: app/templates/administration/_tabs_user.html:15
+msgid "Go back to the list of all users"
+msgstr "Gehe zurück zu der Liste aller Benutzer"
+
+#: app/templates/administration/_tabs_user.html:15
+msgid "Back to Users"
+msgstr "Zurück zu den Benutzern"
+
+#: app/templates/administration/_tabs_user.html:19
+#, python-format
+msgid ""
+"Edit the user “%(user)s” and their settings, and manage the user's security "
+"settings."
+msgstr ""
+"Bearbeite den Benutzer „%(user)s“, die Einstellungen des Benutzers, und "
+"verwalte die Sicherheitseinstellungen."
 
 #: app/templates/administration/role_delete.html:9
 msgid ""
@@ -236,13 +268,13 @@ msgid "Search assigned users..."
 msgstr "Zugewiesene Benutzer durchsuchen..."
 
 #: app/templates/administration/role_users.html:27
-#: app/templates/administration/users.html:29
+#: app/templates/administration/users.html:28
 #, python-format
 msgid "Edit user “%(user)s”"
 msgstr "Benutzer „%(user)s“ bearbeiten"
 
 #: app/templates/administration/role_users.html:32
-#: app/templates/administration/users.html:34
+#: app/templates/administration/users.html:33
 msgid "Click on the name of a user to edit them."
 msgstr "Klicke auf den Namen eines Benutzers, um ihn zu bearbeiten."
 
@@ -281,6 +313,10 @@ msgstr "Rolle „%(role)s“ bearbeiten"
 #: app/templates/administration/roles.html:32
 msgid "Click on the name of a role to edit it."
 msgstr "Klicke auf den Namen einer Rolle, um sie zu bearbeiten."
+
+#: app/templates/administration/user_header.html:8
+msgid "Edit the user's header data."
+msgstr "Bearbeite die Kopfdaten des Benutzers."
 
 #: app/templates/administration/users.html:7
 msgid "User profiles allow users to use Aeararium. "

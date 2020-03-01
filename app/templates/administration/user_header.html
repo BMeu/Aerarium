@@ -1,0 +1,12 @@
+{% extends 'administration/_tabs_user.html' %}
+{% from 'macros/form.html' import render_form %}
+
+{% set active_id = 'user_header' %}
+
+{% block tabcontent %}
+<p>
+    {{ _('Edit the user\'s header data.') }}
+</p>
+
+{# render_form(header_form, cancel_button=True) #}
+{% endblock %}

@@ -4,6 +4,7 @@
     Routes for managing users.
 """
 
+from flask import abort
 from flask import render_template
 from flask_babel import gettext as _
 from flask_login import login_required
@@ -34,3 +35,21 @@ def users_list() -> ResponseType:
 
     title = _('Users')
     return render_template('administration/users.html', title=title, pagination=pagination, search_form=search_form)
+
+
+@bp.route('/user/<int:id>', methods=['GET', 'POST'])
+@login_required  # type: ignore
+@permission_required(Permission.EditUser)
+def user_edit(id: int) -> ResponseType:
+    """
+        Show and process a form to edit an existing user.
+
+        :param id:  The ID of the user.
+        :return: The response for this view.
+    """
+
+    user = User.load_from_id(id)
+    if user is None:
+        abort(404)
+
+    return render_template('administration/user_header.html', user=user)

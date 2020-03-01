@@ -1,0 +1,21 @@
+{% extends '_tabs.html' %}
+
+{% set title = _('Edit User “%(user)s”', user=user.name) %}
+
+{# Tab menu in the form (url, index, title, text). #}
+{% set tabs = [
+    (url_for('administration.user_edit', id=user.id), 'user_header', _('User'), _('User')),
+    ('#', 'user_security', _('Security'), _('Security')),
+    ('#', 'user_settings', _('Settings'), _('Settings')),
+    ('#', 'user_delete', _('Delete'), _('Delete')),
+] %}
+
+{% block tabheader %}
+    <p>
+        <a href="{{ url_for('administration.users_list') }}" title="{{ _('Go back to the list of all users') }}">&laquo; {{ _('Back to Users') }}</a>
+    </p>
+
+    <p>
+        {{ _('Edit the user “%(user)s” and their settings, and manage the user\'s security settings.', user=user.name) }}
+    </p>
+{% endblock %}
