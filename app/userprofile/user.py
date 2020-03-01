@@ -285,9 +285,9 @@ class User(UserMixin, db.Model):  # type: ignore
             :param token: The change-email token.
             :return: `True` if the email address has been set, `False` if the email address could not be set.
             :raise EasyJWTError: If the given token is invalid.
+            :raise ValueError: If the user given in the token does not exist.
         """
 
-        # TODO: Catch errors.
         token_obj = ChangeEmailAddressToken.verify(token)
         user = User.load_from_id(token_obj.user_id)
         if user is None:
