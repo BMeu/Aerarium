@@ -52,19 +52,10 @@ def delete_profile(token: str) -> ResponseType:
         :return: The response for this view.
     """
 
-    try:
-        user = User.verify_delete_account_token(token)
-    except EasyJWTError:
+    deleted = User.delete_account_from_token(token)
+    if not deleted:
         return abort(404)
 
-    if user is None:
-        return abort(404)
-
-    # A user can only delete their own account.
-    if current_user != user:
-        return abort(404)
-
-    user.delete()
     flash(_('Your user profile and all data linked to it have been deleted. We would be happy to see you again in the \
              future!'))
 

@@ -951,12 +951,46 @@ class UserTest(TestCase):
             self.assertIn(f'{validity_in_minutes} minutes', outgoing[0].body)
             self.assertIn(f'{validity_in_minutes} minutes', outgoing[0].html)
 
-    def test_verify_delete_account_token_success(self):
+    def test_delete_account_from_token_success(self):
         """
-            Test the delete account JWT without any failure.
+            Test deleting the currently logged in user's account from a token.
 
-            Expected result: The token returns the correct user when verifying.
+            Expected result: The user is deleted.
         """
+
+        email = 'test@example.com'
+        name = 'John Doe'
+        password = 'Aerarium123!'
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        user = User.login(email, password)
+        user_id = user.id
+
+        token_obj = DeleteAccountToken()
+        token_obj.user_id = user_id
+        token = token_obj.create()
+
+        deleted = User.delete_account_from_token(token)
+        self.assertTrue(deleted)
+        self.assertIsNone(User.load_from_id(user_id))
+
+    def test_delete_account_from_token_failure_other_user_logged_in(self):
+        """
+            Test deleting a user's account from a token if a different user is logged in.
+
+            Expected result: Neither of the two users is deleted.
+        """
+
+        other_email = 'info@example.com'
+        other_name = 'Jane Doe'
+        other_password = 'Aerarium123!'
+        other_user = User(other_email, other_name)
+        other_user.set_password(other_password)
+        db.session.add(other_user)
 
         email = 'test@example.com'
         name = 'John Doe'
@@ -965,36 +999,72 @@ class UserTest(TestCase):
         db.session.add(user)
         db.session.commit()
 
+        other_user = User.login(other_email, other_password)
+
         token_obj = DeleteAccountToken()
         token_obj.user_id = user.id
         token = token_obj.create()
 
-        loaded_user = User.verify_delete_account_token(token)
-        self.assertIsNotNone(loaded_user)
-        self.assertEqual(user, loaded_user)
+        deleted = User.delete_account_from_token(token)
+        self.assertFalse(deleted)
+        self.assertIsNotNone(User.load_from_id(user.id))
+        self.assertIsNotNone(User.load_from_id(other_user.id))
 
-    def test_verify_delete_account_token_invalid(self):
+    def test_delete_account_from_token_failure_unknown_user_id(self):
         """
-            Test the delete account JWT without any failure.
+            Test deleting the currently logged in user's account from a token that has an unknown user ID.
 
-            Expected result: The token does not return a user when verifying.
+            Expected result: The user is not deleted.
         """
 
         email = 'test@example.com'
         name = 'John Doe'
+        password = 'Aerarium123!'
         user = User(email, name)
+        user.set_password(password)
 
         db.session.add(user)
         db.session.commit()
 
+        user = User.login(email, password)
+
+        invalid_id = user.id + 1
+        self.assertIsNone(User.load_from_id(invalid_id))
+
         token_obj = DeleteAccountToken()
-        token_obj.user_id = user.id
-        token_obj.part_of_the_payload = True
+        token_obj.user_id = invalid_id
         token = token_obj.create()
 
-        with self.assertRaises(EasyJWTError):
-            loaded_user = User.verify_delete_account_token(token)
-            self.assertIsNotNone(loaded_user)
+        deleted = User.delete_account_from_token(token)
+        self.assertFalse(deleted)
+        self.assertIsNotNone(User.load_from_id(user.id))
+
+    def test_delete_account_from_token_failure_invalid_token(self):
+        """
+            Test deleting the currently logged in user's account from a token that is invalid.
+
+            Expected result: The user is not deleted.
+        """
+
+        email = 'test@example.com'
+        name = 'John Doe'
+        password = 'Aerarium123!'
+        user = User(email, name)
+        user.set_password(password)
+
+        db.session.add(user)
+        db.session.commit()
+
+        user = User.login(email, password)
+
+        token_obj = DeleteAccountToken()
+        token_obj.user_id = user.id
+        token_obj._easyjwt_class = 'InvalidClass'
+        token = token_obj.create()
+
+        deleted = User.delete_account_from_token(token)
+        self.assertFalse(deleted)
+        self.assertIsNotNone(User.load_from_id(user.id))
 
     def test_delete_logged_in(self):
         """
@@ -1024,7 +1094,7 @@ class UserTest(TestCase):
         self.assertEqual(current_user, user)
 
         with mail.record_messages() as outgoing:
-            user.delete()
+            user._delete()
 
             # Test that the user has been logged out.
             self.assertNotEqual(current_user, user)
@@ -1074,7 +1144,7 @@ class UserTest(TestCase):
         self.assertEqual(current_user, other_user)
 
         with mail.record_messages() as outgoing:
-            user.delete()
+            user._delete()
 
             # Test that the other user has not been logged out.
             self.assertEqual(current_user, other_user)

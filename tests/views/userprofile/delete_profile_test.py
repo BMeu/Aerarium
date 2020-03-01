@@ -152,7 +152,7 @@ class DeleteProfileTest(TestCase):
         self.assertIsNone(User.load_from_id(user_id))
         self.assertIn('Your user profile and all data linked to it have been deleted.', data)
 
-    def test_delete_profile_failure_invalid_token(self):
+    def test_delete_profile_failure(self):
         """
             Test deleting the account with an invalid token.
 
@@ -181,80 +181,5 @@ class DeleteProfileTest(TestCase):
         self.assertEqual(404, response.status_code)
         self.assertIsNotNone(User.load_from_id(user_id))
         self.assertNotIn('Your user profile and all data linked to it have been deleted.', data)
-
-    def test_delete_profile_failure_no_user(self):
-        """
-            Test deleting the account of a user that does not exist.
-
-            Expected result: An error 404 is shown.
-        """
-
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        token_obj = DeleteAccountToken()
-        token_obj.user_id = user_id + 1
-        token = token_obj.create()
-
-        response = self.client.get('/user/delete/' + token, follow_redirects=True)
-        data = response.get_data(as_text=True)
-
-        self.assertEqual(404, response.status_code)
-        self.assertNotIn('Your user profile and all data linked to it have been deleted.', data)
-
-    def test_delete_profile_failure_wrong_user(self):
-        """
-            Test deleting the account of a user while being logged in with a different one.
-
-            Expected result: An error 404 is shown.
-        """
-
-        # Logged in user.
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        # User to delete.
-        email = 'mail@example.com'
-        name = 'Jane Doe'
-        user_delete = User(email, name)
-
-        db.session.add(user_delete)
-        db.session.commit()
-
-        token_obj = DeleteAccountToken()
-        token_obj.user_id = user_delete.id
-        token = token_obj.create()
-
-        response = self.client.get('/user/delete/' + token, follow_redirects=True)
-        data = response.get_data(as_text=True)
-
-        self.assertEqual(404, response.status_code)
-        self.assertNotIn('Your user profile and all data linked to it have been deleted.', data)
-        self.assertIsNotNone(User.load_from_id(user.id))
-        self.assertIsNotNone(User.load_from_id(user_delete.id))
 
     # endregion

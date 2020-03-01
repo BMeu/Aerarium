@@ -11,6 +11,7 @@ from datetime import timedelta
 
 from flask import url_for
 from flask_babel import gettext as _
+from flask_easyjwt import EasyJWTError
 from flask_login import confirm_login
 from flask_login import current_user
 from flask_login import login_user
@@ -414,27 +415,39 @@ class User(UserMixin, db.Model):  # type: ignore
         return token_obj
 
     @staticmethod
-    def verify_delete_account_token(token: str) -> Optional['User']:
+    def delete_account_from_token(token: str) -> bool:
         """
-            Verify the JWT to delete a user's account.
+            Delete the account of the user given in the :class:`DeleteAccountToken` token.
 
-            :param token: The delete-account token.
-            :return: The user to which the token belongs; `None` if the token is invalid.
+            The user that will deleted must be logged in.
+
+            :param token: The token to delete an account, created with :class:`DeleteAccountToken`.
+            :return: `True` if the user in the token has been deleted, `False` otherwise, e.g. if the token is invalid.
         """
 
-        # TODO: Delete user.
-        token_obj = DeleteAccountToken.verify(token)
+        try:
+            token_obj = DeleteAccountToken.verify(token)
+        except EasyJWTError:
+            return False
+
         user = User.load_from_id(token_obj.user_id)
-        return user  # type: ignore
+        if user is None:
+            return False
 
-    def delete(self) -> None:
+        # A user can only delete their own account with a token.
+        if current_user != user:
+            return False
+
+        user._delete()
+        return True
+
+    def _delete(self) -> None:
         """
             Delete the user's account. Log them out first if necessary. Notify them via mail.
 
             This action will directly be committed to the database.
         """
 
-        # TODO: Make private.
         if self == current_user:
             self.logout()
 
@@ -442,7 +455,6 @@ class User(UserMixin, db.Model):  # type: ignore
         application = get_app()
         support_address = application.config.get('SUPPORT_ADDRESS', None)
 
-        # TODO: Do not delete the user if the mail could not be sent.
         if self.email is not None:
             email = Email(_('Your User Profile Has Been Deleted'), 'userprofile/emails/delete_account_confirmation')
             email.prepare(name=self.name, new_email=self.email, support_email=support_address)
