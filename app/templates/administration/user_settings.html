@@ -1,0 +1,16 @@
+{% extends 'administration/_tabs_user.html' %}
+{% from 'macros/form.html' import render_form %}
+
+{% set active_id = 'user_settings' %}
+
+{% block tabcontent %}
+<p>
+    {{ _('Edit the user\'s settings.') }}
+</p>
+
+{{ render_form(settings_form, cancel_button=True) }}
+
+<p>
+    {{ render_form(reset_form, action_url=url_for('administration.user_settings_reset', user_id=user.id), danger=True) }}
+</p>
+{% endblock %}

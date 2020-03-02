@@ -4,9 +4,9 @@
 
 {# Tab menu in the form (url, index, title, text). #}
 {% set tabs = [
-    (url_for('administration.user_edit', id=user.id), 'user_header', _('User'), _('User')),
+    (url_for('administration.user_edit', user_id=user.id), 'user_header', _('User'), _('User')),
     ('#', 'user_security', _('Security'), _('Security')),
-    ('#', 'user_settings', _('Settings'), _('Settings')),
+    (url_for('administration.user_settings', user_id=user.id), 'user_settings', _('Settings'), _('Settings')),
     ('#', 'user_delete', _('Delete'), _('Delete')),
 ] %}
 

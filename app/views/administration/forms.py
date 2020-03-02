@@ -27,6 +27,8 @@ from wtforms.validators import NoneOf
 from wtforms.validators import DataRequired
 from wtforms.validators import Length
 
+from app.configuration import BaseConfiguration
+from app.localization import get_language_names
 from app.userprofile import Permission
 from app.userprofile import Role
 
@@ -76,7 +78,7 @@ class UniqueRoleName(object):
 
 # endregion
 
-# region Forms
+# region Role Forms
 
 
 class BasePermissionForm(FlaskForm):
@@ -268,6 +270,48 @@ class RoleNewForm(RoleHeaderDataForm, PermissionForm):
     """
 
     submit = SubmitField(_l('Create'))
+    """
+        The submit button.
+    """
+
+# endregion
+
+# region User Forms
+
+
+class UserSettingsForm(FlaskForm):
+    """
+        A form for changing a user's settings.
+    """
+    language = SelectField(_l('Language:'), validators=[DataRequired()],
+                           description=_l('The language in which the user will use the application.'))
+    """
+        The field for selecting the language in which the user wants to use the application.
+    """
+
+    submit = SubmitField(_l('Save'))
+    """
+        The submit button.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """
+            :param args: The arguments for initializing the form.
+            :param kwargs: The keyword argument for initializing the form.
+        """
+
+        super().__init__(*args, **kwargs)
+
+        self.language.choices = get_language_names(BaseConfiguration.TRANSLATION_DIR)
+
+
+class UserSettingsResetForm(FlaskForm):
+    """
+        A form to reset the user's settings. The CSRF token is used so that a user cannot be tricked to reset their
+        settings by redirecting them to the URL.
+    """
+
+    submit = SubmitField(_l('Reset'), description=_l('Reset these settings to their default values.'))
     """
         The submit button.
     """

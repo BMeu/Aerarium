@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2020-03-01 18:09+0100\n"
-"PO-Revision-Date: 2020-03-01 18:12+0100\n"
+"POT-Creation-Date: 2020-03-02 06:13+0100\n"
+"PO-Revision-Date: 2020-03-02 06:14+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -99,7 +99,7 @@ msgid "Global Settings"
 msgstr "Globale Einstellungen"
 
 #: app/templates/_header.html:40 app/templates/administration/_tabs_role.html:9
-#: app/views/administration/users.py:36
+#: app/views/administration/users.py:44
 msgid "Users"
 msgstr "Benutzer"
 
@@ -169,7 +169,7 @@ msgstr "Berechtigungen"
 
 #: app/templates/administration/_tabs_role.html:10
 #: app/templates/administration/_tabs_user.html:10
-#: app/views/administration/forms.py:208
+#: app/views/administration/forms.py:210
 msgid "Delete"
 msgstr "Löschen"
 
@@ -318,6 +318,10 @@ msgstr "Klicke auf den Namen einer Rolle, um sie zu bearbeiten."
 msgid "Edit the user's header data."
 msgstr "Bearbeite die Kopfdaten des Benutzers."
 
+#: app/templates/administration/user_settings.html:8
+msgid "Edit the user's settings."
+msgstr "Bearbeite die Einstellungen des Benutzers."
+
 #: app/templates/administration/users.html:7
 msgid "User profiles allow users to use Aeararium. "
 msgstr "Benutzerprofile ermöglichen es Benutzern, Aerarium zu nutzen."
@@ -381,7 +385,8 @@ msgid "Search..."
 msgstr "Suchen..."
 
 #: app/templates/macros/search_form.html:24
-#: app/templates/macros/search_form.html:26 app/views/userprofile/forms.py:230
+#: app/templates/macros/search_form.html:26 app/views/administration/forms.py:314
+#: app/views/userprofile/forms.py:230
 msgid "Reset"
 msgstr "Zurücksetzen"
 
@@ -672,35 +677,48 @@ msgstr "Keine Benutzer"
 msgid "Search:"
 msgstr "Suchen:"
 
-#: app/views/administration/forms.py:50
+#: app/views/administration/forms.py:52
 msgid "The role name already is in use."
 msgstr "Der Rollenname wird bereits verwendet."
 
-#: app/views/administration/forms.py:191 app/views/administration/forms.py:251
-#: app/views/userprofile/forms.py:192 app/views/userprofile/forms.py:208
+#: app/views/administration/forms.py:193 app/views/administration/forms.py:253
+#: app/views/administration/forms.py:292 app/views/userprofile/forms.py:192
+#: app/views/userprofile/forms.py:208
 msgid "Save"
 msgstr "Speichern"
 
-#: app/views/administration/forms.py:202
+#: app/views/administration/forms.py:204
 msgid "New Role:"
 msgstr "Neue Rolle:"
 
-#: app/views/administration/forms.py:203
+#: app/views/administration/forms.py:205
 msgid "Choose a new role for users to whom this role is assigned."
 msgstr "Wähle eine neue Rolle für die Benutzer, denen diese Rolle zugewiesen ist."
 
-#: app/views/administration/forms.py:244 app/views/userprofile/forms.py:169
+#: app/views/administration/forms.py:246 app/views/userprofile/forms.py:169
 msgid "Name:"
 msgstr "Name:"
 
-#: app/views/administration/forms.py:246
+#: app/views/administration/forms.py:248
 msgid "The name must be unique: different roles cannot have the same name."
 msgstr ""
 "Der Name muss eindeutig sein; mehrere Rollen können nicht denselben Namen haben."
 
-#: app/views/administration/forms.py:270
+#: app/views/administration/forms.py:272
 msgid "Create"
 msgstr "Anlegen"
+
+#: app/views/administration/forms.py:286 app/views/userprofile/forms.py:202
+msgid "Language:"
+msgstr "Sprache:"
+
+#: app/views/administration/forms.py:287
+msgid "The language in which the user will use the application."
+msgstr "Die Sprache, in der der Benutzer die Anwendung benutzt."
+
+#: app/views/administration/forms.py:314 app/views/userprofile/forms.py:231
+msgid "Reset these settings to their default values."
+msgstr "Setze Deine Einstellungen auf die Standardwerte zurück."
 
 #: app/views/administration/roles.py:69
 msgid "The new role has been created."
@@ -724,6 +742,15 @@ msgstr ""
 #: app/views/administration/roles.py:191
 msgid "The role has been deleted."
 msgstr "Die Rolle wurde gelöscht."
+
+#: app/views/administration/users.py:92 app/views/userprofile/profile.py:61
+#: app/views/userprofile/user_settings.py:43
+msgid "Your changes have been saved."
+msgstr "Deine Änderungen wurden gespeichert."
+
+#: app/views/administration/users.py:126 app/views/userprofile/user_settings.py:71
+msgid "The settings have been set to their default values."
+msgstr "Deine Einstellungen wurden auf die Standardwerte zurückgesetzt."
 
 #: app/views/main/errors.py:24
 msgid "Bad Request"
@@ -903,17 +930,9 @@ msgstr ""
 msgid "Leave this field empty if you do not want to change your password."
 msgstr "Lasse dieses Feld leer, um Dein Passwort nicht zu ändern."
 
-#: app/views/userprofile/forms.py:202
-msgid "Language:"
-msgstr "Sprache:"
-
 #: app/views/userprofile/forms.py:203
 msgid "The language in which you want to use the application."
 msgstr "Die Sprache, in der Du die Anwendung benutzen möchtest."
-
-#: app/views/userprofile/forms.py:231
-msgid "Reset these settings to their default values."
-msgstr "Setze Deine Einstellungen auf die Standardwerte zurück."
 
 #: app/views/userprofile/password_reset.py:44
 #, python-format
@@ -942,14 +961,6 @@ msgstr ""
 "enthaltenen Link innerhalb der nächsten %(validity)d Minuten, um Deine neue E-"
 "Mail-Adresse zu bestätigen. Ansonsten wird Deine E-Mail-Adresse nicht geändert."
 
-#: app/views/userprofile/profile.py:61 app/views/userprofile/user_settings.py:43
-msgid "Your changes have been saved."
-msgstr "Deine Änderungen wurden gespeichert."
-
 #: app/views/userprofile/profile.py:85
 msgid "Your email address has successfully been changed."
 msgstr "Deine E-Mail-Adresse wurde erfolgreich geändert."
-
-#: app/views/userprofile/user_settings.py:71
-msgid "The settings have been set to their default values."
-msgstr "Deine Einstellungen wurden auf die Standardwerte zurückgesetzt."
