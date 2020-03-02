@@ -5,10 +5,12 @@ from unittest.mock import patch
 
 from app import create_app
 from app import db
+from app import mail
 from app.configuration import TestConfiguration
 from app.userprofile import Permission
 from app.userprofile import Role
 from app.userprofile import User
+from app.views.administration.forms import UserPasswordResetForm
 from app.views.administration.forms import UserSettingsResetForm
 
 
@@ -199,6 +201,103 @@ class UsersTest(TestCase):
         self.assertIn(f'Edit the user\'s header data.', data)
         self.assertNotIn(f'Edit the user\'s settings.', data)
 
+    def test_user_security_no_user(self):
+        """
+            Test viewing the security settings for a user that does not exist.
+
+            Expected result: An error 404 is returned.
+        """
+
+        user = self.create_and_login_test_user()
+
+        non_existing_user_id = user.id + 1
+        self.assertIsNone(User.load_from_id(non_existing_user_id))
+
+        response = self.client.get(f'/administration/user/{non_existing_user_id}/security', follow_redirects=True)
+        self.assertEqual(404, response.status_code)
+
+    def test_user_security_existing_user(self):
+        """
+            Test viewing the security settings for an existing user.
+
+            Expected result: The security settings are displayed.
+        """
+
+        user = self.create_and_login_test_user()
+
+        response = self.client.get(f'/administration/user/{user.id}/security', follow_redirects=True)
+        data = response.get_data(as_text=True)
+
+        self.assertIn('Edit the user\'s security settings.', data)
+        self.assertIn('Reset Password', data)
+
+    def test_user_password_reset_get(self):
+        """
+            Test resetting a user's password by accessing the URL directly.
+
+            Expected result: An error 405 is returned.
+        """
+
+        user = self.create_and_login_test_user()
+
+        response = self.client.get(f'/administration/user/{user.id}/security/reset-password', follow_redirects=True)
+        self.assertEqual(405, response.status_code)
+
+    def test_user_password_reset_post_no_user(self):
+        """
+            Test resetting a user's password for a user that does not exist.
+
+            Expected result: An error 404 is returned.
+        """
+
+        user = self.create_and_login_test_user()
+
+        non_existing_user_id = user.id + 1
+        self.assertIsNone(User.load_from_id(non_existing_user_id))
+
+        response = self.client.post(f'/administration/user/{non_existing_user_id}/security/reset-password',
+                                    follow_redirects=True,
+                                    data=dict())
+        self.assertEqual(404, response.status_code)
+
+    def test_user_password_reset_post_success(self):
+        """
+            Test resetting a user's password for an existing user.
+
+            Expected result: The password reset mail is sent.
+        """
+
+        user = self.create_and_login_test_user()
+
+        with mail.record_messages() as outgoing:
+            response = self.client.post(f'/administration/user/{user.id}/security/reset-password',
+                                        follow_redirects=True,
+                                        data=dict())
+            data = response.get_data(as_text=True)
+
+            self.assertIn('password has been reset. An email has been sent', data)
+            self.assertEqual(1, len(outgoing))
+            self.assertEqual([user.email], outgoing[0].recipients)
+
+    @patch.object(UserPasswordResetForm, 'validate_on_submit', validate_on_submit_failure)
+    def test_user_password_reset_post_failure(self):
+        """
+            Test resetting a user's password with an invalid form.
+
+            Expected result: The password reset mail is not sent.
+        """
+
+        user = self.create_and_login_test_user()
+
+        with mail.record_messages() as outgoing:
+            response = self.client.post(f'/administration/user/{user.id}/security/reset-password',
+                                        follow_redirects=True,
+                                        data=dict())
+            data = response.get_data(as_text=True)
+
+            self.assertNotIn('password has been reset. An email has been sent', data)
+            self.assertEqual(0, len(outgoing))
+
     def test_user_settings_get_no_user(self):
         """
             Test editing user settings for a user that does not exist.
@@ -330,7 +429,7 @@ class UsersTest(TestCase):
         """
             Test resetting some user's with an invalid form..
 
-            Expected result: The settings are reset.
+            Expected result: The settings are not reset.
         """
 
         language = 'de'

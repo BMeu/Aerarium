@@ -1,0 +1,14 @@
+{% extends 'administration/_tabs_user.html' %}
+{% from 'macros/form.html' import render_form %}
+
+{% set active_id = 'user_security' %}
+
+{% block tabcontent %}
+<p>
+    {{ _('Edit the user\'s security settings.') }}
+</p>
+
+<p>
+    {{ render_form(password_reset_form, action_url=url_for('administration.user_reset_password', user_id=user.id), danger=True) }}
+</p>
+{% endblock %}

@@ -279,6 +279,19 @@ class RoleNewForm(RoleHeaderDataForm, PermissionForm):
 # region User Forms
 
 
+class UserPasswordResetForm(FlaskForm):
+    """
+        A form to reset the user's password. The CSRF token is used so that a user cannot be tricked to reset some
+        user's settings by redirecting them to the URL.
+    """
+
+    submit = SubmitField(_l('Reset Password'),
+                         description=_l('Send an email to the user allowing them to reset their password.'))
+    """
+        The submit button.
+    """
+
+
 class UserSettingsForm(FlaskForm):
     """
         A form for changing a user's settings.
@@ -307,8 +320,8 @@ class UserSettingsForm(FlaskForm):
 
 class UserSettingsResetForm(FlaskForm):
     """
-        A form to reset the user's settings. The CSRF token is used so that a user cannot be tricked to reset their
-        settings by redirecting them to the URL.
+        A form to reset the user's settings. The CSRF token is used so that a user cannot be tricked to reset some
+        user's settings by redirecting them to the URL.
     """
 
     submit = SubmitField(_l('Reset'), description=_l('Reset these settings to their default values.'))

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Aerarium\n"
 "Report-Msgid-Bugs-To: aerarium@bastianmeyer.eu\n"
-"POT-Creation-Date: 2020-03-02 06:13+0100\n"
-"PO-Revision-Date: 2020-03-02 06:14+0100\n"
+"POT-Creation-Date: 2020-03-02 16:53+0100\n"
+"PO-Revision-Date: 2020-03-02 16:56+0100\n"
 "Last-Translator: Bastian Meyer <bastian@bastianmeyer.eu>\n"
 "Language: de\n"
 "Language-Team: de <aerarium@bastianmeyer.eu>\n"
@@ -318,6 +318,10 @@ msgstr "Klicke auf den Namen einer Rolle, um sie zu bearbeiten."
 msgid "Edit the user's header data."
 msgstr "Bearbeite die Kopfdaten des Benutzers."
 
+#: app/templates/administration/user_security.html:8
+msgid "Edit the user's security settings."
+msgstr "Bearbeite die Sicherheitseinstellungen des Benutzers."
+
 #: app/templates/administration/user_settings.html:8
 msgid "Edit the user's settings."
 msgstr "Bearbeite die Einstellungen des Benutzers."
@@ -385,7 +389,7 @@ msgid "Search..."
 msgstr "Suchen..."
 
 #: app/templates/macros/search_form.html:24
-#: app/templates/macros/search_form.html:26 app/views/administration/forms.py:314
+#: app/templates/macros/search_form.html:26 app/views/administration/forms.py:327
 #: app/views/userprofile/forms.py:230
 msgid "Reset"
 msgstr "Zurücksetzen"
@@ -682,7 +686,7 @@ msgid "The role name already is in use."
 msgstr "Der Rollenname wird bereits verwendet."
 
 #: app/views/administration/forms.py:193 app/views/administration/forms.py:253
-#: app/views/administration/forms.py:292 app/views/userprofile/forms.py:192
+#: app/views/administration/forms.py:305 app/views/userprofile/forms.py:192
 #: app/views/userprofile/forms.py:208
 msgid "Save"
 msgstr "Speichern"
@@ -708,17 +712,26 @@ msgstr ""
 msgid "Create"
 msgstr "Anlegen"
 
-#: app/views/administration/forms.py:286 app/views/userprofile/forms.py:202
+#: app/views/administration/forms.py:288
+msgid "Reset Password"
+msgstr "Passwort zurücksetzen"
+
+#: app/views/administration/forms.py:289
+msgid "Send an email to the user allowing them to reset their password."
+msgstr ""
+"Sende eine E-Mail an den Benutzer, über die er sein Passwort zurücksetzen kann."
+
+#: app/views/administration/forms.py:299 app/views/userprofile/forms.py:202
 msgid "Language:"
 msgstr "Sprache:"
 
-#: app/views/administration/forms.py:287
+#: app/views/administration/forms.py:300
 msgid "The language in which the user will use the application."
 msgstr "Die Sprache, in der der Benutzer die Anwendung benutzt."
 
-#: app/views/administration/forms.py:314 app/views/userprofile/forms.py:231
+#: app/views/administration/forms.py:327 app/views/userprofile/forms.py:231
 msgid "Reset these settings to their default values."
-msgstr "Setze Deine Einstellungen auf die Standardwerte zurück."
+msgstr "Setze diese Einstellungen auf die Standardwerte zurück."
 
 #: app/views/administration/roles.py:69
 msgid "The new role has been created."
@@ -743,12 +756,20 @@ msgstr ""
 msgid "The role has been deleted."
 msgstr "Die Rolle wurde gelöscht."
 
-#: app/views/administration/users.py:92 app/views/userprofile/profile.py:61
+#: app/views/administration/users.py:104
+msgid ""
+"The user's password has been reset. An email has been sent to their mail "
+"account allowing them to                 set a new password."
+msgstr ""
+"Das Passwort des Benutzers wurde zurückgesetzt und eine E-Mail an seine Adresse "
+"geschickt, über die er sein Passwort zurücksetzen kann."
+
+#: app/views/administration/users.py:136 app/views/userprofile/profile.py:61
 #: app/views/userprofile/user_settings.py:43
 msgid "Your changes have been saved."
 msgstr "Deine Änderungen wurden gespeichert."
 
-#: app/views/administration/users.py:126 app/views/userprofile/user_settings.py:71
+#: app/views/administration/users.py:170 app/views/userprofile/user_settings.py:71
 msgid "The settings have been set to their default values."
 msgstr "Deine Einstellungen wurden auf die Standardwerte zurückgesetzt."
 

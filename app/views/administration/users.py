@@ -20,6 +20,7 @@ from app.userprofile import User
 from app.userprofile import UserPagination
 from app.userprofile.decorators import permission_required
 from app.views.administration import bp
+from app.views.administration.forms import UserPasswordResetForm
 from app.views.administration.forms import UserSettingsForm
 from app.views.administration.forms import UserSettingsResetForm
 from app.views.forms import SearchForm
@@ -60,6 +61,50 @@ def user_edit(user_id: int) -> ResponseType:
         abort(404)
 
     return render_template('administration/user_header.html', user=user)
+
+
+@bp.route('/user/<int:user_id>/security')
+@login_required  # type: ignore
+@permission_required(Permission.EditUser)
+def user_security(user_id: int) -> ResponseType:
+    """
+        Show options to edit a user's security settings.
+
+        :param user_id: The ID of the user whose security settings will be managed.
+        :return: The response for this view.
+    """
+
+    user = User.load_from_id(user_id)
+    if user is None:
+        abort(404)
+
+    password_reset_form = UserPasswordResetForm()
+    return render_template('administration/user_security.html', user=user, password_reset_form=password_reset_form)
+
+
+@bp.route('/user/<int:user_id>/security/reset-password', methods=['POST'])
+@login_required  # type: ignore
+@permission_required(Permission.EditUser)
+def user_reset_password(user_id: int) -> ResponseType:
+    """
+        Process a request to reset a user's password.
+
+        :param user_id: The ID of the user whose password will be reset.
+        :return: The response for this view.
+    """
+
+    user = User.load_from_id(user_id)
+    if user is None:
+        abort(404)
+
+    password_reset_form = UserPasswordResetForm()
+    if password_reset_form.validate_on_submit():
+        user.request_password_reset()
+
+        flash(_('The user\'s password has been reset. An email has been sent to their mail account allowing them to \
+                set a new password.'))
+
+    return redirect(url_for('.user_security', user_id=user_id))
 
 
 @bp.route('/user/<int:user_id>/settings', methods=['GET', 'POST'])
