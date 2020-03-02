@@ -42,6 +42,7 @@ class UserSettingsTest(TestCase):
 
             :return: `False`
         """
+
         return False
 
     def test_user_settings_get(self):

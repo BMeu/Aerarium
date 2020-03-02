@@ -12,6 +12,7 @@ from wtforms import ValidationError
 from app import create_app
 from app import db
 from app.configuration import TestConfiguration
+from app.localization import get_language_names
 from app.userprofile import Permission
 from app.userprofile import Role
 from app.userprofile import User
@@ -20,6 +21,7 @@ from app.views.administration.forms import create_permission_form
 from app.views.administration.forms import PermissionForm
 from app.views.administration.forms import RoleDeleteForm
 from app.views.administration.forms import UniqueRoleName
+from app.views.administration.forms import UserSettingsForm
 
 # region Validators
 
@@ -355,6 +357,43 @@ class RoleDeleteFormTest(TestCase):
         form = RoleDeleteForm(role)
         self.assertIsNotNone(form.new_role)
         self.assertListEqual(choices, form.new_role.choices)
+
+
+class UserSettingsFormTest(TestCase):
+
+    def setUp(self):
+        """
+            Initialize the test cases.
+        """
+
+        self.app = create_app(TestConfiguration)
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.request_context = self.app.test_request_context()
+        self.request_context.push()
+        db.create_all()
+
+    def tearDown(self):
+        """
+            Reset the test cases.
+        """
+
+        db.session.remove()
+        db.drop_all()
+        self.request_context.pop()
+        self.app_context.pop()
+
+    def test_init(self):
+        """
+            Test that the form is correctly initialized.
+
+            Expected result: The language field is initialized with the available languages.
+        """
+
+        languages = get_language_names(TestConfiguration.TRANSLATION_DIR)
+        form = UserSettingsForm()
+        self.assertListEqual(list(languages), form.language.choices)
+
 
 # endregion
 
