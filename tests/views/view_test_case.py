@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from typing import Any
 from typing import Dict
 from typing import Optional
 
 from unittest import TestCase
+
+from flask import abort
+from werkzeug.exceptions import NotFound
 
 from app import create_app
 from app import db
@@ -44,7 +48,7 @@ class ViewTestCase(TestCase):
 
     # region Helper Methods
 
-    def _get(self, url: str, expected_status: int = 200, follow_redirects: bool = True) -> str:
+    def get(self, url: str, expected_status: int = 200, follow_redirects: bool = True) -> str:
         """
             Access the given URL via HTTP GET. Assert that the returned status code is the given one.
 
@@ -60,11 +64,11 @@ class ViewTestCase(TestCase):
         response = self.client.get(url, follow_redirects=follow_redirects)
         data = response.get_data(as_text=True)
 
-        self.assertEqual(expected_status, response.status_code)
+        self.assertEqual(expected_status, response.status_code, msg='Expected Status Code')
 
         return data
 
-    def _post(self, url: str, data: Dict[str, str] = None, expected_status: int = 200, follow_redirects: bool = True)\
+    def post(self, url: str, data: Dict[str, Any] = None, expected_status: int = 200, follow_redirects: bool = True)\
             -> str:
         """
             Access the given URL via HTTP POST, sending the given data. Assert that the returned status code is the
@@ -86,12 +90,12 @@ class ViewTestCase(TestCase):
         response = self.client.post(url, follow_redirects=follow_redirects, data=data)
         data = response.get_data(as_text=True)
 
-        self.assertEqual(expected_status, response.status_code)
+        self.assertEqual(expected_status, response.status_code, msg='Expected Status Code')
 
         return data
 
     @staticmethod
-    def _create_user(email: str, name: str, password: str, role: Optional[Role] = None) -> User:
+    def create_user(email: str, name: str, password: str, role: Optional[Role] = None) -> User:
         """
             Create a user with the given parameters. If a role is given, assign the role to the user. Commit this user
             to the DB.
@@ -114,12 +118,12 @@ class ViewTestCase(TestCase):
 
         return user
 
-    def _create_and_login_user(self,
-                               email: str = 'doe@example.com',
-                               name: str = 'Jane Doe',
-                               password: str = 'ABC123!',
-                               role: Optional[Role] = None
-                               ) -> User:
+    def create_and_login_user(self,
+                              email: str = 'doe@example.com',
+                              name: str = 'Jane Doe',
+                              password: str = 'ABC123!',
+                              role: Optional[Role] = None
+                              ) -> User:
         """
             Create a user with the given parameters and log them in. If a role is given, assign the role to the user.
             The user is committed to the DB.
@@ -131,7 +135,7 @@ class ViewTestCase(TestCase):
             :return: The created user.
         """
 
-        user = self._create_user(email, name, password, role)
+        user = self.create_user(email, name, password, role)
         self.client.post('/user/login', follow_redirects=True, data=dict(
             email=email,
             password=password,
@@ -140,7 +144,7 @@ class ViewTestCase(TestCase):
         return user
 
     @staticmethod
-    def _create_role(*permissions: Permission, name: str = 'Test Role') -> Role:
+    def create_role(*permissions: Permission, name: str = 'Test Role') -> Role:
         """
             Create a role with the given permissions.
 
@@ -159,9 +163,22 @@ class ViewTestCase(TestCase):
         return role
 
     @staticmethod
-    def _get_false() -> bool:
+    def aborting_route(code: int) -> None:
+        """
+            A route handler that aborts with the given status code.
+
+            :param code: The status code of the HTTP response.
+        """
+
+        abort(code)
+
+    @classmethod
+    def get_false(cls) -> bool:
         """
             Get `False`. Useful for mocking.
+
+            This method must be a class method so that it can be used in the patch decorator when mocking another
+            method.
 
             :return: `False`
         """
@@ -179,9 +196,9 @@ class ViewTestCase(TestCase):
             Expected result: The response data is returned. No error is raised.
         """
 
-        self._create_and_login_user()
+        self.create_and_login_user()
 
-        data = self._get('/user/login')
+        data = self.get('/user/login')
         self.assertIn('Logout', data)
 
     def test_get_with_incorrect_status(self) -> None:
@@ -191,10 +208,10 @@ class ViewTestCase(TestCase):
             Expected result: The response data is returned. No error is raised.
         """
 
-        self._create_and_login_user()
+        self.create_and_login_user()
 
         with self.assertRaises(self.failureException):
-            self._get('/user/login', expected_status=404)
+            self.get('/user/login', expected_status=404)
 
     def test_post_with_correct_status(self) -> None:
         """
@@ -206,9 +223,9 @@ class ViewTestCase(TestCase):
         email = 'jane@doe.com'
         name = 'Jane Doe'
         password = 'ABC123!'
-        self._create_user(email, name, password)
+        self.create_user(email, name, password)
 
-        data = self._post('/user/login', data=dict(
+        data = self.post('/user/login', data=dict(
             email=email,
             password=password,
         ))
@@ -225,10 +242,10 @@ class ViewTestCase(TestCase):
         email = 'jane@doe.com'
         name = 'Jane Doe'
         password = 'ABC123!'
-        self._create_user(email, name, password)
+        self.create_user(email, name, password)
 
         with self.assertRaises(self.failureException):
-            self._post('/user/login', expected_status=404, data=dict(
+            self.post('/user/login', expected_status=404, data=dict(
                 email=email,
                 password=password,
             ))
@@ -244,7 +261,7 @@ class ViewTestCase(TestCase):
         email = 'john@doe.com'
         name = 'John Doe'
         password = '123ABC$'
-        user = self._create_user(email, name, password)
+        user = self.create_user(email, name, password)
 
         self.assertIsNotNone(user)
         self.assertEqual(email, user.email)
@@ -260,12 +277,12 @@ class ViewTestCase(TestCase):
             Expected result: The user is created with the given parameters and the role. The user is saved on the DB.
         """
 
-        role = self._create_role(Permission.EditUser, Permission.EditRole)
+        role = self.create_role(Permission.EditUser, Permission.EditRole)
 
         email = 'john@doe.com'
         name = 'John Doe'
         password = '123ABC$'
-        user = self._create_user(email, name, password, role)
+        user = self.create_user(email, name, password, role)
 
         self.assertIsNotNone(user)
         self.assertEqual(email, user.email)
@@ -281,7 +298,7 @@ class ViewTestCase(TestCase):
             Expected result: The user is created and logged in.
         """
 
-        user = self._create_and_login_user()
+        user = self.create_and_login_user()
 
         self.assertIsNotNone(user)
         self.assertEqual('doe@example.com', user.email)
@@ -305,13 +322,23 @@ class ViewTestCase(TestCase):
         """
 
         name = 'Administrator'
-        role = self._create_role(Permission.EditUser, Permission.EditRole, name=name)
+        role = self.create_role(Permission.EditUser, Permission.EditRole, name=name)
 
         self.assertIsNotNone(role)
         self.assertEqual(name, role.name)
         self.assertTrue(role.has_permissions_all(Permission.EditUser, Permission.EditRole))
         self.assertFalse(role.has_permissions_one_of(Permission.EditGlobalSettings))
         self.assertEqual(role, Role.load_from_id(role.id))
+
+    def test_aborting_route(self) -> None:
+        """
+            Test the aborting route handler for a 404 error.
+
+            :return: The NotFound error is raised.
+        """
+
+        with self.assertRaises(NotFound):
+            self.aborting_route(404)
 
     def test_get_false(self) -> None:
         """
@@ -320,6 +347,6 @@ class ViewTestCase(TestCase):
             Expected Result: `False`.
         """
 
-        self.assertFalse(self._get_false())
+        self.assertFalse(self.get_false())
 
     # endregion

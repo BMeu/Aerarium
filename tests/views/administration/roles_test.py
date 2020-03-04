@@ -1,39 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase
-
-from app import create_app
-from app import db
-from app.configuration import TestConfiguration
 from app.userprofile import Permission
 from app.userprofile import Role
-from app.userprofile import User
+from tests.views import ViewTestCase
 
 
-class RolesTest(TestCase):
-
-    def setUp(self):
-        """
-            Initialize the test cases.
-        """
-
-        self.app = create_app(TestConfiguration)
-        self.client = self.app.test_client()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        self.request_context = self.app.test_request_context()
-        self.request_context.push()
-        db.create_all()
-
-    def tearDown(self):
-        """
-            Reset the test cases.
-        """
-
-        db.session.remove()
-        db.drop_all()
-        self.request_context.pop()
-        self.app_context.pop()
+class RolesTest(ViewTestCase):
 
     def test_roles_list(self):
         """
@@ -45,16 +17,9 @@ class RolesTest(TestCase):
         self.app.config['ITEMS_PER_PAGE'] = 2
 
         # Add roles, but not sorted by name.
-        role_guest = Role(name='Guest')
-        db.session.add(role_guest)
-
-        role_user = Role(name='User')
-        db.session.add(role_user)
-
-        role_admin = Role(name='Administrator')
-        role_admin.permissions = Permission.EditRole
-        db.session.add(role_admin)
-        db.session.commit()
+        role_guest = self.create_role(name='Guest')
+        role_user = self.create_role(name='User')
+        role_admin = self.create_role(Permission.EditRole, name='Administrator')
 
         roles_assorted = [
             role_guest,
@@ -67,22 +32,9 @@ class RolesTest(TestCase):
         self.assertListEqual(roles_assorted, roles)
 
         # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role_admin
-        db.session.add(user)
-        db.session.commit()
+        self.create_and_login_user(role=role_admin)
 
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get('administration/roles', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('administration/roles')
 
         title_role_admin = f'Edit role “{role_admin.name}”'
         title_role_guest = f'Edit role “{role_guest.name}”'
@@ -106,30 +58,13 @@ class RolesTest(TestCase):
             Expected result: An error 404 is returned.
         """
 
-        role = Role(name='Administrator')
-        role.permissions = Permission.EditRole
-        db.session.add(role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        role = self.create_role(Permission.EditRole)
+        self.create_and_login_user(role=role)
 
         non_existing_role = 'Guest'
         self.assertIsNone(Role.load_from_name(non_existing_role))
 
-        response = self.client.get(f'/administration/role/{non_existing_role}', follow_redirects=True)
-        self.assertEqual(404, response.status_code)
+        self.get(f'/administration/role/{non_existing_role}', expected_status=404)
 
     def test_role_new_get(self):
         """
@@ -138,27 +73,10 @@ class RolesTest(TestCase):
             Expected result: The new-role page is shown.
         """
 
-        role = Role(name='Administrator')
-        role.permissions = Permission.EditRole
-        db.session.add(role)
+        role = self.create_role(Permission.EditRole)
+        self.create_and_login_user(role=role)
 
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get('/administration/role/new', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('/administration/role/new')
 
         self.assertIn('Add a New Role', data)
         self.assertNotIn('The new role has been created.', data)
@@ -170,30 +88,13 @@ class RolesTest(TestCase):
             Expected result: The new-role page is shown and no role has been created.
         """
 
-        role = Role(name='Administrator')
-        role.permissions = Permission.EditRole
-        db.session.add(role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        role = self.create_role(Permission.EditRole)
+        self.create_and_login_user(role=role)
 
         name = Role.invalid_names[0]
-        response = self.client.post('/administration/role/new', follow_redirects=True, data=dict(
+        data = self.post('/administration/role/new', data=dict(
             name=name
         ))
-        data = response.get_data(as_text=True)
 
         self.assertIn('Add a New Role', data)
         self.assertNotIn('The new role has been created.', data)
@@ -206,33 +107,16 @@ class RolesTest(TestCase):
             Expected result: The list of roles is shown and the new role has been created.
         """
 
-        role = Role(name='Administrator')
-        role.permissions = Permission.EditRole
-        db.session.add(role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        role = self.create_role(Permission.EditRole, name='Administrator')
+        self.create_and_login_user(role=role)
 
         name = 'Guest'
         permissions = Permission.EditRole | Permission.EditGlobalSettings
-        response = self.client.post('/administration/role/new', follow_redirects=True, data=dict(
+        data = self.post('/administration/role/new', data=dict(
             name=name,
             editrole=True,
             editglobalsettings=True
         ))
-        data = response.get_data(as_text=True)
 
         self.assertIn('Roles', data)
         self.assertNotIn('Add a New Role', data)
@@ -249,30 +133,12 @@ class RolesTest(TestCase):
             Expected result: The edit page is shown.
         """
 
-        role_name = 'Administrator'
-        role = Role(name=role_name)
-        role.permissions = Permission.EditRole
-        db.session.add(role)
+        role = self.create_role(Permission.EditRole, name='Administrator')
+        self.create_and_login_user(role=role)
 
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
+        data = self.get(f'/administration/role/{role.name}')
 
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get(f'/administration/role/{role_name}', follow_redirects=True)
-        data = response.get_data(as_text=True)
-
-        self.assertIn(f'Edit Role “{role_name}”', data)
+        self.assertIn(f'Edit Role “{role.name}”', data)
         self.assertIn(f'Edit the role\'s header data', data)
         self.assertNotIn(f'View the users who have this role assigned to them', data)
         self.assertNotIn(f'Permanently delete this role', data)
@@ -285,41 +151,23 @@ class RolesTest(TestCase):
             Expected result: The edit page is shown, the role is not updated.
         """
 
-        role_existing_name = 'Guest'
-        role_existing = Role(name=role_existing_name)
-        db.session.add(role_existing)
+        existing_role = self.create_role(name='Guest')
 
-        role_name = 'Administrator'
-        role = Role(name=role_name)
-        role.permissions = Permission.EditRole
-        db.session.add(role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
+        name = 'Administrator'
+        role = self.create_role(Permission.EditRole, name=name)
+        self.create_and_login_user(role=role)
 
         role_id = role.id
 
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
+        data = self.post(f'/administration/role/{role.name}', data=dict(
+            name=existing_role.name
         ))
 
-        response = self.client.post(f'/administration/role/{role_name}', follow_redirects=True, data=dict(
-            name=role_existing_name
-        ))
-        data = response.get_data(as_text=True)
         role = Role.load_from_id(role_id)
 
-        self.assertIn(f'Edit Role “{role_name}”', data)
+        self.assertIn(f'Edit Role “{name}”', data)
         self.assertNotIn('The role has been updated.', data)
-        self.assertEqual(role_name, role.name)
+        self.assertEqual(name, role.name)
         self.assertIn(f'Edit the role\'s header data', data)
         self.assertNotIn(f'View the users who have this role assigned to them', data)
         self.assertNotIn(f'Permanently delete this role', data)
@@ -332,34 +180,17 @@ class RolesTest(TestCase):
             Expected result: The edit page is shown, the role is updated.
         """
 
-        role_name = 'Administrator'
-        role = Role(name=role_name)
-        role.permissions = Permission.EditRole
-        db.session.add(role)
+        name = 'Administrator'
+        role = self.create_role(Permission.EditRole, name=name)
 
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
+        self.create_and_login_user(role=role)
 
-        role_id = role.id
         new_name = 'Guest'
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.post(f'/administration/role/{role_name}', follow_redirects=True, data=dict(
+        data = self.post(f'/administration/role/{name}', data=dict(
             name=new_name
         ))
-        data = response.get_data(as_text=True)
-        role = Role.load_from_id(role_id)
+
+        role = Role.load_from_id(role.id)
 
         self.assertIn(f'Edit Role “{new_name}”', data)
         self.assertIn('The role has been updated.', data)
@@ -376,30 +207,13 @@ class RolesTest(TestCase):
             Expected result: An error 404 is returned.
         """
 
-        role = Role(name='Administrator')
-        role.permissions = Permission.EditRole
-        db.session.add(role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        role = self.create_role(Permission.EditRole, name='Administrator')
+        self.create_and_login_user(role=role)
 
         non_existing_role = 'Guest'
         self.assertIsNone(Role.load_from_name(non_existing_role))
 
-        response = self.client.get(f'/administration/role/{non_existing_role}/permissions', follow_redirects=True)
-        self.assertEqual(404, response.status_code)
+        self.get(f'/administration/role/{non_existing_role}/permissions', expected_status=404)
 
     def test_role_permissions_get(self):
         """
@@ -408,28 +222,10 @@ class RolesTest(TestCase):
             Expected result: The permissions are listed.
         """
 
-        role_name = 'Administrator'
-        role = Role(name=role_name)
-        role.permissions = Permission.EditRole
-        db.session.add(role)
+        role = self.create_role(Permission.EditRole)
+        self.create_and_login_user(role=role)
 
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get(f'/administration/role/{role_name}/permissions', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get(f'/administration/role/{role.name}/permissions')
 
         self.assertIn('<h1>Edit Role “', data)
         self.assertIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
@@ -444,40 +240,18 @@ class RolesTest(TestCase):
             Expected result: The new permissions are set on the role.
         """
 
-        other_role_name = 'Administrator'
-        other_role = Role(name=other_role_name)
-        other_role.permissions = Permission.EditRole
-        db.session.add(other_role)
-
-        role_name = 'Moderator'
-        role = Role(name=role_name)
-        role.permissions = Permission.EditRole
-        db.session.add(role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = other_role
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        other_role = self.create_role(Permission.EditRole, name='Administrator')
+        role = self.create_role(Permission.EditRole, name='Moderator')
+        self.create_and_login_user(role=other_role)
 
         new_permissions = Permission.EditRole | Permission.EditGlobalSettings
-        response = self.client.post(f'/administration/role/{role_name}/permissions', follow_redirects=True, data=dict(
+        data = self.post(f'/administration/role/{role.name}/permissions', data=dict(
             editglobalsettings=True,
             editrole=True,
             edituser=None,
         ))
-        data = response.get_data(as_text=True)
 
-        role = Role.load_from_name(role_name)
+        role = Role.load_from_name(role.name)
         self.assertEqual(new_permissions, role.permissions)
         self.assertIn('<h1>Edit Role “', data)
         self.assertIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
@@ -495,37 +269,19 @@ class RolesTest(TestCase):
             Expected result: The new permissions are set on the role, but the role keeps the permission to edit roles.
         """
 
-        role_name = 'Administrator'
-        role = Role(name=role_name)
-        role.permissions = Permission.EditRole
-        db.session.add(role)
+        role = self.create_role(Permission.EditRole)
+        self.create_and_login_user(role=role)
 
         self.assertTrue(role.is_only_role_allowed_to_edit_roles())
 
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
         new_permissions = Permission.EditRole | Permission.EditGlobalSettings
-        response = self.client.post(f'/administration/role/{role_name}/permissions', follow_redirects=True, data=dict(
+        data = self.post(f'/administration/role/{role.name}/permissions', data=dict(
             editglobalsettings=True,
             editrole=False,
             edituser=None,
         ))
-        data = response.get_data(as_text=True)
 
-        role = Role.load_from_name(role_name)
+        role = Role.load_from_name(role.name)
         self.assertEqual(new_permissions, role.permissions)
         self.assertIn('<h1>Edit Role “', data)
         self.assertIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
@@ -542,30 +298,13 @@ class RolesTest(TestCase):
             Expected result: An error 404 is returned.
         """
 
-        role = Role(name='Administrator')
-        role.permissions = Permission.EditRole
-        db.session.add(role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        role = self.create_role(Permission.EditRole, name='Administrator')
+        self.create_and_login_user(role=role)
 
         non_existing_role = 'Guest'
         self.assertIsNone(Role.load_from_name(non_existing_role))
 
-        response = self.client.get(f'/administration/role/{non_existing_role}/users', follow_redirects=True)
-        self.assertEqual(404, response.status_code)
+        self.get(f'/administration/role/{non_existing_role}/users', expected_status=404)
 
     def test_role_users_get(self):
         """
@@ -574,28 +313,11 @@ class RolesTest(TestCase):
             Expected result: The users are listed.
         """
 
-        role_name = 'Administrator'
-        role = Role(name=role_name)
-        role.permissions = Permission.EditRole
-        db.session.add(role)
-
-        # Add a user with permissions to view this page.
         name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
+        role = self.create_role(Permission.EditRole)
+        self.create_and_login_user(name=name, role=role)
 
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get(f'/administration/role/{role_name}/users', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get(f'/administration/role/{role.name}/users')
 
         self.assertIn('<h1>Edit Role “', data)
         self.assertIn(f'View the users who have this role assigned to them', data)
@@ -611,30 +333,13 @@ class RolesTest(TestCase):
             Expected result: An error 404 is returned.
         """
 
-        role = Role(name='Administrator')
-        role.permissions = Permission.EditRole
-        db.session.add(role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        role = self.create_role(Permission.EditRole, name='Administrator')
+        self.create_and_login_user(role=role)
 
         non_existing_role = 'Guest'
         self.assertIsNone(Role.load_from_name(non_existing_role))
 
-        response = self.client.get(f'/administration/role/{non_existing_role}/delete', follow_redirects=True)
-        self.assertEqual(404, response.status_code)
+        self.get(f'/administration/role/{non_existing_role}/delete', expected_status=404)
 
     def test_role_delete_get_only_allowed_to_edit_roles(self):
         """
@@ -643,30 +348,12 @@ class RolesTest(TestCase):
             Expected result: The role delete form is not shown.
         """
 
-        role_name = 'Administrator'
-        role = Role(name=role_name)
-        role.permissions = Permission.EditRole
-        db.session.add(role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
+        role = self.create_role(Permission.EditRole)
+        self.create_and_login_user(role=role)
 
         role_id = role.id
 
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get(f'/administration/role/{role_name}/delete', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get(f'/administration/role/{role.name}/delete')
         role = Role.load_from_id(role_id)
 
         self.assertIsNotNone(role)
@@ -686,37 +373,15 @@ class RolesTest(TestCase):
             Expected result: The role delete form.
         """
 
-        other_role_name = 'Administrator'
-        other_role = Role(name=other_role_name)
-        other_role.permissions = Permission.EditRole
-        db.session.add(other_role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = other_role
-        db.session.add(user)
-
-        # Add a role that will be deleted.
-        role_name = 'Guest'
-        role = Role(name=role_name)
-        db.session.add(role)
-        db.session.commit()
+        other_role = self.create_role(Permission.EditRole, name='Administrator')
+        role = self.create_role(name='Guest')
+        self.create_and_login_user(role=other_role)
 
         role_id = role.id
 
         self.assertListEqual([], role.users.all())
 
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get(f'/administration/role/{role_name}/delete', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get(f'/administration/role/{role.name}/delete')
         role = Role.load_from_id(role_id)
 
         self.assertIsNotNone(role)
@@ -735,39 +400,17 @@ class RolesTest(TestCase):
             Expected result: The role is deleted.
         """
 
-        other_role_name = 'Administrator'
-        other_role = Role(name=other_role_name)
-        other_role.permissions = Permission.EditRole
-        db.session.add(other_role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = other_role
-        db.session.add(user)
-
-        # Add a role that will be deleted.
-        role_name = 'Guest'
-        role = Role(name=role_name)
-        db.session.add(role)
-        db.session.commit()
+        other_role = self.create_role(Permission.EditRole, name='Administrator')
+        role = self.create_role(name='Guest')
+        self.create_and_login_user(role=other_role)
 
         role_id = role.id
 
         self.assertListEqual([], role.users.all())
 
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.post(f'/administration/role/{role_name}/delete', follow_redirects=True, data=dict(
+        data = self.post(f'/administration/role/{role.name}/delete', data=dict(
             new_role=0
         ))
-        data = response.get_data(as_text=True)
         role = Role.load_from_id(role_id)
 
         self.assertIsNone(role)
@@ -782,32 +425,14 @@ class RolesTest(TestCase):
             Expected result: The role delete form is not shown.
         """
 
-        role_name = 'Administrator'
-        role = Role(name=role_name)
-        role.permissions = Permission.EditRole
-        db.session.add(role)
-
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = role
-        db.session.add(user)
-        db.session.commit()
+        role = self.create_role(Permission.EditRole)
+        self.create_and_login_user(role=role)
 
         role_id = role.id
 
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.post(f'/administration/role/{role_name}/delete', follow_redirects=True, data=dict(
+        data = self.post(f'/administration/role/{role.name}/delete', data=dict(
             new_role=0,
         ))
-        data = response.get_data(as_text=True)
         role = Role.load_from_id(role_id)
 
         self.assertIsNotNone(role)
@@ -827,43 +452,21 @@ class RolesTest(TestCase):
             Expected result: The role is deleted.
         """
 
-        other_role_name = 'Administrator'
-        other_role = Role(name=other_role_name)
-        other_role.permissions = Permission.EditRole
-        db.session.add(other_role)
+        other_role = self.create_role(Permission.EditRole, name='Administrator')
+        role = self.create_role(name='Guest')
 
-        # Add a user with permissions to view this page.
-        name = 'Jane Doe'
-        email = 'test@example.com'
-        password = '123456'
-        user = User(email, name)
-        user.set_password(password)
-        user.role = other_role
-        db.session.add(user)
-
-        # Add a role that will be deleted.
-        role_name = 'Guest'
-        role = Role(name=role_name)
-        db.session.add(role)
+        self.create_and_login_user(role=other_role)
 
         # Add a user for the role to delete.
-        other_user = User('mail@example.com', 'John Doe')
-        other_user.role = role
-        db.session.commit()
+        other_user = self.create_user(email='john@doe.com', name='John Doe', password='ABC123!', role=role)
 
         role_id = role.id
 
         self.assertListEqual([other_user], role.users.all())
 
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.post(f'/administration/role/{role_name}/delete', follow_redirects=True, data=dict(
+        data = self.post(f'/administration/role/{role.name}/delete', data=dict(
             new_role=other_role.id
         ))
-        data = response.get_data(as_text=True)
         role = Role.load_from_id(role_id)
 
         self.assertIsNone(role)

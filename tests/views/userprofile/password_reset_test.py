@@ -1,41 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase
-
-from app import create_app
 from app import db
 from app import mail
-from app.configuration import TestConfiguration
-from app.userprofile import User
 from app.userprofile.tokens import ResetPasswordToken
+from tests.views import ViewTestCase
 
 
-class PasswordResetTest(TestCase):
-
-    def setUp(self):
-        """
-            Initialize the test cases.
-        """
-
-        self.app = create_app(TestConfiguration)
-        self.client = self.app.test_client()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        self.request_context = self.app.test_request_context()
-        self.request_context.push()
-        db.create_all()
-
-    def tearDown(self):
-        """
-            Reset the test cases.
-        """
-
-        db.session.remove()
-        db.drop_all()
-        self.request_context.pop()
-        self.app_context.pop()
-
-    # region Request
+class PasswordResetTest(ViewTestCase):
 
     def test_reset_password_request_logged_in(self):
         """
@@ -44,24 +15,9 @@ class PasswordResetTest(TestCase):
             Expected result: The user is redirected to the home page.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        self.create_and_login_user()
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get('/user/reset-password', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('/user/reset-password')
 
         self.assertIn('Dashboard', data)
         self.assertNotIn('Forgot Your Password?', data)
@@ -73,8 +29,7 @@ class PasswordResetTest(TestCase):
             Expected result: The password reset request form is displayed.
         """
 
-        response = self.client.get('/user/reset-password', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('/user/reset-password')
 
         self.assertIn('Forgot Your Password?', data)
 
@@ -86,21 +41,12 @@ class PasswordResetTest(TestCase):
         """
 
         email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
+        self.create_user(email=email, name='Jane Doe', password='ABC123!')
 
         with mail.record_messages() as outgoing:
-            response = self.client.post('/user/reset-password', follow_redirects=True, data=dict(
+            data = self.post('/user/reset-password', data=dict(
                 email=email
             ))
-            data = response.get_data(as_text=True)
 
             self.assertEqual(1, len(outgoing))
             self.assertIn('Reset Your Password', outgoing[0].subject)
@@ -118,10 +64,9 @@ class PasswordResetTest(TestCase):
         email = 'test@example.com'
 
         with mail.record_messages() as outgoing:
-            response = self.client.post('/user/reset-password', follow_redirects=True, data=dict(
+            data = self.post('/user/reset-password', data=dict(
                 email=email
             ))
-            data = response.get_data(as_text=True)
 
             self.assertEqual(0, len(outgoing))
 
@@ -139,28 +84,13 @@ class PasswordResetTest(TestCase):
             Expected result: The user is redirected to the home page.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        user = self.create_and_login_user()
 
         token_obj = ResetPasswordToken()
-        token_obj.user_id = user_id
+        token_obj.user_id = user.id
         token = token_obj.create()
 
-        response = self.client.get(f'/user/reset-password/{token}', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get(f'/user/reset-password/{token}')
 
         self.assertIn('Dashboard', data)
         self.assertNotIn('The token is invalid.', data)
@@ -174,19 +104,13 @@ class PasswordResetTest(TestCase):
             Expected result: The user password reset form is displayed.
         """
 
-        email = 'test@example.com'
-        name = 'John Doe'
-        user = User(email, name)
-
-        db.session.add(user)
-        db.session.commit()
+        user = self.create_user(email='doe@example.com', name='Jane', password='ABC123!')
 
         token_obj = ResetPasswordToken()
         token_obj.user_id = user.id
         token = token_obj.create()
 
-        response = self.client.get(f'/user/reset-password/{token}', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get(f'/user/reset-password/{token}')
 
         self.assertIn('Reset Your Password', data)
         self.assertIn('New Password', data)
@@ -201,17 +125,10 @@ class PasswordResetTest(TestCase):
             Expected result: A 404 error page is shown.
         """
 
-        email = 'test@example.com'
-        name = 'John Doe'
-        user = User(email, name)
+        self.create_user(email='test@example.com', name='John Doe', password='ABC123!')
 
-        db.session.add(user)
-        db.session.commit()
+        data = self.get('/user/reset-password/just-some-token', expected_status=404)
 
-        response = self.client.get('/user/reset-password/just-some-token', follow_redirects=True)
-        data = response.get_data(as_text=True)
-
-        self.assertEqual(404, response.status_code)
         self.assertNotIn('Your password has successfully been changed.', data)
 
     def test_reset_password_get_failure_no_user(self):
@@ -221,12 +138,7 @@ class PasswordResetTest(TestCase):
             Expected result: A 404 error page is shown.
         """
 
-        email = 'test@example.com'
-        name = 'John Doe'
-        user = User(email, name)
-
-        db.session.add(user)
-        db.session.commit()
+        user = self.create_user(email='doe@example.com', name='Jane', password='ABC123!')
 
         token_obj = ResetPasswordToken()
         token_obj.user_id = user.id
@@ -235,10 +147,8 @@ class PasswordResetTest(TestCase):
         db.session.delete(user)
         db.session.commit()
 
-        response = self.client.get(f'/user/reset-password/{token}', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get(f'/user/reset-password/{token}', expected_status=404)
 
-        self.assertEqual(404, response.status_code)
         self.assertNotIn('Your password has successfully been changed.', data)
 
     def test_reset_password_post_logged_in(self):
@@ -248,32 +158,18 @@ class PasswordResetTest(TestCase):
             Expected result: The user is redirected to the home page without changing the password.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        password = 'ABC123!'
+        user = self.create_and_login_user(password=password)
 
         token_obj = ResetPasswordToken()
-        token_obj.user_id = user_id
+        token_obj.user_id = user.id
         token = token_obj.create()
 
-        new_password = 'abcdef'
-        response = self.client.post(f'/user/reset-password/{token}', follow_redirects=True, data=dict(
+        new_password = 'DEF456?'
+        data = self.post(f'/user/reset-password/{token}', data=dict(
             password=new_password,
             password_confirmation=new_password
         ))
-        data = response.get_data(as_text=True)
 
         self.assertIn('Dashboard', data)
         self.assertNotIn('The token is invalid.', data)
@@ -288,27 +184,18 @@ class PasswordResetTest(TestCase):
             Expected result: The password is set to the new one and the user is redirected to the login page.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
+        password = 'ABC123!'
+        user = self.create_user(email='jane@doe.com', name='Jane Doe', password=password)
 
         token_obj = ResetPasswordToken()
-        token_obj.user_id = user_id
+        token_obj.user_id = user.id
         token = token_obj.create()
 
-        new_password = 'abcdef'
-        response = self.client.post(f'/user/reset-password/{token}', follow_redirects=True, data=dict(
+        new_password = 'DEF456?'
+        data = self.post(f'/user/reset-password/{token}', data=dict(
             password=new_password,
             password_confirmation=new_password
         ))
-        data = response.get_data(as_text=True)
 
         self.assertNotIn('Reset Your Password', data)
         self.assertIn('Log In', data)
@@ -324,27 +211,18 @@ class PasswordResetTest(TestCase):
             Expected result: The password is not updated and the user is shown the reset password form.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
+        password = 'ABC123!'
+        user = self.create_user(email='jane@doe.com', name='Jane Doe', password=password)
 
         token_obj = ResetPasswordToken()
-        token_obj.user_id = user_id
+        token_obj.user_id = user.id
         token = token_obj.create()
 
-        new_password = 'abcdef'
-        response = self.client.post(f'/user/reset-password/{token}', follow_redirects=True, data=dict(
+        new_password = 'DEF456?'
+        data = self.post(f'/user/reset-password/{token}', data=dict(
             password=new_password,
-            password_confirmation=new_password + 'ghi'
+            password_confirmation=new_password + 'GHI'
         ))
-        data = response.get_data(as_text=True)
 
         self.assertIn('Reset Your Password', data)
         self.assertNotIn('The token is invalid.', data)
@@ -359,25 +237,15 @@ class PasswordResetTest(TestCase):
             Expected result: The password is not updated and the user is shown a 404 error page.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        password = 'ABC123!'
+        user = self.create_user(email='jane@doe.com', name='Jane Doe', password=password)
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        new_password = 'abcdef'
-        response = self.client.post('/user/reset-password/just-some-token', follow_redirects=True, data=dict(
+        new_password = 'DEF456?'
+        data = self.post('/user/reset-password/just-some-token', expected_status=404, data=dict(
             password=new_password,
             password_confirmation=new_password
         ))
-        data = response.get_data(as_text=True)
 
-        self.assertEqual(404, response.status_code)
         self.assertNotIn('Your password has successfully been changed.', data)
         self.assertFalse(user.check_password(new_password))
         self.assertTrue(user.check_password(password))
@@ -390,32 +258,22 @@ class PasswordResetTest(TestCase):
             Expected result: The password is not updated and the user is shown a 404 error page.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
+        password = 'ABC123!'
+        user = self.create_user(email='jane@doe.com', name='Jane Doe', password=password)
 
         token_obj = ResetPasswordToken()
-        token_obj.user_id = user_id
+        token_obj.user_id = user.id
         token = token_obj.create()
 
         db.session.delete(user)
         db.session.commit()
 
-        new_password = 'abcdef'
-        response = self.client.post(f'/user/reset-password/{token}', follow_redirects=True, data=dict(
+        new_password = 'DEF456?'
+        data = self.post(f'/user/reset-password/{token}', expected_status=404, data=dict(
             password=new_password,
-            password_confirmation=new_password + 'ghi'
+            password_confirmation=new_password + 'GHI'
         ))
-        data = response.get_data(as_text=True)
 
-        self.assertEqual(404, response.status_code)
         self.assertNotIn('Your password has successfully been changed.', data)
         self.assertFalse(user.check_password(new_password))
         self.assertTrue(user.check_password(password))

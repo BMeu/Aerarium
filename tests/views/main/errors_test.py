@@ -1,36 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase
-
-from flask import abort
 from flask import url_for
 
-from app import create_app
-from app.configuration import TestConfiguration
+from tests.views import ViewTestCase
 
 
-class ErrorsTest(TestCase):
+class ErrorsTest(ViewTestCase):
 
     def setUp(self):
         """
             Initialize the test cases.
         """
 
-        self.app = create_app(TestConfiguration)
-        self.app.add_url_rule('/abort/<code>', 'abort', _aborting_route)
-        self.client = self.app.test_client()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        self.request_context = self.app.test_request_context()
-        self.request_context.push()
+        super().setUp()
 
-    def tearDown(self):
-        """
-            Reset the test cases.
-        """
-
-        self.request_context.pop()
-        self.app_context.pop()
+        # Add a view that aborts with the given code.
+        self.app.add_url_rule('/abort/<int:code>', 'abort', self.aborting_route)
 
     def test_error_400(self):
         """
@@ -40,10 +25,8 @@ class ErrorsTest(TestCase):
         """
 
         code = 400
-        response = self.client.get('/abort/' + str(code))
-        data = response.get_data(as_text=True)
+        data = self.get(f'/abort/{code}', expected_status=code)
 
-        self.assertEqual(code, response.status_code)
         self.assertIn('Bad Request', data)
 
     def test_error_401(self):
@@ -54,10 +37,8 @@ class ErrorsTest(TestCase):
         """
 
         code = 401
-        response = self.client.get('/abort/' + str(code))
-        data = response.get_data(as_text=True)
+        data = self.get(f'/abort/{code}', expected_status=code)
 
-        self.assertEqual(code, response.status_code)
         self.assertIn('Unauthorized Access', data)
 
         # Ensure that the login page is linked.
@@ -71,10 +52,8 @@ class ErrorsTest(TestCase):
         """
 
         code = 403
-        response = self.client.get('/abort/' + str(code))
-        data = response.get_data(as_text=True)
+        data = self.get(f'/abort/{code}', expected_status=code)
 
-        self.assertEqual(code, response.status_code)
         self.assertIn('Permission Denied', data)
 
         # Ensure that the login page is linked.
@@ -89,10 +68,8 @@ class ErrorsTest(TestCase):
         """
 
         code = 404
-        response = self.client.get('/abort/' + str(code))
-        data = response.get_data(as_text=True)
+        data = self.get(f'/abort/{code}', expected_status=code)
 
-        self.assertEqual(code, response.status_code)
         self.assertIn('Page Not Found', data)
 
     def test_error_405(self):
@@ -104,10 +81,8 @@ class ErrorsTest(TestCase):
         """
 
         code = 405
-        response = self.client.get('/abort/' + str(code))
-        data = response.get_data(as_text=True)
+        data = self.get(f'/abort/{code}', expected_status=code)
 
-        self.assertEqual(code, response.status_code)
         self.assertIn('Method Not Allowed', data)
 
     def test_error_500(self):
@@ -119,16 +94,6 @@ class ErrorsTest(TestCase):
         """
 
         code = 500
-        response = self.client.get('/abort/' + str(code))
-        data = response.get_data(as_text=True)
+        data = self.get(f'/abort/{code}', expected_status=code)
 
-        self.assertEqual(code, response.status_code)
         self.assertIn('Internal Error', data)
-
-
-def _aborting_route(code):
-    """
-        A simple view function aborting with the given `code`.
-    """
-
-    abort(int(code))

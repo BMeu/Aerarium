@@ -1,85 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase
 from unittest.mock import patch
 
-from app import create_app
 from app import db
 from app import mail
-from app.configuration import TestConfiguration
 from app.userprofile import Permission
-from app.userprofile import Role
 from app.userprofile import User
 from app.views.administration.forms import UserPasswordResetForm
 from app.views.administration.forms import UserSettingsResetForm
+from tests.views import ViewTestCase
 
 
-class UsersTest(TestCase):
-
-    # region Test Setup
-
-    def setUp(self):
-        """
-            Prepare the test cases.
-        """
-
-        self.app = create_app(TestConfiguration)
-        self.client = self.app.test_client()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        self.request_context = self.app.test_request_context()
-        self.request_context.push()
-        db.create_all()
-
-        # Create a role for accessing the user administration.
-        self.role = Role('Administrator')
-        self.role.permissions = Permission.EditUser
-        db.session.add(self.role)
-        db.session.commit()
-
-    def tearDown(self):
-        """
-            Clean up after each test case.
-        """
-
-        db.session.remove()
-        db.drop_all()
-        self.request_context.pop()
-        self.app_context.pop()
-
-    def create_and_login_test_user(self) -> User:
-        """
-            Create a test user and log them in.
-
-            :return: The created user.
-        """
-
-        email = 'doe@example.com'
-        password = 'ABC123!'
-        user = User(email, 'Jane Doe')
-        user.set_password(password)
-        user.role = self.role
-        db.session.add(user)
-        db.session.commit()
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password,
-        ))
-
-        return user
-
-    @staticmethod
-    def validate_on_submit_failure():
-        """
-            A mock method for validating forms that will always fail.
-
-            :return: `False`
-        """
-
-        return False
-
-    # endregion
+class UsersTest(ViewTestCase):
 
     def test_users_list(self):
         """
@@ -90,21 +22,12 @@ class UsersTest(TestCase):
 
         self.app.config['ITEMS_PER_PAGE'] = 2
 
+        role = self.create_role(Permission.EditUser)
+
         # Add users, but not sorted by name.
-        user_john = User('john@example.com', 'John')
-        db.session.add(user_john)
-
-        # Use this user to access the page.
-        email = 'johanna@example.com'
-        password = 'ABC123!'
-        user_johanna = User(email, 'Johanna')
-        user_johanna.set_password(password)
-        user_johanna.role = self.role
-        db.session.add(user_johanna)
-
-        user_jona = User('jona@example.com', 'Jona')
-        db.session.add(user_jona)
-        db.session.commit()
+        user_john = self.create_user(email='john@example.com', name='John', password='ABC123!')
+        user_johanna = self.create_and_login_user(email='johanna@example.com', name='Johanna', role=role)
+        user_jona = self.create_user(email='jona@example.com', name='Jona', password='ABC123!')
 
         users_assorted = [
             user_john,
@@ -116,13 +39,7 @@ class UsersTest(TestCase):
         users = User.query.all()
         self.assertListEqual(users_assorted, users)
 
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get('administration/users', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('administration/users')
 
         title_user_john = f'Edit user “{user_john.name}”'
         title_user_johanna = f'Edit user “{user_johanna.name}”'
@@ -146,13 +63,13 @@ class UsersTest(TestCase):
             Expected result: An error 404 is returned.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
         non_existing_user_id = user.id + 1
         self.assertIsNone(User.load_from_id(non_existing_user_id))
 
-        response = self.client.get(f'/administration/user/{non_existing_user_id}', follow_redirects=True)
-        self.assertEqual(404, response.status_code)
+        self.get(f'/administration/user/{non_existing_user_id}', expected_status=404)
 
     def test_user_header_get_existing_user(self):
         """
@@ -161,10 +78,10 @@ class UsersTest(TestCase):
             Expected result: The edit page is shown.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
-        response = self.client.get(f'/administration/user/{user.id}', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get(f'/administration/user/{user.id}')
 
         self.assertIn(f'Edit User “{user.name}”', data)
         self.assertIn(f'Edit the user\'s header data.', data)
@@ -177,13 +94,13 @@ class UsersTest(TestCase):
             Expected result: An error 404 is returned.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
         non_existing_user_id = user.id + 1
         self.assertIsNone(User.load_from_id(non_existing_user_id))
 
-        response = self.client.post(f'/administration/user/{non_existing_user_id}', follow_redirects=True, data=dict())
-        self.assertEqual(404, response.status_code)
+        self.post(f'/administration/user/{non_existing_user_id}', expected_status=404)
 
     def test_user_header_post_existing_user(self):
         """
@@ -192,10 +109,10 @@ class UsersTest(TestCase):
             Expected result: The edit page is shown.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
-        response = self.client.post(f'/administration/user/{user.id}', follow_redirects=True, data=dict())
-        data = response.get_data(as_text=True)
+        data = self.post(f'/administration/user/{user.id}')
 
         self.assertIn(f'Edit User “{user.name}”', data)
         self.assertIn(f'Edit the user\'s header data.', data)
@@ -208,13 +125,13 @@ class UsersTest(TestCase):
             Expected result: An error 404 is returned.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
         non_existing_user_id = user.id + 1
         self.assertIsNone(User.load_from_id(non_existing_user_id))
 
-        response = self.client.get(f'/administration/user/{non_existing_user_id}/security', follow_redirects=True)
-        self.assertEqual(404, response.status_code)
+        self.get(f'/administration/user/{non_existing_user_id}/security', expected_status=404)
 
     def test_user_security_existing_user(self):
         """
@@ -223,10 +140,10 @@ class UsersTest(TestCase):
             Expected result: The security settings are displayed.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
-        response = self.client.get(f'/administration/user/{user.id}/security', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get(f'/administration/user/{user.id}/security')
 
         self.assertIn('Edit the user\'s security settings.', data)
         self.assertIn('Reset Password', data)
@@ -238,10 +155,10 @@ class UsersTest(TestCase):
             Expected result: An error 405 is returned.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
-        response = self.client.get(f'/administration/user/{user.id}/security/reset-password', follow_redirects=True)
-        self.assertEqual(405, response.status_code)
+        self.get(f'/administration/user/{user.id}/security/reset-password', expected_status=405)
 
     def test_user_password_reset_post_no_user(self):
         """
@@ -250,15 +167,13 @@ class UsersTest(TestCase):
             Expected result: An error 404 is returned.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
         non_existing_user_id = user.id + 1
         self.assertIsNone(User.load_from_id(non_existing_user_id))
 
-        response = self.client.post(f'/administration/user/{non_existing_user_id}/security/reset-password',
-                                    follow_redirects=True,
-                                    data=dict())
-        self.assertEqual(404, response.status_code)
+        self.post(f'/administration/user/{non_existing_user_id}/security/reset-password', expected_status=404)
 
     def test_user_password_reset_post_success(self):
         """
@@ -267,19 +182,17 @@ class UsersTest(TestCase):
             Expected result: The password reset mail is sent.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
         with mail.record_messages() as outgoing:
-            response = self.client.post(f'/administration/user/{user.id}/security/reset-password',
-                                        follow_redirects=True,
-                                        data=dict())
-            data = response.get_data(as_text=True)
+            data = self.post(f'/administration/user/{user.id}/security/reset-password')
 
             self.assertIn('password has been reset. An email has been sent', data)
             self.assertEqual(1, len(outgoing))
             self.assertEqual([user.email], outgoing[0].recipients)
 
-    @patch.object(UserPasswordResetForm, 'validate_on_submit', validate_on_submit_failure)
+    @patch.object(UserPasswordResetForm, 'validate_on_submit', ViewTestCase.get_false)
     def test_user_password_reset_post_failure(self):
         """
             Test resetting a user's password with an invalid form.
@@ -287,13 +200,11 @@ class UsersTest(TestCase):
             Expected result: The password reset mail is not sent.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
         with mail.record_messages() as outgoing:
-            response = self.client.post(f'/administration/user/{user.id}/security/reset-password',
-                                        follow_redirects=True,
-                                        data=dict())
-            data = response.get_data(as_text=True)
+            data = self.post(f'/administration/user/{user.id}/security/reset-password')
 
             self.assertNotIn('password has been reset. An email has been sent', data)
             self.assertEqual(0, len(outgoing))
@@ -305,13 +216,13 @@ class UsersTest(TestCase):
             Expected result: An error 404 is returned.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
         non_existing_user_id = user.id + 1
         self.assertIsNone(User.load_from_id(non_existing_user_id))
 
-        response = self.client.get(f'/administration/user/{non_existing_user_id}/settings', follow_redirects=True)
-        self.assertEqual(404, response.status_code)
+        self.get(f'/administration/user/{non_existing_user_id}/settings', expected_status=404)
 
     def test_user_settings_get_existing_user(self):
         """
@@ -320,10 +231,10 @@ class UsersTest(TestCase):
             Expected result: The user's settings are displayed.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
-        response = self.client.get(f'/administration/user/{user.id}/settings', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get(f'/administration/user/{user.id}/settings')
 
         self.assertIn('Settings', data)
         self.assertNotIn('Your changes have been saved.', data)
@@ -338,15 +249,13 @@ class UsersTest(TestCase):
             Expected result: An error 404 is returned.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
         non_existing_user_id = user.id + 1
         self.assertIsNone(User.load_from_id(non_existing_user_id))
 
-        response = self.client.post(f'/administration/user/{non_existing_user_id}/settings',
-                                    follow_redirects=True,
-                                    data=dict())
-        self.assertEqual(404, response.status_code)
+        self.post(f'/administration/user/{non_existing_user_id}/settings', expected_status=404)
 
     def test_user_settings_post_existing_user(self):
         """
@@ -355,13 +264,13 @@ class UsersTest(TestCase):
             Expected result: The user's settings are changed and the new settings are displayed.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
         new_language = 'de'
-        response = self.client.post(f'/administration/user/{user.id}/settings', follow_redirects=True, data=dict(
+        data = self.post(f'/administration/user/{user.id}/settings', data=dict(
             language=new_language,
         ))
-        data = response.get_data(as_text=True)
 
         self.assertNotIn('Settings', data)
         self.assertIn('Einstellungen', data)
@@ -380,10 +289,10 @@ class UsersTest(TestCase):
             Expected result: An error 405 is returned.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
-        response = self.client.get(f'/administration/user/{user.id}/settings/reset', follow_redirects=True)
-        self.assertEqual(405, response.status_code)
+        self.get(f'/administration/user/{user.id}/settings/reset', expected_status=405)
 
     def test_user_settings_reset_post_no_user(self):
         """
@@ -392,15 +301,13 @@ class UsersTest(TestCase):
             Expected result: An error 404 is returned.
         """
 
-        user = self.create_and_login_test_user()
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
 
         non_existing_user_id = user.id + 1
         self.assertIsNone(User.load_from_id(non_existing_user_id))
 
-        response = self.client.post(f'/administration/user/{non_existing_user_id}/settings/reset',
-                                    follow_redirects=True,
-                                    data=dict())
-        self.assertEqual(404, response.status_code)
+        self.post(f'/administration/user/{non_existing_user_id}/settings/reset', expected_status=404)
 
     def test_user_settings_reset_post_success(self):
         """
@@ -409,22 +316,21 @@ class UsersTest(TestCase):
             Expected result: The settings are reset.
         """
 
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
+
         language = 'de'
-        user = self.create_and_login_test_user()
         user.settings.language = language
         db.session.commit()
 
         self.assertEqual(language, user.settings.language)
 
-        response = self.client.post(f'/administration/user/{user.id}/settings/reset',
-                                    follow_redirects=True,
-                                    data=dict())
-        data = response.get_data(as_text=True)
+        data = self.post(f'/administration/user/{user.id}/settings/reset')
 
         self.assertIn('The settings have been set to their default values.', data)
         self.assertEqual('en', user.settings.language)
 
-    @patch.object(UserSettingsResetForm, 'validate_on_submit', validate_on_submit_failure)
+    @patch.object(UserSettingsResetForm, 'validate_on_submit', ViewTestCase.get_false)
     def test_user_settings_reset_post_failure(self):
         """
             Test resetting some user's with an invalid form..
@@ -432,17 +338,16 @@ class UsersTest(TestCase):
             Expected result: The settings are not reset.
         """
 
+        role = self.create_role(Permission.EditUser)
+        user = self.create_and_login_user(role=role)
+
         language = 'de'
-        user = self.create_and_login_test_user()
         user.settings.language = language
         db.session.commit()
 
         self.assertEqual(language, user.settings.language)
 
-        response = self.client.post(f'/administration/user/{user.id}/settings/reset',
-                                    follow_redirects=True,
-                                    data=dict())
-        data = response.get_data(as_text=True)
+        data = self.post(f'/administration/user/{user.id}/settings/reset')
 
         self.assertNotIn('The settings have been set to their default values.', data)
         self.assertEqual(language, user.settings.language)

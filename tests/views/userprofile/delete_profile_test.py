@@ -1,50 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase
 from unittest.mock import patch
 
-from app import create_app
-from app import db
 from app import mail
-from app.configuration import TestConfiguration
 from app.userprofile import User
 from app.userprofile.tokens import DeleteAccountToken
 from app.views.userprofile.forms import DeleteUserProfileForm
+from tests.views import ViewTestCase
 
 
-class DeleteProfileTest(TestCase):
-
-    def setUp(self):
-        """
-            Initialize the test cases.
-        """
-
-        self.app = create_app(TestConfiguration)
-        self.client = self.app.test_client()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        self.request_context = self.app.test_request_context()
-        self.request_context.push()
-        db.create_all()
-
-    def tearDown(self):
-        """
-            Reset the test cases.
-        """
-
-        db.session.remove()
-        db.drop_all()
-        self.request_context.pop()
-        self.app_context.pop()
-
-    @staticmethod
-    def validate_on_submit():
-        """
-            A mock method for validating forms that will always fail.
-
-            :return: `False`
-        """
-        return False
+class DeleteProfileTest(ViewTestCase):
 
     # region Request
 
@@ -55,25 +20,10 @@ class DeleteProfileTest(TestCase):
             Expected result: An email with a link to delete the account is sent.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        self.create_and_login_user()
 
         with mail.record_messages() as outgoing:
-            response = self.client.post('/user/delete', follow_redirects=True, data=dict())
-            data = response.get_data(as_text=True)
+            data = self.post('/user/delete')
 
             self.assertEqual(1, len(outgoing))
             self.assertIn('Delete Your User Profile', outgoing[0].subject)
@@ -82,7 +32,7 @@ class DeleteProfileTest(TestCase):
             self.assertIn('to delete your user profile.', data)
             self.assertIn('<h1>User Profile</h1>', data)
 
-    @patch.object(DeleteUserProfileForm, 'validate_on_submit', validate_on_submit)
+    @patch.object(DeleteUserProfileForm, 'validate_on_submit', ViewTestCase.get_false)
     def test_delete_profile_request_failure_invalid_form(self):
         """
             Test requesting the deletion of the user's account with an invalid form.
@@ -90,25 +40,10 @@ class DeleteProfileTest(TestCase):
             Expected result: No email is sent.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        self.create_and_login_user()
 
         with mail.record_messages() as outgoing:
-            response = self.client.post('/user/delete', follow_redirects=True, data=dict())
-            data = response.get_data(as_text=True)
+            data = self.post('/user/delete')
 
             self.assertEqual(0, len(outgoing))
 
@@ -123,27 +58,12 @@ class DeleteProfileTest(TestCase):
             Expected result: No email is sent.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        user = self.create_and_login_user()
 
         user._email = None
 
         with mail.record_messages() as outgoing:
-            response = self.client.post('/user/delete', follow_redirects=True, data=dict())
-            data = response.get_data(as_text=True)
+            data = self.post('/user/delete')
 
             self.assertEqual(0, len(outgoing))
 
@@ -162,28 +82,14 @@ class DeleteProfileTest(TestCase):
             Expected result: The account is successfully deleted.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
-
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
+        user = self.create_and_login_user()
+        user_id = user.id
 
         token_obj = DeleteAccountToken()
-        token_obj.user_id = user.id
+        token_obj.user_id = user_id
 
         token = token_obj.create()
-        response = self.client.get('/user/delete/' + token, follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('/user/delete/' + token)
 
         self.assertIsNone(User.load_from_id(user_id))
         self.assertIn('Your user profile and all data linked to it have been deleted.', data)
@@ -195,26 +101,11 @@ class DeleteProfileTest(TestCase):
             Expected result: The account is not deleted.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        user = self.create_and_login_user()
+        user_id = user.id
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
+        data = self.get('/user/delete/invalid-token', expected_status=404)
 
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get('/user/delete/invalid-token', follow_redirects=True)
-        data = response.get_data(as_text=True)
-
-        self.assertEqual(404, response.status_code)
         self.assertIsNotNone(User.load_from_id(user_id))
         self.assertNotIn('Your user profile and all data linked to it have been deleted.', data)
 

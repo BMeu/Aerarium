@@ -1,39 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from unittest import TestCase
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
-from app import create_app
-from app import db
-from app.configuration import TestConfiguration
-from app.userprofile import User
+from tests.views import ViewTestCase
 
 
-class AuthenticationTest(TestCase):
-
-    def setUp(self):
-        """
-            Initialize the test cases.
-        """
-
-        self.app = create_app(TestConfiguration)
-        self.client = self.app.test_client()
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        self.request_context = self.app.test_request_context()
-        self.request_context.push()
-        db.create_all()
-
-    def tearDown(self):
-        """
-            Reset the test cases.
-        """
-
-        db.session.remove()
-        db.drop_all()
-        self.request_context.pop()
-        self.app_context.pop()
+class AuthenticationTest(ViewTestCase):
 
     # region Login
 
@@ -44,8 +17,7 @@ class AuthenticationTest(TestCase):
             Expected result: The user is displayed the login form.
         """
 
-        response = self.client.get('/user/login', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('/user/login')
 
         self.assertIn('<h1>Log In</h1>', data)
         self.assertIn('<form', data)
@@ -57,24 +29,9 @@ class AuthenticationTest(TestCase):
             Expected result: The user is redirected to the homepage.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        self.create_and_login_user()
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get('/user/login', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('/user/login')
 
         self.assertNotIn('<h1>Log In</h1>', data)
         self.assertIn('<h1>Dashboard</h1>', data)
@@ -89,19 +46,12 @@ class AuthenticationTest(TestCase):
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        self.create_user(email, name, password)
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        response = self.client.post('/user/login', follow_redirects=True, data=dict(
+        data = self.post('/user/login', data=dict(
             email=email,
             password=password
         ))
-        data = response.get_data(as_text=True)
 
         self.assertNotIn('<h1>Log In</h1>', data)
         self.assertIn('<h1>Dashboard</h1>', data)
@@ -117,23 +67,17 @@ class AuthenticationTest(TestCase):
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        self.create_user(email, name, password)
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        response = self.client.post('/user/login?next=some-other-page', follow_redirects=True, data=dict(
+        data = self.post('/user/login?next=user', expected_status=404, data=dict(
             email=email,
             password=password
         ))
-        data = response.get_data(as_text=True)
 
         self.assertNotIn('<h1>Log In</h1>', data)
         self.assertNotIn('<h1>Dashboard</h1>', data)
         self.assertIn(f'Welcome, {name}!', data)
+        self.assertIn(f'User Profile', data)
 
     def test_login_post_failure(self):
         """
@@ -145,19 +89,12 @@ class AuthenticationTest(TestCase):
         email = 'test@example.com'
         password = '123456'
         name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        self.create_user(email, name, password)
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        response = self.client.post('/user/login', follow_redirects=True, data=dict(
+        data = self.post('/user/login', data=dict(
             email=email,
             password='invalid' + password
         ))
-        data = response.get_data(as_text=True)
 
         self.assertIn('<h1>Log In</h1>', data)
         self.assertIn('Invalid email address or password.', data)
@@ -169,29 +106,14 @@ class AuthenticationTest(TestCase):
 
     def test_login_refresh_get_fresh(self):
         """
-            Test accessing the login refresh page with an freshly authorized user.
+            Test accessing the login refresh page with a freshly authorized user.
 
             Expected result: The user is redirected to the home page.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        self.create_and_login_user()
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get('/user/login/refresh', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('/user/login/refresh')
 
         self.assertNotIn('<h1>Confirm Login</h1>', data)
         self.assertIn('<h1>Dashboard</h1>', data)
@@ -206,24 +128,9 @@ class AuthenticationTest(TestCase):
 
         mock_login_fresh.return_value = False
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        self.create_and_login_user()
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get('/user/login/refresh', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('/user/login/refresh')
 
         self.assertIn('<h1>Confirm Login</h1>', data)
         self.assertNotIn('<h1>Dashboard</h1>', data)
@@ -238,26 +145,12 @@ class AuthenticationTest(TestCase):
 
         mock_login_fresh.return_value = False
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        password = 'ABC123!'
+        self.create_and_login_user(password=password)
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.post('/user/login/refresh', follow_redirects=True, data=dict(
+        data = self.post('/user/login/refresh', data=dict(
             password='invalid' + password
         ))
-        data = response.get_data(as_text=True)
 
         self.assertIn('<h1>Confirm Login</h1>', data)
         self.assertIn('Invalid password', data)
@@ -273,30 +166,16 @@ class AuthenticationTest(TestCase):
 
         mock_login_fresh.return_value = False
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        password = 'ABC123!'
+        user = self.create_and_login_user(password=password)
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
+        data = self.post('/user/login/refresh', data=dict(
             password=password
         ))
-
-        response = self.client.post('/user/login/refresh', follow_redirects=True, data=dict(
-            password=password
-        ))
-        data = response.get_data(as_text=True)
 
         self.assertNotIn('<h1>Confirm Login</h1>', data)
         self.assertNotIn('Invalid password', data)
-        self.assertIn(f'Welcome, {name}!', data)
+        self.assertIn(f'Welcome, {user.name}!', data)
         self.assertIn('<h1>Dashboard</h1>', data)
 
     # endregion
@@ -311,24 +190,9 @@ class AuthenticationTest(TestCase):
                              and shown a success message.
         """
 
-        email = 'test@example.com'
-        password = '123456'
-        name = 'John Doe'
-        user_id = 1
-        user = User(email, name)
-        user.set_password(password)
+        self.create_and_login_user()
 
-        db.session.add(user)
-        db.session.commit()
-        self.assertEqual(user_id, user.id)
-
-        self.client.post('/user/login', follow_redirects=True, data=dict(
-            email=email,
-            password=password
-        ))
-
-        response = self.client.get('/user/logout', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('/user/logout')
 
         self.assertIn('You were successfully logged out.', data)
         self.assertIn('<h1>Log In</h1>', data)
@@ -341,8 +205,7 @@ class AuthenticationTest(TestCase):
                              but not shown a success message.
         """
 
-        response = self.client.get('/user/logout', follow_redirects=True)
-        data = response.get_data(as_text=True)
+        data = self.get('/user/logout')
 
         self.assertNotIn('You were successfully logged out.', data)
         self.assertIn('<h1>Log In</h1>', data)
