@@ -19,6 +19,12 @@ from app.userprofile import User
 
 
 class ViewTestCase(TestCase):
+    """
+        This class is a base test case for all view tests, providing helpful methods that are needed in many situations.
+
+        All of these methods are themselves unit-tested within this class. Inheriting from this class will thus execute
+        all these tests in each child class.
+    """
 
     # region Test Setup
 
