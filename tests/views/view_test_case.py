@@ -3,6 +3,7 @@
 from typing import Any
 from typing import Dict
 from typing import Optional
+from typing import Set
 
 from unittest import TestCase
 
@@ -94,6 +95,82 @@ class ViewTestCase(TestCase):
 
         return data
 
+    def check_allowed_methods(self, url: str, allowed_methods: Optional[Set[str]] = None, allow_options: bool = True)\
+            -> None:
+        """
+            Check if the given URL can be accessed only by the specified methods.
+
+            This method will assert that the URL can be accessed by all HTTP methods listed in `allowed_methods` by
+            checking that a request via each of these methods to the URL does not return a response code of 405.
+            Likewise, it will test that all methods not listed in `allowed_methods` return a response code of 405.
+
+            Flask by default allows 'OPTIONS'. This method follows this behaviour and automatically adds 'OPTIONS' to
+            the set of allowed methods unless configured otherwise.
+
+            Flask also automatically allows 'HEAD' if 'GET' is allowed. This method follows this behaviour and always
+            adds 'HEAD' to the set of allowed methods if 'GET' is included in the set.
+
+            :param url: The URL to check.
+            :param allowed_methods: A set of all HTTP methods via which the URL can be accessed. If the set is not given
+                                    or an empty set of allowed methods is passed, 'GET' will automatically be allowed
+                                    to mimic Flask's behaviour. Defaults to `None`.
+            :param allow_options: If this parameter is set to `True`, 'OPTIONS' will automatically be added to the set
+                                  of allowed methods to follow Flask's behaviour. Defaults to `True`.
+        """
+
+        all_methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT']
+
+        # Be default, 'GET' is the only allowed method.
+        if allowed_methods is None or not allowed_methods:
+            allowed_methods = {'GET'}
+
+        # If 'GET' is allowed, Flask also allows 'HEAD' automatically.
+        if 'GET' in allowed_methods:
+            allowed_methods.add('HEAD')
+
+        # Follow Flask's behaviour and add 'OPTIONS' by default.
+        if allow_options:
+            allowed_methods.add('OPTIONS')
+
+        prohibited_methods = [method for method in all_methods if method not in allowed_methods]
+
+        for allowed_method in allowed_methods:
+            status_code = self._get_status_code_for_method(url, allowed_method)
+            self.assertNotEqual(405, status_code, f'{allowed_method} {url} is not allowed, but should be.')
+
+        for prohibited_method in prohibited_methods:
+            status_code = self._get_status_code_for_method(url, prohibited_method)
+            self.assertEqual(405, status_code, f'{prohibited_method} {url} is allowed, but should not be.')
+
+    def _get_status_code_for_method(self, url: str, method: str) -> int:
+        """
+            Access the given URL via the given HTTP method and return the response status code.
+
+            :param url: The URL to access.
+            :param method: The HTTP method used to access the URL.
+            :return: The HTTP status code that accessing the URL via the method returned.
+            :raise ValueError: if the HTTP method is invalid.
+        """
+
+        if method == 'DELETE':
+            response = self.client.delete(url)
+        elif method == 'GET':
+            response = self.client.get(url)
+        elif method == 'HEAD':
+            response = self.client.head(url)
+        elif method == 'OPTIONS':
+            response = self.client.options(url)
+        elif method == 'PATCH':
+            response = self.client.patch(url)
+        elif method == 'POST':
+            response = self.client.post(url)
+        elif method == 'PUT':
+            response = self.client.put(url)
+        else:
+            raise ValueError(f'Invalid HTTP method {method}')
+
+        return response.status_code
+
     @staticmethod
     def create_user(email: str, name: str, password: str, role: Optional[Role] = None) -> User:
         """
@@ -172,6 +249,16 @@ class ViewTestCase(TestCase):
 
         abort(code)
 
+    @staticmethod
+    def example_route() -> str:
+        """
+            A route handler that returns an example string as its response.
+
+            :return: 'Hello, world!'
+        """
+
+        return 'Hello, world!'
+
     @classmethod
     def get_false(cls) -> bool:
         """
@@ -232,6 +319,22 @@ class ViewTestCase(TestCase):
         self.assertIn('Welcome', data)
         self.assertNotIn('Log In', data)
 
+    def test_post_with_correct_status_and_no_data(self) -> None:
+        """
+            Test accessing a URL via HTTP POST and expecting the correct status, but passing no data.
+
+            Expected result: The response data is returned. No error is raised.
+        """
+
+        email = 'jane@doe.com'
+        name = 'Jane Doe'
+        password = 'ABC123!'
+        self.create_user(email, name, password)
+
+        data = self.post('/user/login')
+        self.assertNotIn('Welcome', data)
+        self.assertIn('Log In', data)
+
     def test_post_with_incorrect_status(self) -> None:
         """
             Test accessing a URL via HTTP POST and expecting an incorrect status.
@@ -249,6 +352,173 @@ class ViewTestCase(TestCase):
                 email=email,
                 password=password,
             ))
+
+    def test_check_allowed_methods_without_assertion_failures(self) -> None:
+        """
+            Test checking the allowed and prohibited methods of a URL when all assertions hold.
+
+            Expected result: No error is raised. 'OPTIONS' and 'HEAD' are automatically added to the allowed methods.
+        """
+
+        allowed_methods = ['GET', 'POST', 'PUT', 'OPTIONS', 'HEAD']
+        self.app.add_url_rule('/example', 'example', self.example_route, methods=allowed_methods)
+
+        self.check_allowed_methods('/example', {'GET', 'POST', 'PUT'})
+
+    def test_check_allowed_methods_with_unexpectedly_allowed_method(self) -> None:
+        """
+            Test checking the allowed and prohibited methods of a URL when there is a method that is allowed but
+            shouldn't be.
+
+            Expected result: An assertion error is raised with a message describing the failure.
+        """
+
+        self.app.add_url_rule('/example', 'example', self.example_route, methods=['POST', 'PUT'])
+
+        # PUT is allowed, but should not be allowed.
+        with self.assertRaises(self.failureException) as exception_cm:
+            self.check_allowed_methods('/example', {'POST'})
+
+        self.assertEqual('PUT /example is allowed, but should not be.', exception_cm.exception.msg)
+
+    def test_check_allowed_methods_with_unexpectedly_prohibited_method(self) -> None:
+        """
+            Test checking the allowed and prohibited methods of a URL when there is a method that is prohibited but
+            shouldn't be.
+
+            Expected result: An assertion error is raised with a message describing the failure.
+        """
+
+        self.app.add_url_rule('/example', 'example', self.example_route, methods=['POST'])
+
+        # PUT is not allowed, but should be.
+        with self.assertRaises(self.failureException) as exception_cm:
+            self.check_allowed_methods('/example', {'POST', 'PUT'})
+
+        # The error object does not have a `msg` attribute if it is raised from `assertNotEqual`.
+        self.assertEqual('405 == 405 : PUT /example is not allowed, but should be.', str(exception_cm.exception))
+
+    def test_check_allowed_methods_with_default_methods(self) -> None:
+        """
+            Test checking the allowed and prohibited methods of a URL when not specifying the allowed methods.
+
+            Expected result: 'GET' is automatically allowed and thus, will not raise an error.
+        """
+
+        self.app.add_url_rule('/example', 'example', self.example_route, methods=['GET'])
+
+        self.check_allowed_methods('/example')
+
+    def test_check_allowed_methods_without_options(self) -> None:
+        """
+            Test checking the allowed and prohibited methods of a URL when not automatically adding 'OPTIONS' to the
+            allowed methods.
+
+            Expected result: An error is raised that 'OPTIONS' is allowed, but should not be.
+        """
+
+        self.app.add_url_rule('/example', 'example', self.example_route, methods=['GET', 'OPTIONS'])
+
+        with self.assertRaises(self.failureException) as exception_cm:
+            self.check_allowed_methods('/example', {'GET'}, allow_options=False)
+
+        self.assertEqual('OPTIONS /example is allowed, but should not be.', exception_cm.exception.msg)
+
+    def test_get_status_code_for_method_delete(self) -> None:
+        """
+            Test that accessing a URL via DELETE.
+
+            Expected result: The correct status code is returned.
+        """
+
+        self.app.add_url_rule('/delete', 'delete', self.example_route, methods=['DELETE'])
+
+        status_code = self._get_status_code_for_method('/delete', 'DELETE')
+        self.assertEqual(200, status_code)
+
+    def test_get_status_code_for_method_get(self) -> None:
+        """
+            Test that accessing a URL via GET.
+
+            Expected result: The correct status code is returned.
+        """
+
+        self.app.add_url_rule('/get', 'get', self.example_route, methods=['GET'])
+
+        status_code = self._get_status_code_for_method('/get', 'GET')
+        self.assertEqual(200, status_code)
+
+    def test_get_status_code_for_method_head(self) -> None:
+        """
+            Test that accessing a URL via HEAD.
+
+            Expected result: The correct status code is returned.
+        """
+
+        self.app.add_url_rule('/head', 'head', self.example_route, methods=['HEAD'])
+
+        status_code = self._get_status_code_for_method('/head', 'HEAD')
+        self.assertEqual(200, status_code)
+
+    def test_get_status_code_for_method_options(self) -> None:
+        """
+            Test that accessing a URL via OPTIONS.
+
+            Expected result: The correct status code is returned.
+        """
+
+        self.app.add_url_rule('/options', 'options', self.example_route, methods=['OPTIONS'])
+
+        status_code = self._get_status_code_for_method('/options', 'OPTIONS')
+        self.assertEqual(200, status_code)
+
+    def test_get_status_code_for_method_patch(self) -> None:
+        """
+            Test that accessing a URL via PATCH.
+
+            Expected result: The correct status code is returned.
+        """
+
+        self.app.add_url_rule('/patch', 'patch', self.example_route, methods=['PATCH'])
+
+        status_code = self._get_status_code_for_method('/patch', 'PATCH')
+        self.assertEqual(200, status_code)
+
+    def test_get_status_code_for_method_post(self) -> None:
+        """
+            Test that accessing a URL via POST.
+
+            Expected result: The correct status code is returned.
+        """
+
+        self.app.add_url_rule('/post', 'post', self.example_route, methods=['POST'])
+
+        status_code = self._get_status_code_for_method('/post', 'POST')
+        self.assertEqual(200, status_code)
+
+    def test_get_status_code_for_method_put(self) -> None:
+        """
+            Test that accessing a URL via PUT.
+
+            Expected result: The correct status code is returned.
+        """
+
+        self.app.add_url_rule('/put', 'put', self.example_route, methods=['PUT'])
+
+        status_code = self._get_status_code_for_method('/put', 'PUT')
+        self.assertEqual(200, status_code)
+
+    def test_get_status_code_for_method_invalid_method(self) -> None:
+        """
+            Test that accessing a URL via an invalid method.
+
+            Expected result: A value error is raised.
+        """
+
+        with self.assertRaises(ValueError) as exception_cm:
+            self._get_status_code_for_method('/invalid', 'INVALID')
+
+        self.assertEqual('Invalid HTTP method INVALID', str(exception_cm.exception))
 
     def test_create_user_without_role(self) -> None:
         """
@@ -334,11 +604,20 @@ class ViewTestCase(TestCase):
         """
             Test the aborting route handler for a 404 error.
 
-            :return: The NotFound error is raised.
+            Expected result: The NotFound error is raised.
         """
 
         with self.assertRaises(NotFound):
             self.aborting_route(404)
+
+    def test_example_route(self) -> None:
+        """
+            Test the example route handle.
+
+            Expected result: 'Hello, world!' is returned.
+        """
+
+        self.assertEqual('Hello, world!', self.example_route())
 
     def test_get_false(self) -> None:
         """
