@@ -3,6 +3,7 @@
 from werkzeug.exceptions import NotFound
 
 from app.userprofile import Permission
+from app.userprofile import permission_required
 from app.userprofile import Role
 from app.userprofile import User
 from tests.views import ViewTestCase
@@ -255,6 +256,52 @@ class ViewTestCaseTest(ViewTestCase):
             self._get_status_code_for_method('/invalid', 'INVALID')
 
         self.assertEqual('Invalid HTTP method INVALID', str(exception_cm.exception))
+
+    def test_assert_permission_required_with_correct_permissions(self) -> None:
+        """
+            Test accessing a URL that requires a certain permission if the permission is correctly defined.
+
+            Expected result: No errors are raised.
+        """
+
+        decorator = permission_required(Permission.EditRole)
+        decorated_view = decorator(self.example_route)
+        self.app.add_url_rule('/example', 'example', decorated_view, methods=['GET', 'POST'])
+
+        self.assert_permission_required('/example', Permission.EditRole)
+        self.assert_permission_required('/example', Permission.EditRole, method='POST')
+
+    def test_assert_permission_required_with_incorrect_permissions(self) -> None:
+        """
+            Test accessing a URL that requires a certain permission if the permission is incorrectly defined.
+
+            Expected result: No errors are raised.
+        """
+
+        decorator = permission_required(Permission.EditRole)
+        decorated_view = decorator(self.example_route)
+        self.app.add_url_rule('/example', 'example', decorated_view)
+
+        with self.assertRaises(self.failureException) as exception_cm:
+            self.assert_permission_required('/example', Permission.EditUser)
+
+        message = '403 == 403 : GET /example must be accessible with permission Permission.EditUser, but it is not.'
+        self.assertEqual(message, str(exception_cm.exception))
+
+    def test_assert_permission_required_without_required_permissions(self) -> None:
+        """
+            Test accessing a URL that requires a certain permission if the URL does not require any permissions.
+
+            Expected result: No errors are raised.
+        """
+
+        self.app.add_url_rule('/example', 'example', self.example_route)
+
+        with self.assertRaises(self.failureException) as exception_cm:
+            self.assert_permission_required('/example', Permission.EditUser)
+
+        message = 'GET /example must not be accessible without permission Permission.EditUser, but it is.'
+        self.assertEqual(message, exception_cm.exception.msg)
 
     # endregion
 

@@ -145,6 +145,43 @@ class ViewTestCase(TestCase):
             status_code = self._get_status_code_for_method(url, prohibited_method)
             self.assertEqual(405, status_code, f'{prohibited_method} {url} is allowed, but should not be.')
 
+    def assert_permission_required(self, url: str, permission: Permission, method: str = 'GET') -> None:
+        """
+            Assert that accessing the URL via the given method requires the specified permission and that accessing the
+            URL with the permission is actually possible.
+
+            The test checks for a response code of 403. This can lead to a false positive if a route does not require
+            the specified permission but aborts with an error 403 in some other case.
+
+            :param url: The URL to access.
+            :param permission: The permission that must be required to access the URL.
+            :param method: The HTTP method to access the URL by. Defaults to `'GET'`.
+        """
+
+        # Access the URL without the required permission. This must not be possible.
+        user = self.create_and_login_user()
+        status_code = self._get_status_code_for_method(url, method)
+        self.assertEqual(403, status_code,
+                         f'{method} {url} must not be accessible without permission {permission}, but it is.')
+
+        # Delete the user so that the method can be called multiple times in the same test.
+        user._delete()
+
+        # Access the URL with the required permission. This must be possible.
+        role = self.create_role(permission)
+        user = self.create_and_login_user(role=role)
+
+        status_code = self._get_status_code_for_method(url, method)
+        self.assertNotEqual(403, status_code,
+                            f'{method} {url} must be accessible with permission {permission}, but it is not.')
+
+        # Delete the user and role so that the method can be called multiple times in the same test.
+        # Since the role might be the only role with permissions to edit roles, we cannot use role.delete() which will
+        # fail in such a case.
+        user._delete()
+        db.session.delete(role)
+        db.session.commit()
+
     def _get_status_code_for_method(self, url: str, method: str) -> int:
         """
             Access the given URL via the given HTTP method and return the response status code.
