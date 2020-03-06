@@ -50,7 +50,7 @@ class ViewTestCase(TestCase):
 
     # endregion
 
-    # region Helper Methods
+    # region Route Accessing
 
     def get(self, url: str, expected_status: int = 200, follow_redirects: bool = True) -> str:
         """
@@ -174,6 +174,10 @@ class ViewTestCase(TestCase):
 
         return response.status_code
 
+    # endregion
+
+    # region Application Entities
+
     @staticmethod
     def create_user(email: str, name: str, password: str, role: Optional[Role] = None) -> User:
         """
@@ -242,6 +246,10 @@ class ViewTestCase(TestCase):
 
         return role
 
+    # endregion
+
+    # region Routes
+
     @staticmethod
     def aborting_route(code: int) -> None:
         """
@@ -261,6 +269,10 @@ class ViewTestCase(TestCase):
         """
 
         return 'Hello, world!'
+
+    # endregion
+
+    # region Other Helper Methods
 
     @classmethod
     def get_false(cls) -> bool:
