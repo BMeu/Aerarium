@@ -10,6 +10,8 @@ from tests.views import ViewTestCase
 
 class ViewTestCaseTest(ViewTestCase):
 
+    # region Route Accessing
+
     def test_get_with_correct_status(self) -> None:
         """
             Test accessing a URL via HTTP GET and expecting the correct status.
@@ -254,6 +256,10 @@ class ViewTestCaseTest(ViewTestCase):
 
         self.assertEqual('Invalid HTTP method INVALID', str(exception_cm.exception))
 
+    # endregion
+
+    # region Application Entities
+
     def test_create_user_without_role(self) -> None:
         """
             Test creating a new user without a role.
@@ -334,6 +340,10 @@ class ViewTestCaseTest(ViewTestCase):
         self.assertFalse(role.has_permissions_one_of(Permission.EditGlobalSettings))
         self.assertEqual(role, Role.load_from_id(role.id))
 
+    # endregion
+
+    # region Routes
+
     def test_aborting_route(self) -> None:
         """
             Test the aborting route handler for a 404 error.
@@ -353,6 +363,10 @@ class ViewTestCaseTest(ViewTestCase):
 
         self.assertEqual('Hello, world!', self.example_route())
 
+    # endregion
+
+    # region Other Helper Methods
+
     def test_get_false(self) -> None:
         """
             Test getting `False`.
@@ -361,3 +375,5 @@ class ViewTestCaseTest(ViewTestCase):
         """
 
         self.assertFalse(self.get_false())
+
+    # endregion
