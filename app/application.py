@@ -70,14 +70,14 @@ def create_app(configuration_class: Type[BaseConfiguration] = BaseConfiguration)
 
         # Warn on missing system administrator addresses (no logs can be sent) if a mail server is configured.
         if application.config['MAIL_SERVER'] and application.config['SYS_ADMINS'] is None:
-            message = 'No system administrator email addresses defined. In case of severe failures, logs cannot be '\
-                    'sent by mail.'
+            message = 'No system administrator email addresses defined. In case of severe failures, logs cannot be ' \
+                      'sent by mail.'
             application.logger.warn(message)
 
         # Exit on missing a secret key (user sessions cannot be encrypted).
         if application.config['SECRET_KEY'] is None:
-            message = 'No secret key defined. Set one using the configuration variable SECRET_KEY. Exiting due to '\
-                    'severe security vulnerabilities without a secret key in production mode.'
+            message = 'No secret key defined. Set one using the configuration variable SECRET_KEY. Exiting due to ' \
+                      'severe security vulnerabilities without a secret key in production mode.'
             print(message)
             application.logger.error(message)
             sys.exit(1)

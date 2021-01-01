@@ -20,18 +20,18 @@ from app.email import Email
 from app.pagination import Pagination
 
 __all__ = [
-            'babel',
-            'bcrypt',
-            'create_app',
-            'csrf',
-            'db',
-            'Email',
-            'get_app',
-            'login',
-            'mail',
-            'migrate',
-            'Pagination',
-            'register_after_request_handlers',
-            'register_before_request_handlers',
-            'timedelta_to_minutes',
-           ]
+    'babel',
+    'bcrypt',
+    'create_app',
+    'csrf',
+    'db',
+    'Email',
+    'get_app',
+    'login',
+    'mail',
+    'migrate',
+    'Pagination',
+    'register_after_request_handlers',
+    'register_before_request_handlers',
+    'timedelta_to_minutes',
+]

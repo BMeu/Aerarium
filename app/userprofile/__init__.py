@@ -16,14 +16,14 @@ from app.userprofile.decorators import permission_required_all
 from app.userprofile.decorators import permission_required_one_of
 
 __all__ = [
-            'logout_required',
-            'Permission',
-            'permission_required',
-            'permission_required_all',
-            'permission_required_one_of',
-            'Role',
-            'RolePagination',
-            'User',
-            'UserPagination',
-            'UserSettings',
-          ]
+    'logout_required',
+    'Permission',
+    'permission_required',
+    'permission_required_all',
+    'permission_required_one_of',
+    'Role',
+    'RolePagination',
+    'User',
+    'UserPagination',
+    'UserSettings',
+]

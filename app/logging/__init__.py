@@ -10,8 +10,8 @@ from app.logging.handler_factories import create_mail_handler
 from app.logging.handler_factories import create_stream_handler
 
 __all__ = [
-            'create_file_handler',
-            'create_mail_handler',
-            'create_stream_handler',
-            'SecureSMTPHandler'
-          ]
+    'create_file_handler',
+    'create_mail_handler',
+    'create_stream_handler',
+    'SecureSMTPHandler'
+]
