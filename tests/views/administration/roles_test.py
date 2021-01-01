@@ -28,6 +28,7 @@ class RolesTest(ViewTestCase):
         ]
 
         # Ensure that they are not sorted by name on the DB.
+        # noinspection PyUnresolvedReferences
         roles = Role.query.all()
         self.assertListEqual(roles_assorted, roles)
 
@@ -473,4 +474,5 @@ class RolesTest(ViewTestCase):
         self.assertIsNotNone(other_role.id)
         self.assertNotIn('<h1>Edit Role “', data)
         self.assertIn('The role has been deleted.', data)
+        # noinspection PyUnresolvedReferences
         self.assertEqual(other_role, other_user.role)

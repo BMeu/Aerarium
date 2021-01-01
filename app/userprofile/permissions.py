@@ -5,13 +5,21 @@
 """
 
 from typing import cast
+from typing import Iterator
 from typing import Optional
+from typing import Set
+from typing import Tuple
+from typing import Type
+from typing import TypeVar
 
 from enum import Flag
+from itertools import combinations
 
 from flask_babel import lazy_gettext as _l
 
 from app.tools.math import is_power_of_two
+
+PermissionType = TypeVar('PermissionType', bound='PermissionBase')
 
 
 class PermissionBase(Flag):
@@ -69,6 +77,70 @@ class PermissionBase(Flag):
 
         self.title = title
         self.description = description
+
+    @classmethod
+    def get_permissions(cls: Type[PermissionType],
+                        include_empty_permission: bool = False,
+                        all_combinations: bool = False) \
+            -> Set[PermissionType]:
+        """
+            Get a list of all permissions.
+
+            The result list will be in the order of definition of the permissions. If the empty permissions is included,
+            it will be the first element of the list.
+
+            TODO: Complete documentation.
+            If all combinations of permissions are created, the result list will
+
+            # Example
+
+
+
+            :param include_empty_permission: Include the empty permission if set to `True`. Defaults to `False`.
+            :param all_combinations: Get all possible combinations of the permissions if set to `True`. Defaults to
+                                     `False`.
+            :return: A list of permissions.
+        """
+
+        # Get all defined permissions for the result list.
+        permissions: Set[PermissionType] = set(cls)
+
+        # Create all combinations of the singular permissions, starting with two singular permissions per element up
+        # to all permissions.
+        if all_combinations:
+            length = len(permissions)
+            for r in range(2, length + 1):
+
+                # Get all combinations of the defined permissions of the current length `r`.
+                subsequences: Iterator[Tuple[PermissionType, ...]] = combinations(list(cls), r)
+                for subsequence in subsequences:
+
+                    # Combine all permissions of this subsequence into a single permission.
+                    permission = cls(0)
+                    for p in subsequence:
+                        permission |= p
+
+                    # Add this combined permission.
+                    permissions.add(permission)
+
+        # Include the empty permission in the beginning.
+        if include_empty_permission:
+            permissions.add(cls(0))
+
+        return permissions
+
+    def includes_permission(self, other_permission: PermissionType) -> bool:
+        """
+            Determine if this (combination of) permission includes the given other permission.
+
+            :param other_permission: The other permission that will be checked
+            :return: `True` if `other_permission` is included in this permission, `False` otherwise.
+        """
+
+        if type(self) is not type(other_permission):
+            return False
+
+        return self & other_permission == other_permission
 
 
 class Permission(PermissionBase):

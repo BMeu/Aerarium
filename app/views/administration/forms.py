@@ -364,19 +364,14 @@ def create_permission_form(form_class: Type[BasePermissionForm], preset_permissi
         disabled_permissions = Permission(0)
 
     # Insert the permission fields.
-    # noinspection PyTypeChecker
-    permissions = list(Permission)
+    permissions = Permission.get_permissions()
     for permission in sorted(permissions, key=lambda p: p.title):
 
         # Preset the permission field if necessary.
-        default = False
-        if permission & preset_permissions == permission:
-            default = True
+        default = preset_permissions.includes_permission(permission)
 
         # Disable the field if necessary.
-        disabled = False
-        if permission & disabled_permissions == permission:
-            disabled = True
+        disabled = disabled_permissions.includes_permission(permission)
 
         # Create the field.
         field_name = permission.name.lower()

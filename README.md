@@ -28,7 +28,7 @@ _TODO_
 
 Aerarium allows configuration in two ways: you can either use environment variables or use a `.env` file in the
 [`instance`](instance) folder. All configuration options are explained in the included example file
-[`instance/example.env`](instance/example.env). To use your own settings, simply rename this file to `.env`. All of the
+[`instance/example.env`](instance/example.env). To use your own settings, simply rename this file to `.env`. All the
 options can also directly be used as environment variables instead. 
 
 ## Contribution
@@ -160,7 +160,7 @@ When you submit a pull request, please ensure that your changes fulfill the foll
     
     This makes it easier to find imports and spot changes in commits.
 * All texts that are displayed to the user must be localizable. If you added, changed, or deleted some of those texts
-  put a note in the pull request so the translators can be informed, and update the translation files:
+  put a note in the pull request, so the translators can be informed, and update the translation files:
   ```bash
   flask translate update
   ``` 

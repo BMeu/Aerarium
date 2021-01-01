@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from typing import Set
+
 from werkzeug.exceptions import NotFound
 
 from app.userprofile import Permission
 from app.userprofile import permission_required
+from app.userprofile import permission_required_all
+from app.userprofile import permission_required_one_of
 from app.userprofile import Role
 from app.userprofile import User
 from tests.views import ViewTestCase
@@ -257,9 +261,86 @@ class ViewTestCaseTest(ViewTestCase):
 
         self.assertEqual('Invalid HTTP method INVALID', str(exception_cm.exception))
 
+    # endregion
+
+    # region Permissions
+
+    @staticmethod
+    def _get_messages_for_inaccessible_url(permissions: Set[Permission]) -> Set[str]:
+        """
+            Get the failure message for each given permission when a URL should be accessible with the permission,
+            but it is not.
+
+            The HTTP method in the message will always be 'GET', the URL '/example'.
+
+            :param permissions: The permissions for which the failure messages will be created.
+            :return: A set of all messages, one for each permission.
+        """
+
+        messages = set()
+        for permission in permissions:
+            messages.add(f'403 == 403 : GET /example must be accessible with permission {permission}, but it is not.')
+
+        return messages
+
+    @staticmethod
+    def _get_messages_for_accessible_url(permissions: Set[Permission]) -> Set[str]:
+        """
+            Get the failure message for each given permission when a URL should not be accessible with the permission,
+            but it is.
+
+            The HTTP method in the message will always be 'GET', the URL '/example'.
+
+            :param permissions: The permissions for which the failure messages will be created.
+            :return: A set of all message, one for each permissions.
+        """
+
+        messages = set()
+        for permission in permissions:
+            messages.add(f'GET /example must not be accessible with permission {permission}, but it is.')
+
+        return messages
+
+    def test_assert_no_permission_required_if_no_permission_is_required(self) -> None:
+        """
+            Test the assertion `assert_no_permission_required` if the accessed URL does in fact not require any
+            permissions.
+
+            Expected result: No errors are raised.
+        """
+
+        self.app.add_url_rule('/example', 'example', self.example_route, methods=['GET', 'POST'])
+
+        self.assert_no_permission_required('/example')
+        self.assert_no_permission_required('/example', method='POST')
+
+    def test_assert_no_permission_required_but_url_requires_a_permission(self) -> None:
+        """
+            Test the assertion `assert_no_permission_required` if the accessed URL requires a permission.
+
+            Expected result: An error is raised for any permission other than the required one.
+        """
+
+        decorator = permission_required(Permission.EditUser)
+        decorated_view = decorator(self.example_route)
+        self.app.add_url_rule('/example', 'example', decorated_view)
+
+        with self.assertRaises(self.failureException) as exception_cm:
+            self.assert_no_permission_required('/example')
+
+        # The assertion can fail for any of these permissions since the assertion uses sets.
+        expected_messages = self._get_messages_for_inaccessible_url({
+            Permission(0),
+            Permission.EditRole,
+            Permission.EditGlobalSettings,
+            Permission.EditRole | Permission.EditGlobalSettings
+        })
+
+        self.assertIn(str(exception_cm.exception), expected_messages)
+
     def test_assert_permission_required_with_correct_permissions(self) -> None:
         """
-            Test accessing a URL that requires a certain permission if the permission is correctly defined.
+            Test the assertion `assert_permission_required` with the permission that the accessed URL requires.
 
             Expected result: No errors are raised.
         """
@@ -273,9 +354,10 @@ class ViewTestCaseTest(ViewTestCase):
 
     def test_assert_permission_required_with_incorrect_permissions(self) -> None:
         """
-            Test accessing a URL that requires a certain permission if the permission is incorrectly defined.
+            Test the assertion `assert_permission_required` with a different permission than the one required by the
+            URL.
 
-            Expected result: No errors are raised.
+            Expected result: An error is raised than the different one.
         """
 
         decorator = permission_required(Permission.EditRole)
@@ -285,14 +367,20 @@ class ViewTestCaseTest(ViewTestCase):
         with self.assertRaises(self.failureException) as exception_cm:
             self.assert_permission_required('/example', Permission.EditUser)
 
-        message = '403 == 403 : GET /example must be accessible with permission Permission.EditUser, but it is not.'
-        self.assertEqual(message, str(exception_cm.exception))
+        # The assertion can fail for any of these permissions since the assertion uses sets.
+        expected_messages = self._get_messages_for_inaccessible_url({
+            Permission.EditUser,
+            Permission.EditUser | Permission.EditGlobalSettings,
+        })
+
+        self.assertIn(str(exception_cm.exception), expected_messages)
 
     def test_assert_permission_required_without_required_permissions(self) -> None:
         """
-            Test accessing a URL that requires a certain permission if the URL does not require any permissions.
+            Test the assertion `assert_permission_required` assuming that a URL requires a permission, while in fact, it
+            does not.
 
-            Expected result: No errors are raised.
+            Expected result: An error is raised for any other permission than the assumed one.
         """
 
         self.app.add_url_rule('/example', 'example', self.example_route)
@@ -300,8 +388,130 @@ class ViewTestCaseTest(ViewTestCase):
         with self.assertRaises(self.failureException) as exception_cm:
             self.assert_permission_required('/example', Permission.EditUser)
 
-        message = 'GET /example must not be accessible without permission Permission.EditUser, but it is.'
-        self.assertEqual(message, exception_cm.exception.msg)
+        expected_messages = self._get_messages_for_accessible_url({
+            Permission(0),
+            Permission.EditRole,
+            Permission.EditGlobalSettings,
+            Permission.EditRole | Permission.EditGlobalSettings,
+        })
+        self.assertIn(exception_cm.exception.msg, expected_messages)
+
+    def test_assert_permission_required_one_of_with_correct_permissions(self) -> None:
+        """
+            Test the assertion `assert_permission_required_one_of` with the same permissions that are required by the
+            URL.
+
+            Expected result: No errors are raised.
+        """
+
+        decorator = permission_required_one_of(Permission.EditRole, Permission.EditUser)
+        decorated_view = decorator(self.example_route)
+        self.app.add_url_rule('/example', 'example', decorated_view, methods=['GET', 'POST'])
+
+        self.assert_permission_required_one_of('/example', Permission.EditRole, Permission.EditUser)
+        self.assert_permission_required_one_of('/example', Permission.EditRole, Permission.EditUser, method='POST')
+
+    def test_assert_permission_required_one_of_with_too_many_permissions(self) -> None:
+        """
+            Test the assertion `assert_permission_required_one_of` with more permissions than actually required by the
+            URL.
+
+            Expected result: An error is raised for the permission that is given in the assertion, but in in fact not
+                             required.
+        """
+
+        decorator = permission_required_one_of(Permission.EditRole, Permission.EditUser)
+        decorated_view = decorator(self.example_route)
+        self.app.add_url_rule('/example', 'example', decorated_view)
+
+        with self.assertRaises(self.failureException) as exception_cm:
+            self.assert_permission_required_one_of('/example', Permission.EditRole, Permission.EditUser,
+                                                   Permission.EditGlobalSettings)
+
+        expected_messages = self._get_messages_for_inaccessible_url({
+            Permission.EditGlobalSettings,
+        })
+        self.assertIn(str(exception_cm.exception), expected_messages)
+
+    def test_assert_permission_required_one_of_with_too_few_permissions(self) -> None:
+        """
+            Test the assertion `assert_permission_required_one_of` with fewer permissions than actually required by the
+            URL.
+
+            Expected result: An error is raised for the permission that is in fact required, but not given in the
+                             assertion.
+        """
+
+        decorator = permission_required_one_of(Permission.EditRole, Permission.EditUser, Permission.EditGlobalSettings)
+        decorated_view = decorator(self.example_route)
+        self.app.add_url_rule('/example', 'example', decorated_view)
+
+        with self.assertRaises(self.failureException) as exception_cm:
+            self.assert_permission_required_one_of('/example', Permission.EditRole, Permission.EditUser)
+
+        expected_messages = self._get_messages_for_accessible_url({
+            Permission.EditGlobalSettings,
+        })
+        self.assertIn(exception_cm.exception.msg, expected_messages)
+
+    def test_assert_permission_required_all_with_correct_permissions(self) -> None:
+        """
+            Test the assertion `assert_permission_required_all` with the same permissions that are required by the
+            URL.
+
+            Expected result: No errors are raised.
+        """
+
+        decorator = permission_required_all(Permission.EditRole, Permission.EditUser)
+        decorated_view = decorator(self.example_route)
+        self.app.add_url_rule('/example', 'example', decorated_view, methods=['GET', 'POST'])
+
+        self.assert_permission_required_all('/example', Permission.EditRole, Permission.EditUser)
+        self.assert_permission_required_all('/example', Permission.EditRole, Permission.EditUser, method='POST')
+
+    def test_assert_permission_required_all_with_too_many_permissions(self) -> None:
+        """
+            Test the assertion `assert_permission_required_all` with more permissions than actually required by the URL.
+
+            Expected result: An error is raised that the URL is accessible with the permissions that are actually
+                             required.
+        """
+
+        decorator = permission_required_all(Permission.EditRole, Permission.EditUser)
+        decorated_view = decorator(self.example_route)
+        self.app.add_url_rule('/example', 'example', decorated_view)
+
+        with self.assertRaises(self.failureException) as exception_cm:
+            self.assert_permission_required_all('/example', Permission.EditRole, Permission.EditUser,
+                                                Permission.EditGlobalSettings)
+
+        expected_messages = self._get_messages_for_accessible_url({
+            Permission.EditUser | Permission.EditRole,
+        })
+
+        self.assertIn(exception_cm.exception.msg, expected_messages)
+
+    def test_assert_permission_required_all_with_too_few_permissions(self) -> None:
+        """
+            Test the assertion `assert_permission_required_all` with fewer permissions than actually required by the
+            URL.
+
+            Expected result: An error is raised that the URL is not accessible with the permissions given in the
+                             assertion.
+        """
+
+        decorator = permission_required_all(Permission.EditRole, Permission.EditUser, Permission.EditGlobalSettings)
+        decorated_view = decorator(self.example_route)
+        self.app.add_url_rule('/example', 'example', decorated_view)
+
+        with self.assertRaises(self.failureException) as exception_cm:
+            self.assert_permission_required_all('/example', Permission.EditRole, Permission.EditUser)
+
+        expected_messages = self._get_messages_for_inaccessible_url({
+            Permission.EditUser | Permission.EditRole,
+        })
+
+        self.assertIn(str(exception_cm.exception), expected_messages)
 
     # endregion
 

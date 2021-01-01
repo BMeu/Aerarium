@@ -97,6 +97,132 @@ class PermissionBaseTest(TestCase):
         self.assertEqual('EditRole', TestPermission.EditRole.title)
         self.assertIsNone(TestPermission.EditRole.description)
 
+    def test_get_permissions_without_empty_permission_and_combinations(self) -> None:
+        """
+            Test getting all permissions, without the empty permission and combinations.
+
+            Expected result: All defined permissions are returned, without any extra elements in the result.
+        """
+
+        class TestPermission(PermissionBase):
+            """
+                A permission enumeration for testing.
+            """
+
+            EditUser = 1
+            EditRole = 2
+            EditGlobalSettings = 4
+
+        expected_permissions = {
+            TestPermission.EditUser,
+            TestPermission.EditRole,
+            TestPermission.EditGlobalSettings,
+        }
+
+        permissions = TestPermission.get_permissions()
+        self.assertSetEqual(expected_permissions, permissions)
+
+    def test_get_permissions_with_empty_permission_and_without_combinations(self) -> None:
+        """
+            Test getting all permissions, including the empty permission, but no combinations.
+
+            Expected result: All defined permissions are returned, including the empty permission.
+        """
+
+        class TestPermission(PermissionBase):
+            """
+                A permission enumeration for testing.
+            """
+
+            EditUser = 1
+            EditRole = 2
+            EditGlobalSettings = 4
+
+        expected_permissions = {
+            TestPermission(0),
+            TestPermission.EditUser,
+            TestPermission.EditRole,
+            TestPermission.EditGlobalSettings,
+        }
+
+        permissions = TestPermission.get_permissions(include_empty_permission=True)
+        self.assertSetEqual(expected_permissions, permissions)
+
+    def test_get_permissions_without_empty_permission_and_with_combinations(self) -> None:
+        """
+            Test getting all permissions, without the empty permission, but with combinations.
+
+            Expected result: All defined permissions and all combinations of these permissions are returned, without
+                             the empty permission.
+        """
+
+        class TestPermission(PermissionBase):
+            """
+                A permission enumeration for testing.
+            """
+
+            EditUser = 1
+            EditRole = 2
+            EditGlobalSettings = 4
+
+        expected_permissions = {
+            TestPermission.EditUser,
+            TestPermission.EditRole,
+            TestPermission.EditGlobalSettings,
+            TestPermission.EditUser | TestPermission.EditRole,
+            TestPermission.EditUser | TestPermission.EditGlobalSettings,
+            TestPermission.EditRole | TestPermission.EditGlobalSettings,
+            TestPermission.EditUser | TestPermission.EditRole | TestPermission.EditGlobalSettings,
+        }
+
+        permissions = TestPermission.get_permissions(all_combinations=True)
+        self.assertSetEqual(expected_permissions, permissions)
+
+    def test_get_permissions_with_empty_permission_and_with_combinations(self) -> None:
+        """
+            Test getting all permissions, with the empty permission and combinations.
+
+            Expected result: All defined permissions and all combinations of these permissions are returned, including
+                             the empty permission.
+        """
+
+        class TestPermission(PermissionBase):
+            """
+                A permission enumeration for testing.
+            """
+
+            EditUser = 1
+            EditRole = 2
+            EditGlobalSettings = 4
+
+        expected_permissions = {
+            TestPermission(0),
+            TestPermission.EditUser,
+            TestPermission.EditRole,
+            TestPermission.EditGlobalSettings,
+            TestPermission.EditUser | TestPermission.EditRole,
+            TestPermission.EditUser | TestPermission.EditGlobalSettings,
+            TestPermission.EditRole | TestPermission.EditGlobalSettings,
+            TestPermission.EditUser | TestPermission.EditRole | TestPermission.EditGlobalSettings,
+        }
+
+        permissions = TestPermission.get_permissions(include_empty_permission=True, all_combinations=True)
+        self.assertSetEqual(expected_permissions, permissions)
+
+    def test_includes_permission(self):
+        """
+            Test checking if a permission includes another permission.
+
+            Expected result: If the other permission is fully included in the permission, `True`.
+        """
+
+        permission = Permission.EditRole | Permission.EditUser
+        self.assertTrue(permission.includes_permission(Permission.EditRole))
+        self.assertTrue(permission.includes_permission(Permission.EditUser))
+        self.assertTrue(permission.includes_permission(permission))
+        self.assertFalse(permission.includes_permission(Permission.EditGlobalSettings))
+        self.assertFalse(permission.includes_permission(Permission.EditGlobalSettings | Permission.EditUser))
+
 
 class PermissionTest(TestCase):
 

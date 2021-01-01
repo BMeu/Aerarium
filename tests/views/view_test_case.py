@@ -72,7 +72,7 @@ class ViewTestCase(TestCase):
 
         return data
 
-    def post(self, url: str, data: Dict[str, Any] = None, expected_status: int = 200, follow_redirects: bool = True)\
+    def post(self, url: str, data: Dict[str, Any] = None, expected_status: int = 200, follow_redirects: bool = True) \
             -> str:
         """
             Access the given URL via HTTP POST, sending the given data. Assert that the returned status code is the
@@ -98,7 +98,8 @@ class ViewTestCase(TestCase):
 
         return data
 
-    def check_allowed_methods(self, url: str, allowed_methods: Optional[Set[str]] = None, allow_options: bool = True)\
+    # TODO: Rename assert_allowed_methods().
+    def check_allowed_methods(self, url: str, allowed_methods: Optional[Set[str]] = None, allow_options: bool = True) \
             -> None:
         """
             Check if the given URL can be accessed only by the specified methods.
@@ -145,43 +146,6 @@ class ViewTestCase(TestCase):
             status_code = self._get_status_code_for_method(url, prohibited_method)
             self.assertEqual(405, status_code, f'{prohibited_method} {url} is allowed, but should not be.')
 
-    def assert_permission_required(self, url: str, permission: Permission, method: str = 'GET') -> None:
-        """
-            Assert that accessing the URL via the given method requires the specified permission and that accessing the
-            URL with the permission is actually possible.
-
-            The test checks for a response code of 403. This can lead to a false positive if a route does not require
-            the specified permission but aborts with an error 403 in some other case.
-
-            :param url: The URL to access.
-            :param permission: The permission that must be required to access the URL.
-            :param method: The HTTP method to access the URL by. Defaults to `'GET'`.
-        """
-
-        # Access the URL without the required permission. This must not be possible.
-        user = self.create_and_login_user()
-        status_code = self._get_status_code_for_method(url, method)
-        self.assertEqual(403, status_code,
-                         f'{method} {url} must not be accessible without permission {permission}, but it is.')
-
-        # Delete the user so that the method can be called multiple times in the same test.
-        user._delete()
-
-        # Access the URL with the required permission. This must be possible.
-        role = self.create_role(permission)
-        user = self.create_and_login_user(role=role)
-
-        status_code = self._get_status_code_for_method(url, method)
-        self.assertNotEqual(403, status_code,
-                            f'{method} {url} must be accessible with permission {permission}, but it is not.')
-
-        # Delete the user and role so that the method can be called multiple times in the same test.
-        # Since the role might be the only role with permissions to edit roles, we cannot use role.delete() which will
-        # fail in such a case.
-        user._delete()
-        db.session.delete(role)
-        db.session.commit()
-
     def _get_status_code_for_method(self, url: str, method: str) -> int:
         """
             Access the given URL via the given HTTP method and return the response status code.
@@ -210,6 +174,149 @@ class ViewTestCase(TestCase):
             raise ValueError(f'Invalid HTTP method {method}')
 
         return response.status_code
+
+    # endregion
+
+    # region Permissions
+
+    def assert_no_permission_required(self, url: str, method: str = 'GET') -> None:
+        """
+            Assert that accessing the URL via the given method requires no permission at all and that accessing the URL
+            with any permission is actually possible.
+
+            The test checks for a response code of 403. This can lead to a false positive if a route aborts with an
+            error 403.
+
+            :param url: The URL to access.
+            :param method: The HTTP method to access the URL by. Defaults to `'GET'`.
+        """
+
+        allowed_permissions = Permission.get_permissions(include_empty_permission=True, all_combinations=True)
+        self._assert_permissions(url, allowed_permissions, method)
+
+    def assert_permission_required(self, url: str, permission: Permission, method: str = 'GET') -> None:
+        """
+            Assert that accessing the URL via the given method requires the specified permission and that accessing the
+            URL with the permission is actually possible.
+
+            The test checks for a response code of 403. This can lead to a false positive if a route does not require
+            the specified permission but aborts with an error 403 in some other case.
+
+            :param url: The URL to access.
+            :param permission: The permission that must be required to access the URL.
+            :param method: The HTTP method to access the URL by. Defaults to `'GET'`.
+        """
+
+        all_permissions = Permission.get_permissions(include_empty_permission=True, all_combinations=True)
+        allowed_permissions = {p for p in all_permissions if p.includes_permission(permission)}
+
+        self._assert_permissions(url, allowed_permissions, method)
+
+    def assert_permission_required_one_of(self, url: str, *permissions: Permission, method: str = 'GET') -> None:
+        """
+            Assert that accessing the URL via the given method requires one of the specified permissions and that
+            accessing the URL with the permission is actually possible, while accessing the URL with any other
+            permission fails.
+
+            :param url: The url to access.
+            :param permissions: The permissions that must be required to access the URL.
+            :param method: The HTTP method to access the URL by. Defaults to `'GET'`.
+        """
+
+        all_permissions = Permission.get_permissions(include_empty_permission=True, all_combinations=True)
+        allowed_permissions = set({})
+        for permission in permissions:
+            allowed_permissions.update({p for p in all_permissions if p.includes_permission(permission)})
+
+        self._assert_permissions(url, allowed_permissions, method)
+
+    def assert_permission_required_all(self, url: str, *permissions: Permission, method: str = 'GET') -> None:
+        """
+            Assert that accessing the URL via the given method requires all of the specified permissions and that
+            accessing the URL with the permissions is actually possible.
+
+            :param url: The URL to access.
+            :param permissions: The permissions that must be required to access the URL.
+            :param method: The HTTP method to access the URL by. Defaults to `'GET'`.
+        """
+
+        all_permissions = Permission.get_permissions(include_empty_permission=True, all_combinations=True)
+
+        #
+        allowed_permission = Permission(0)
+        for permission in permissions:
+            allowed_permission |= permission
+
+        allowed_permissions = {p for p in all_permissions if p.includes_permission(allowed_permission)}
+
+        self._assert_permissions(url, allowed_permissions, method)
+
+    def _assert_permission_grants_access(self, url: str, permission: Permission, method: str = 'GET') -> None:
+        """
+            Assert that the given permission is sufficient to access the given URL.
+
+            :param url: The URL to access.
+            :param permission: The permission that should be able to able to access the URL.
+            :param method: The HTTP method to access the URL by. Defaults to `'GET'`.
+        """
+
+        # Create and log in a user with the given permission.
+        role = self.create_role(permission)
+        user = self.create_and_login_user(role=role)
+
+        # Ensure that accessing the URL with the given permission is possible.
+        status_code = self._get_status_code_for_method(url, method)
+        self.assertNotEqual(403, status_code,
+                            f'{method} {url} must be accessible with permission {permission}, but it is not.')
+
+        # Delete the user and role so that this method can be called multiple times in the same test.
+        # Since the role might be the only role with permissions to edit roles, we cannot use role.delete() which will
+        # fail in such a case.
+        user._delete()
+        db.session.delete(role)
+        db.session.commit()
+
+    def _assert_permission_does_not_grant_access(self, url: str, permission: Permission, method: str = 'GET') -> None:
+        """
+            Assert that the given permission is not sufficient to access the given URL.
+
+            :param url: The URL to access.
+            :param permission: The permission that should not be able to able to access the URL.
+            :param method: The HTTP method to access the URL by. Defaults to `'GET'`.
+        """
+
+        # Create and log in a user with the given permission.
+        role = self.create_role(permission)
+        user = self.create_and_login_user(role=role)
+
+        # Ensure that accessing the URL with the given permission is impossible.
+        status_code = self._get_status_code_for_method(url, method)
+        self.assertEqual(403, status_code,
+                         f'{method} {url} must not be accessible with permission {permission}, but it is.')
+
+        # Delete the user and role so that this method can be called multiple times in the same test.
+        # Since the role might be the only role with permissions to edit roles, we cannot use role.delete() which will
+        # fail in such a case.
+        user._delete()
+        db.session.delete(role)
+        db.session.commit()
+
+    def _assert_permissions(self, url: str, allowed_permissions: Set[Permission], method: str) -> None:
+        """
+            Assert that the given URL can be accessed with the allowed permissions, but not with any other permission.
+
+            :param url: The URL to access.
+            :param allowed_permissions: List of permissions that must be able to access the URL.
+            :param method: The HTTP method to access the URL by.
+        """
+
+        for allowed_permission in allowed_permissions:
+            self._assert_permission_grants_access(url, allowed_permission, method)
+
+        all_permissions = Permission.get_permissions(include_empty_permission=True, all_combinations=True)
+        prohibited_permissions = {permission for permission in all_permissions if permission not in allowed_permissions}
+        for prohibited_permission in prohibited_permissions:
+            self._assert_permission_does_not_grant_access(url, prohibited_permission, method)
 
     # endregion
 

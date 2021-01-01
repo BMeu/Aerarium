@@ -12,6 +12,7 @@ from app.userprofile import RolePagination
 from app.userprofile import User
 
 
+# noinspection PyUnresolvedReferences
 class RoleTest(TestCase):
 
     def setUp(self):
