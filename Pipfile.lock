@@ -111,10 +111,10 @@
         },
         "easyjwt": {
             "hashes": [
-                "sha256:168bb377766a8605b49d0c8bed5942740d591c3808e06907ccaa9f3cd8c7a550",
-                "sha256:c979dec87674703337044df09b97ea2560adbf72702d69e141d681de5c1f0939"
+                "sha256:0734ff6da85d0d9aee56521b73ff35412760dd84a44224d0018b7eb871058829",
+                "sha256:973a1793da0c5aee0009f2f0603df977224819050c177a5ae4c2d29a97bf2540"
             ],
-            "version": "==0.2.0"
+            "version": "==0.2.1"
         },
         "email-validator": {
             "hashes": [
