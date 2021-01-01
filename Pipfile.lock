@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "425a6da77060a75957570ea3a326f2c5e2c7fdc06c19dd2f6dea46a4e4df0264"
+            "sha256": "7ffe1b7929b335943eeb9aa462767596b61896ef8f2457152b4826fad60a2495"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -111,10 +111,10 @@
         },
         "easyjwt": {
             "hashes": [
-                "sha256:a2d03018678bc0eb2356cf7cdf1cc231a2a37b99dfa400f577d62de81269f805",
-                "sha256:ddf34d3b6062e6ff30f1ee80de70ad157b4991d823ec9fc83dd7ded9e56ac9da"
+                "sha256:168bb377766a8605b49d0c8bed5942740d591c3808e06907ccaa9f3cd8c7a550",
+                "sha256:c979dec87674703337044df09b97ea2560adbf72702d69e141d681de5c1f0939"
             ],
-            "version": "==0.1.1"
+            "version": "==0.2.0"
         },
         "email-validator": {
             "hashes": [
@@ -149,11 +149,11 @@
         },
         "flask-easyjwt": {
             "hashes": [
-                "sha256:01eec3f49b4dd9ecad9de6a8cfe22b74334b48ddf08e23e588721f91d06faaf4",
-                "sha256:85a9a20e15e73861ceb2d81ac73b71049400d09996f54745ea74aeed3fe8cd11"
+                "sha256:92358f20983a139dc6874bd86c29ccad53778248fce7d0a8ca0fdcc308628374",
+                "sha256:ced5d8afef91e7b1fc947ba28ce9fdfe59f11ac90b131d1f9b46fdcbd3216ede"
             ],
             "index": "pypi",
-            "version": "==0.2.0"
+            "version": "==0.2.2"
         },
         "flask-login": {
             "hashes": [
