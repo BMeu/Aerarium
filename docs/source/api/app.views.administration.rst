@@ -20,6 +20,13 @@ app.views.administration.roles module
    :undoc-members:
    :show-inheritance:
 
+app.views.administration.users module
+-------------------------------------
+
+.. automodule:: app.views.administration.users
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------

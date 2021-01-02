@@ -12,7 +12,6 @@ app.localization.languages module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

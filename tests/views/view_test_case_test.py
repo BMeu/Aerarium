@@ -120,7 +120,7 @@ class ViewTestCaseTest(ViewTestCase):
         with self.assertRaises(self.failureException) as exception_cm:
             self.check_allowed_methods('/example', {'POST'})
 
-        self.assertEqual('PUT /example is allowed, but should not be.', exception_cm.exception.msg)
+        self.assertEqual('PUT /example is allowed, but should not be. :: 405 != 200', str(exception_cm.exception))
 
     def test_check_allowed_methods_with_unexpectedly_prohibited_method(self) -> None:
         """
@@ -163,7 +163,7 @@ class ViewTestCaseTest(ViewTestCase):
         with self.assertRaises(self.failureException) as exception_cm:
             self.check_allowed_methods('/example', {'GET'}, allow_options=False)
 
-        self.assertEqual('OPTIONS /example is allowed, but should not be.', exception_cm.exception.msg)
+        self.assertEqual('OPTIONS /example is allowed, but should not be. :: 405 != 200', str(exception_cm.exception))
 
     def test_get_status_code_for_method_delete(self) -> None:
         """
@@ -289,7 +289,7 @@ class ViewTestCaseTest(ViewTestCase):
             Get the failure message for each given permission when a URL should not be accessible with the permission,
             but it is.
 
-            The HTTP method in the message will always be 'GET', the URL '/example'.
+            The HTTP method in the message will always be 'GET', the URL '/example', the actual status code 200.
 
             :param permissions: The permissions for which the failure messages will be created.
             :return: A set of all message, one for each permissions.
@@ -297,7 +297,7 @@ class ViewTestCaseTest(ViewTestCase):
 
         messages = set()
         for permission in permissions:
-            messages.add(f'GET /example must not be accessible with permission {permission}, but it is.')
+            messages.add(f'GET /example must not be accessible with permission {permission}, but it is. :: 403 != 200')
 
         return messages
 
@@ -394,7 +394,7 @@ class ViewTestCaseTest(ViewTestCase):
             Permission.EditGlobalSettings,
             Permission.EditRole | Permission.EditGlobalSettings,
         })
-        self.assertIn(exception_cm.exception.msg, expected_messages)
+        self.assertIn(str(exception_cm.exception), expected_messages)
 
     def test_assert_permission_required_one_of_with_correct_permissions(self) -> None:
         """
@@ -452,7 +452,7 @@ class ViewTestCaseTest(ViewTestCase):
         expected_messages = self._get_messages_for_accessible_url({
             Permission.EditGlobalSettings,
         })
-        self.assertIn(exception_cm.exception.msg, expected_messages)
+        self.assertIn(str(exception_cm.exception), expected_messages)
 
     def test_assert_permission_required_all_with_correct_permissions(self) -> None:
         """
@@ -489,7 +489,7 @@ class ViewTestCaseTest(ViewTestCase):
             Permission.EditUser | Permission.EditRole,
         })
 
-        self.assertIn(exception_cm.exception.msg, expected_messages)
+        self.assertIn(str(exception_cm.exception), expected_messages)
 
     def test_assert_permission_required_all_with_too_few_permissions(self) -> None:
         """

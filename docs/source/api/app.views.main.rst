@@ -20,7 +20,6 @@ app.views.main.routes module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

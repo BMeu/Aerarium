@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    app.configuration
    app.localization
@@ -79,7 +80,6 @@ app.typing module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

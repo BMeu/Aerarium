@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    app.views.administration
    app.views.main
@@ -28,7 +29,6 @@ app.views.tools module
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

@@ -20,7 +20,6 @@ app.configuration.test\_configuration module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

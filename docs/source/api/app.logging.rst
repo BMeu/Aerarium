@@ -20,7 +20,6 @@ app.logging.secure\_smtp\_handler module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

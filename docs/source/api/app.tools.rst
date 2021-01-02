@@ -12,7 +12,6 @@ app.tools.math module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 
