@@ -120,7 +120,7 @@ class ViewTestCaseTest(ViewTestCase):
         with self.assertRaises(self.failureException) as exception_cm:
             self.check_allowed_methods('/example', {'POST'})
 
-        self.assertEqual('PUT /example is allowed, but should not be. :: 405 != 200', str(exception_cm.exception))
+        self.assertEqual('405 != 200 : PUT /example is allowed, but should not be.', str(exception_cm.exception))
 
     def test_check_allowed_methods_with_unexpectedly_prohibited_method(self) -> None:
         """
@@ -163,7 +163,7 @@ class ViewTestCaseTest(ViewTestCase):
         with self.assertRaises(self.failureException) as exception_cm:
             self.check_allowed_methods('/example', {'GET'}, allow_options=False)
 
-        self.assertEqual('OPTIONS /example is allowed, but should not be. :: 405 != 200', str(exception_cm.exception))
+        self.assertEqual('405 != 200 : OPTIONS /example is allowed, but should not be.', str(exception_cm.exception))
 
     def test_get_status_code_for_method_delete(self) -> None:
         """
@@ -297,7 +297,7 @@ class ViewTestCaseTest(ViewTestCase):
 
         messages = set()
         for permission in permissions:
-            messages.add(f'GET /example must not be accessible with permission {permission}, but it is. :: 403 != 200')
+            messages.add(f'403 != 200 : GET /example must not be accessible with permission {permission}, but it is.')
 
         return messages
 
