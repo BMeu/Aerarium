@@ -62,7 +62,8 @@ def get_language_names(translation_dir: str, with_native_names: bool = True) -> 
         names.append((language, name))
 
     # Sort the list of language names by their name, i.e. the second element in the tuple.
-    names.sort(key=lambda x: x[1])
+    # The type ignore is needed until https://github.com/python/mypy/issues/9656 is fixed.
+    names.sort(key=lambda x: x[1])  # type: ignore
     return names
 
 
