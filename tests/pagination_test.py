@@ -273,7 +273,7 @@ class PaginationTest(TestCase):
 
         text = pagination.get_info_text()
         self.assertIn(f'results {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
-        self.assertNotIn(f'matching “', text)
+        self.assertNotIn('matching “', text)
 
     def test_get_info_text_no_search_term_single(self):
         """
@@ -287,7 +287,7 @@ class PaginationTest(TestCase):
 
         text = pagination.get_info_text()
         self.assertIn(f'result {pagination.first_row} of {pagination.total_rows}', text)
-        self.assertNotIn(f'matching “', text)
+        self.assertNotIn('matching “', text)
 
     def test_get_info_text_no_search_term_no_rows(self):
         """
@@ -302,4 +302,4 @@ class PaginationTest(TestCase):
 
         text = pagination.get_info_text()
         self.assertIn('No results', text)
-        self.assertNotIn(f'matching “', text)
+        self.assertNotIn('matching “', text)

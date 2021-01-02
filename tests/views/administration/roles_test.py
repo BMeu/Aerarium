@@ -140,10 +140,10 @@ class RolesTest(ViewTestCase):
         data = self.get(f'/administration/role/{role.name}')
 
         self.assertIn(f'Edit Role “{role.name}”', data)
-        self.assertIn(f'Edit the role\'s header data', data)
-        self.assertNotIn(f'View the users who have this role assigned to them', data)
-        self.assertNotIn(f'Permanently delete this role', data)
-        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
+        self.assertIn('Edit the role\'s header data', data)
+        self.assertNotIn('View the users who have this role assigned to them', data)
+        self.assertNotIn('Permanently delete this role', data)
+        self.assertNotIn('Define the permissions which the users to whom this role is assigned will have.', data)
 
     def test_role_header_post_header_data_existing_name(self):
         """
@@ -169,10 +169,10 @@ class RolesTest(ViewTestCase):
         self.assertIn(f'Edit Role “{name}”', data)
         self.assertNotIn('The role has been updated.', data)
         self.assertEqual(name, role.name)
-        self.assertIn(f'Edit the role\'s header data', data)
-        self.assertNotIn(f'View the users who have this role assigned to them', data)
-        self.assertNotIn(f'Permanently delete this role', data)
-        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
+        self.assertIn('Edit the role\'s header data', data)
+        self.assertNotIn('View the users who have this role assigned to them', data)
+        self.assertNotIn('Permanently delete this role', data)
+        self.assertNotIn('Define the permissions which the users to whom this role is assigned will have.', data)
 
     def test_role_header_post_header_data_new_name(self):
         """
@@ -196,10 +196,10 @@ class RolesTest(ViewTestCase):
         self.assertIn(f'Edit Role “{new_name}”', data)
         self.assertIn('The role has been updated.', data)
         self.assertEqual(new_name, role.name)
-        self.assertIn(f'Edit the role\'s header data', data)
-        self.assertNotIn(f'View the users who have this role assigned to them', data)
-        self.assertNotIn(f'Permanently delete this role', data)
-        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
+        self.assertIn('Edit the role\'s header data', data)
+        self.assertNotIn('View the users who have this role assigned to them', data)
+        self.assertNotIn('Permanently delete this role', data)
+        self.assertNotIn('Define the permissions which the users to whom this role is assigned will have.', data)
 
     def test_role_permissions_get_no_role(self):
         """
@@ -229,10 +229,10 @@ class RolesTest(ViewTestCase):
         data = self.get(f'/administration/role/{role.name}/permissions')
 
         self.assertIn('<h1>Edit Role “', data)
-        self.assertIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
-        self.assertNotIn(f'View the users who have this role assigned to them', data)
-        self.assertNotIn(f'Permanently delete this role', data)
-        self.assertNotIn(f'Edit the role\'s header data', data)
+        self.assertIn('Define the permissions which the users to whom this role is assigned will have.', data)
+        self.assertNotIn('View the users who have this role assigned to them', data)
+        self.assertNotIn('Permanently delete this role', data)
+        self.assertNotIn('Edit the role\'s header data', data)
 
     def test_role_permissions_post(self):
         """
@@ -255,12 +255,12 @@ class RolesTest(ViewTestCase):
         role = Role.load_from_name(role.name)
         self.assertEqual(new_permissions, role.permissions)
         self.assertIn('<h1>Edit Role “', data)
-        self.assertIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
+        self.assertIn('Define the permissions which the users to whom this role is assigned will have.', data)
         # The apostrophe is escaped...
         self.assertIn('The role&#39;s permissions have been updated.', data)
-        self.assertNotIn(f'View the users who have this role assigned to them', data)
-        self.assertNotIn(f'Permanently delete this role', data)
-        self.assertNotIn(f'Edit the role\'s header data', data)
+        self.assertNotIn('View the users who have this role assigned to them', data)
+        self.assertNotIn('Permanently delete this role', data)
+        self.assertNotIn('Edit the role\'s header data', data)
 
     def test_role_permissions_post_only_role_to_edit_roles(self):
         """
@@ -285,12 +285,12 @@ class RolesTest(ViewTestCase):
         role = Role.load_from_name(role.name)
         self.assertEqual(new_permissions, role.permissions)
         self.assertIn('<h1>Edit Role “', data)
-        self.assertIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
+        self.assertIn('Define the permissions which the users to whom this role is assigned will have.', data)
         # The apostrophe is escaped...
         self.assertIn('The role&#39;s permissions have been updated.', data)
-        self.assertNotIn(f'View the users who have this role assigned to them', data)
-        self.assertNotIn(f'Permanently delete this role', data)
-        self.assertNotIn(f'Edit the role\'s header data', data)
+        self.assertNotIn('View the users who have this role assigned to them', data)
+        self.assertNotIn('Permanently delete this role', data)
+        self.assertNotIn('Edit the role\'s header data', data)
 
     def test_role_users_get_no_role(self):
         """
@@ -321,10 +321,10 @@ class RolesTest(ViewTestCase):
         data = self.get(f'/administration/role/{role.name}/users')
 
         self.assertIn('<h1>Edit Role “', data)
-        self.assertIn(f'View the users who have this role assigned to them', data)
-        self.assertNotIn(f'Permanently delete this role', data)
-        self.assertNotIn(f'Edit the role\'s header data', data)
-        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
+        self.assertIn('View the users who have this role assigned to them', data)
+        self.assertNotIn('Permanently delete this role', data)
+        self.assertNotIn('Edit the role\'s header data', data)
+        self.assertNotIn('Define the permissions which the users to whom this role is assigned will have.', data)
         self.assertIn(name, data)
 
     def test_role_delete_get_no_role(self):
@@ -361,10 +361,10 @@ class RolesTest(ViewTestCase):
         self.assertIsNotNone(role.id)
         self.assertIn('<h1>Edit Role “', data)
         self.assertIn('This role cannot be deleted because it is the only one that can edit roles.', data)
-        self.assertNotIn(f'View the users who have this role assigned to them', data)
-        self.assertNotIn(f'Edit the role\'s header data', data)
-        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
-        self.assertNotIn(f'Permanently delete this role', data)
+        self.assertNotIn('View the users who have this role assigned to them', data)
+        self.assertNotIn('Edit the role\'s header data', data)
+        self.assertNotIn('Define the permissions which the users to whom this role is assigned will have.', data)
+        self.assertNotIn('Permanently delete this role', data)
         self.assertNotIn('The role has been deleted.', data)
 
     def test_role_delete_get(self):
@@ -388,10 +388,10 @@ class RolesTest(ViewTestCase):
         self.assertIsNotNone(role)
         self.assertIsNotNone(other_role.id)
         self.assertIn('<h1>Edit Role “', data)
-        self.assertNotIn(f'View the users who have this role assigned to them', data)
-        self.assertNotIn(f'Edit the role\'s header data', data)
-        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
-        self.assertIn(f'Permanently delete this role', data)
+        self.assertNotIn('View the users who have this role assigned to them', data)
+        self.assertNotIn('Edit the role\'s header data', data)
+        self.assertNotIn('Define the permissions which the users to whom this role is assigned will have.', data)
+        self.assertIn('Permanently delete this role', data)
         self.assertNotIn('The role has been deleted.', data)
 
     def test_role_delete_post_no_users(self):
@@ -440,10 +440,10 @@ class RolesTest(ViewTestCase):
         self.assertIsNotNone(role.id)
         self.assertIn('<h1>Edit Role “', data)
         self.assertIn('This role cannot be deleted because it is the only one that can edit roles.', data)
-        self.assertNotIn(f'View the users who have this role assigned to them', data)
-        self.assertNotIn(f'Edit the role\'s header data', data)
-        self.assertNotIn(f'Define the permissions which the users to whom this role is assigned will have.', data)
-        self.assertNotIn(f'Permanently delete this role', data)
+        self.assertNotIn('View the users who have this role assigned to them', data)
+        self.assertNotIn('Edit the role\'s header data', data)
+        self.assertNotIn('Define the permissions which the users to whom this role is assigned will have.', data)
+        self.assertNotIn('Permanently delete this role', data)
         self.assertNotIn('The role has been deleted.', data)
 
     def test_role_delete_post_has_users(self):

@@ -1056,7 +1056,7 @@ class RolePaginationTest(TestCase):
 
         text = pagination.get_info_text()
         self.assertIn(f'roles {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
-        self.assertNotIn(f'matching “', text)
+        self.assertNotIn('matching “', text)
 
     def test_get_info_text_no_search_term_single(self):
         """
@@ -1070,7 +1070,7 @@ class RolePaginationTest(TestCase):
 
         text = pagination.get_info_text()
         self.assertIn(f'role {pagination.first_row} of {pagination.total_rows}', text)
-        self.assertNotIn(f'matching “', text)
+        self.assertNotIn('matching “', text)
 
     def test_get_info_text_no_search_term_no_rows(self):
         """
@@ -1085,4 +1085,4 @@ class RolePaginationTest(TestCase):
 
         text = pagination.get_info_text()
         self.assertIn('No roles', text)
-        self.assertNotIn(f'matching “', text)
+        self.assertNotIn('matching “', text)

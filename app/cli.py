@@ -80,12 +80,12 @@ def register(application: Flask) -> None:
             # If the found number of rounds is smaller than the minimum number of rounds, the minimum number has taken
             # more time than requested. However, this value is not allowed by bcrypt.
             rounds = min_rounds
-            click.echo(f'The minimum number of rounds took more time than allowed.')
+            click.echo('The minimum number of rounds took more time than allowed.')
             click.echo(f'However, the number of rounds must be at least: {rounds}')
         else:
             click.echo(f'Found suiting number of hashing rounds: {rounds}')
 
-        click.echo(f'You can set this value in your configuration file with')
+        click.echo('You can set this value in your configuration file with')
         click.echo(f'   BCRYPT_LOG_ROUNDS={rounds}')
 
     @application.cli.group()  # type: ignore

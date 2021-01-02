@@ -77,7 +77,7 @@ class AuthenticationTest(ViewTestCase):
         self.assertNotIn('<h1>Log In</h1>', data)
         self.assertNotIn('<h1>Dashboard</h1>', data)
         self.assertIn(f'Welcome, {name}!', data)
-        self.assertIn(f'User Profile', data)
+        self.assertIn('User Profile', data)
 
     def test_login_post_failure(self):
         """

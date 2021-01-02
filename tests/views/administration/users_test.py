@@ -84,8 +84,8 @@ class UsersTest(ViewTestCase):
         data = self.get(f'/administration/user/{user.id}')
 
         self.assertIn(f'Edit User “{user.name}”', data)
-        self.assertIn(f'Edit the user\'s header data.', data)
-        self.assertNotIn(f'Edit the user\'s settings.', data)
+        self.assertIn('Edit the user\'s header data.', data)
+        self.assertNotIn('Edit the user\'s settings.', data)
 
     def test_user_header_post_no_user(self):
         """
@@ -115,8 +115,8 @@ class UsersTest(ViewTestCase):
         data = self.post(f'/administration/user/{user.id}')
 
         self.assertIn(f'Edit User “{user.name}”', data)
-        self.assertIn(f'Edit the user\'s header data.', data)
-        self.assertNotIn(f'Edit the user\'s settings.', data)
+        self.assertIn('Edit the user\'s header data.', data)
+        self.assertNotIn('Edit the user\'s settings.', data)
 
     def test_user_security_no_user(self):
         """

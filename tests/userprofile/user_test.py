@@ -451,7 +451,7 @@ class UserTest(TestCase):
             self.assertListEqual([old_email], outgoing[0].recipients)
             self.assertIn('Your Email Address Has Been Changed', outgoing[0].subject)
             self.assertIn(f'Your email address has been changed to {new_email}', outgoing[0].body)
-            self.assertIn(f'Your email address has been changed to ', outgoing[0].html)
+            self.assertIn('Your email address has been changed to ', outgoing[0].html)
 
             self.assertTrue(changed_email)
             self.assertEqual(new_email, user.email)
@@ -1830,7 +1830,7 @@ class UserPaginationTest(TestCase):
 
         text = pagination.get_info_text()
         self.assertIn(f'users {pagination.first_row} to {pagination.last_row} of {pagination.total_rows}', text)
-        self.assertNotIn(f'matching “', text)
+        self.assertNotIn('matching “', text)
 
     def test_get_info_text_no_search_term_single(self):
         """
@@ -1844,7 +1844,7 @@ class UserPaginationTest(TestCase):
 
         text = pagination.get_info_text()
         self.assertIn(f'user {pagination.first_row} of {pagination.total_rows}', text)
-        self.assertNotIn(f'matching “', text)
+        self.assertNotIn('matching “', text)
 
     def test_get_info_text_no_search_term_no_rows(self):
         """
@@ -1859,4 +1859,4 @@ class UserPaginationTest(TestCase):
 
         text = pagination.get_info_text()
         self.assertIn('No users', text)
-        self.assertNotIn(f'matching “', text)
+        self.assertNotIn('matching “', text)
