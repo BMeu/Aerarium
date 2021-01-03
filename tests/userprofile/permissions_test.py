@@ -216,12 +216,54 @@ class PermissionBaseTest(TestCase):
             Expected result: If the other permission is fully included in the permission, `True`.
         """
 
-        permission = Permission.EditRole | Permission.EditUser
-        self.assertTrue(permission.includes_permission(Permission.EditRole))
-        self.assertTrue(permission.includes_permission(Permission.EditUser))
+        class TestPermission(PermissionBase):
+            """
+                A permission enumeration for testing.
+            """
+
+            A = 1
+            B = 2
+            C = 4
+
+        permission = TestPermission.A | TestPermission.B
+        self.assertTrue(permission.includes_permission(TestPermission.A))
+        self.assertTrue(permission.includes_permission(TestPermission.B))
         self.assertTrue(permission.includes_permission(permission))
-        self.assertFalse(permission.includes_permission(Permission.EditGlobalSettings))
-        self.assertFalse(permission.includes_permission(Permission.EditGlobalSettings | Permission.EditUser))
+
+        self.assertFalse(permission.includes_permission(TestPermission.C))
+        self.assertFalse(permission.includes_permission(TestPermission.C | TestPermission.B))
+
+    def test_includes_permission_does_not_include_other_permission_type(self):
+        """
+            Test checking if a permission includes another permission if the other permission is from a different
+            permission class.
+
+            Expected result: A type error is raised.
+        """
+
+        class TestPermission1(PermissionBase):
+            """
+                A permission enumeration for testing.
+            """
+
+            A = 1
+            B = 2
+
+        class TestPermission2(PermissionBase):
+            """
+                A permission enumeration for testing.
+            """
+
+            A = 1
+            B = 2
+
+        permission = TestPermission1.A | TestPermission1.B
+
+        with self.assertRaises(TypeError) as exception_cm:
+            permission.includes_permission(TestPermission2.A)
+
+        self.assertEqual(str(exception_cm.exception),
+                         'other_permission must be of type <enum \'Permission1\'>, but is <enum \'Permission2\'>')
 
 
 class PermissionTest(TestCase):

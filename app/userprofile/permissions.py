@@ -135,10 +135,11 @@ class PermissionBase(Flag):
 
             :param other_permission: The other permission that will be checked
             :return: `True` if `other_permission` is included in this permission, `False` otherwise.
+            :raise TypeError: If `other_permission` is a different enum than `self`.
         """
 
         if type(self) is not type(other_permission):
-            return False
+            raise TypeError(f'other_permission must be of type {type(self)}, but is {type(other_permission)}')
 
         return self & other_permission == other_permission
 
