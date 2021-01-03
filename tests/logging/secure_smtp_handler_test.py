@@ -30,7 +30,7 @@ class SecureSMTPHandlerTest(TestCase):
         self.handler = SecureSMTPHandler(**self.settings)
         self.handler_ssl = SecureSMTPHandler(ssl=True, **self.settings)
 
-        self.log_record = LogRecord('Log Record', DEBUG, '.', 42, 'This is a debug message.', (None,), None)
+        self.log_record = LogRecord('Log Record', DEBUG, '.', 42, 'This is a debug message.', None, None)
 
     def test_init(self):
         """
