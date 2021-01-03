@@ -263,7 +263,7 @@ class PermissionBaseTest(TestCase):
             permission.includes_permission(TestPermission2.A)
 
         self.assertEqual(str(exception_cm.exception),
-                         'other_permission must be of type <enum \'Permission1\'>, but is <enum \'Permission2\'>')
+                         "other_permission must be of type <enum 'TestPermission1'>, but is <enum 'TestPermission2'>")
 
 
 class PermissionTest(TestCase):
