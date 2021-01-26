@@ -213,6 +213,25 @@ class RoleTest(TestCase):
         loaded_role = Role.load_from_name('Administrator')
         self.assertIsNone(loaded_role)
 
+    def test_load_from_name_is_case_sensitive(self):
+        """
+            Test that loading a role by its name is case sensitive.
+
+            Expected result: The method returns the role if the name is the same in the same case, otherwise `None`.
+        """
+
+        name = 'Administrator'.upper()
+        role = Role(name=name)
+        db.session.add(role)
+        db.session.commit()
+
+        loaded_role = Role.load_from_name(name)
+        self.assertIsNotNone(loaded_role)
+        self.assertEqual(name, loaded_role.name)
+
+        loaded_role = Role.load_from_name(name.lower())
+        self.assertIsNone(loaded_role)
+
     def test_load_roles_with_permission(self):
         """
             Test loading roles that have a given permission.

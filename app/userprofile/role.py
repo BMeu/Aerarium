@@ -119,7 +119,11 @@ class Role(db.Model):  # type: ignore
             :return: The loaded role if it exists, `None` otherwise.
         """
 
-        return Role.query.filter_by(_name=name).first()  # type: ignore
+        role: Role = Role.query.filter_by(_name=name).first()
+        if role is None or role.name != name:
+            return None
+
+        return role
 
     @staticmethod
     def load_roles_with_permission(permission: Permission) -> List['Role']:
